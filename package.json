@@ -19,8 +19,6 @@
     "lint-staged": "^15.4.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "yarn biome check --write"
-    ]
+    "*.{js,jsx,ts,tsx}": ["yarn biome check --write"]
   }
 }

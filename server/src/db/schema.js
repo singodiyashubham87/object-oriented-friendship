@@ -13,6 +13,7 @@ const requestStatusEnums = pgEnum("request_status", [
   "accepted",
   "rejected",
 ]);
+
 const messageTypeEnums = pgEnum("message_type", [
   "text",
   "audio",
@@ -119,3 +120,6 @@ export const Messages = pgTable(
     index(table.createdAt),
   ],
 );
+
+// If not exported then neondb(whoever the provider is) won't know that these enums types has to be created for the tables
+export { requestStatusEnums, messageTypeEnums };

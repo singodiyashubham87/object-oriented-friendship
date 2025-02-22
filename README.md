@@ -24,6 +24,7 @@
 - Redis (Caching)
 
 ### Miscellaneous
+- Cloudinary (Assets Management on Cloud)
 - Sentry (Error Monitoring)
 - Vitest (Testing Framework for Vite)
 - Vercel (Frontend Deployment)

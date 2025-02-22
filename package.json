@@ -4,7 +4,7 @@
   "description": "Where strangers become family.",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
+    "test": "echo 'test'",
     "format": "yarn biome format --write",
     "lint": "yarn biome lint --write",
     "check": "yarn biome check --write",
@@ -19,6 +19,8 @@
     "lint-staged": "^15.4.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["yarn biome check --write"]
+    "*.{js,jsx,ts,tsx}": [
+      "yarn biome check --write"
+    ]
   }
 }

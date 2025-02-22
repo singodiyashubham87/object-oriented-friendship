@@ -15,5 +15,10 @@
   "license": "ISC",
   "devDependencies": {
     "husky": "^9.1.7"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "yarn biome check --write"
+    ]
   }
 }

@@ -9,7 +9,8 @@
 - TailwindCSS
 
 ### Backend
-- Bun.Js (NodeJS Runtime)
+- NodeJs (JavaScript Runtime)
+- ExpressJS (NodeJs Web Framework)
 - Drizzle (ORM)
 - BullMQ (Message Queuing)
 - JWT (Authentication)

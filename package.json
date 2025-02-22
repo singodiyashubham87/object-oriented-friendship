@@ -1,0 +1,19 @@
+{
+  "name": "object-oriented-friendship",
+  "version": "1.0.0",
+  "description": "*Where strangers become family.*",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "yarn biome format --write",
+    "lint": "yarn biome lint --write",
+    "check": "yarn biome check --write",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "Shubham Singodiya",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

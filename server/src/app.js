@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
-
+import "dotenv/config";
 import cookieParser from "cookie-parser";
 import express from "express";
 import accountRouter from "./routers/account";

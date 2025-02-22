@@ -1,8 +1,25 @@
-# React + Vite
+# Object-Oriented Friendship - Let's make friends
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+*Where strangers become family.*
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Frontend
+- ReactJS
+- TailwindCSS
+
+### Backend
+- Bun.Js (NodeJS Runtime)
+- Drizzle (ORM)
+- BullMQ (Message Queuing)
+- JWT (Authentication)
+- Twilio (2FA)
+
+### Database
+- Postgres
+- Firebase (For Health Check & Alerts)
+
+### Miscellaneous
+- Sentry (Error Monitoring)
+- Vitest (Testing Framework for Vite)
+- Vercel (Frontend Deployment)

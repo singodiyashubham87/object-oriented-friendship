@@ -7,6 +7,8 @@
 ### Frontend
 - ReactJS
 - TailwindCSS
+- Redux (Local State Management)
+- TanstackQuery (Caching & Server State Management)
 
 ### Backend
 - NodeJs (JavaScript Runtime)
@@ -19,6 +21,7 @@
 ### Database
 - Postgres
 - Firebase (For Health Check & Alerts)
+- Redis (Caching)
 
 ### Miscellaneous
 - Sentry (Error Monitoring)

@@ -1,7 +1,7 @@
 {
   "name": "object-oriented-friendship",
   "version": "1.0.0",
-  "description": "*Where strangers become family.*",
+  "description": "Where strangers become family.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,8 @@
   "author": "Shubham Singodiya",
   "license": "ISC",
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

@@ -1,4 +1,5 @@
 import { index, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { Users } from "../Users/Users";
 
 export const RequestStatusEnums = pgEnum("request_status", [
   "pending",

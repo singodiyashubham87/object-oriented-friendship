@@ -1,9 +1,7 @@
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import express from "express";
-import accountRouter from "./routers/account";
-import connectionRequestRouter from "./routers/connectionRequest";
-import userRouter from "./routers/user";
+import { router as baseRouter } from "./router.js";
 
 const app = express();
 
@@ -13,8 +11,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
-app.use("/account", accountRouter);
-app.use("/user", userRouter);
-app.use("/connection-request", connectionRequestRouter);
+app.use("/api/", baseRouter);
+app.get("/", (req, res) => {
+  res.json({ message: "Hello from Backend!" });
+});
 
 export default app;

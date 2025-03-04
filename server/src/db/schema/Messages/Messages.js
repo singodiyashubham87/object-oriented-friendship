@@ -6,8 +6,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { Chats } from "../Chats/Chats";
-import { Users } from "../Users/Users";
+import { Chats } from "../Chats/Chats.js";
+import { Users } from "../Users/Users.js";
 
 export const MessageTypeEnums = pgEnum("message_type", [
   "text",

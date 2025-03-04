@@ -2,7 +2,7 @@ import "dotenv/config";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { seed } from "drizzle-seed";
-import { Bookmarks, Chats, Messages, Requests, Users } from "./schema.js";
+import { Bookmarks, Chats, Messages, Requests, Users } from "./schema/index.js";
 
 const seedCount = 10;
 

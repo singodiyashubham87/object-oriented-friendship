@@ -8,4 +8,4 @@ import { Users } from "./Users/Users";
 export { RequestStatusEnums, MessageTypeEnums };
 
 // Export all the tables to be created in DB after enum creation
-export { Users, Requests, Messages, Chats, Bookmarks };
+export { Users, Requests, Bookmarks, Chats, Messages };

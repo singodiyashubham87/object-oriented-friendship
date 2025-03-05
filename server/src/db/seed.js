@@ -2,7 +2,7 @@ import "dotenv/config";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { seed } from "drizzle-seed";
-import { Bookmarks, Chats, Messages, Requests, Users } from "./schema/index.js";
+import { Bookmark, Chat, Message, Request, User } from "./schema/index.js";
 
 const seedCount = 10;
 
@@ -13,7 +13,7 @@ async function seedDatabase(seedCount) {
     console.log("🌱 Starting database seeding...🌱");
     await seed(
       db,
-      { Users, Requests, Bookmarks, Chats, Messages },
+      { User, Request, Bookmark, Chat, Message },
       { count: seedCount },
     );
     console.log("✅ Database seeding completed successfully.");

@@ -11,24 +11,24 @@ import Layout from "./common/Layout.jsx";
 import ReceivedRequests from "./pages/Requests/ReceivedRequests.jsx";
 import SentRequests from "./pages/Requests/SentRequests.jsx";
 const App = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Feed />} />
-          <Route path="friends" element={<Friends />} />
-          <Route path="messages" element={<Messages />} />
-          <Route path="bookmark" element={<Bookmark />} />
-          <Route path="sent-requests" element={<SentRequests />} />
-          <Route path="received-requests" element={<ReceivedRequests />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:id" element={<UserProfile />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+	return (
+		<BrowserRouter>
+			<Routes>
+				<Route path="/register" element={<Register />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/" element={<Layout />}>
+					<Route index element={<Feed />} />
+					<Route path="friends" element={<Friends />} />
+					<Route path="messages" element={<Messages />} />
+					<Route path="bookmark" element={<Bookmark />} />
+					<Route path="sent-requests" element={<SentRequests />} />
+					<Route path="received-requests" element={<ReceivedRequests />} />
+					<Route path="profile" element={<Profile />} />
+					<Route path="profile/:id" element={<UserProfile />} />
+				</Route>
+			</Routes>
+		</BrowserRouter>
+	);
 };
 
 export default App;

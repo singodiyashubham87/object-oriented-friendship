@@ -13,7 +13,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/", baseRouter);
 app.get("/", (req, res) => {
-  res.json({ message: "Hello from Backend!" });
+	res.json({ message: "Hello from Backend!" });
 });
 
 export default app;

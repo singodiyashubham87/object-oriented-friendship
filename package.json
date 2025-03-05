@@ -1,26 +1,24 @@
 {
-  "name": "object-oriented-friendship",
-  "version": "1.0.0",
-  "description": "Where strangers become family.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo 'test'",
-    "format": "yarn biome format --write",
-    "lint": "yarn biome lint --write",
-    "check": "yarn biome check --write",
-    "prepare": "husky"
-  },
-  "keywords": [],
-  "author": "Shubham Singodiya",
-  "license": "ISC",
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.4.3"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "yarn biome check --write"
-    ]
-  }
+	"name": "object-oriented-friendship",
+	"version": "1.0.0",
+	"description": "Where strangers become family.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo 'test'",
+		"format": "yarn biome format --write",
+		"lint": "yarn biome lint --write",
+		"check": "yarn biome check --write",
+		"prepare": "husky"
+	},
+	"keywords": [],
+	"author": "Shubham Singodiya",
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.4.3"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx}": ["yarn biome check --write"]
+	}
 }

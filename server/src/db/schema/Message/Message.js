@@ -6,8 +6,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { Chats } from "../Chats/Chats.js";
-import { Users } from "../Users/Users.js";
+import { Chat } from "../Chat/Chat.js";
+import { User } from "../User/User.js";
 
 export const MessageTypeEnums = pgEnum("message_type", [
   "text",
@@ -17,15 +17,15 @@ export const MessageTypeEnums = pgEnum("message_type", [
   "file",
 ]);
 
-export const Messages = pgTable(
-  "messages",
+export const Message = pgTable(
+  "message",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
     chatId: uuid("chat_id")
-      .references(() => Chats.id, { onDelete: "cascade" })
+      .references(() => Chat.id, { onDelete: "cascade" })
       .notNull(),
     senderId: uuid("sender_id")
-      .references(() => Users.id, { onDelete: "cascade" })
+      .references(() => User.id, { onDelete: "cascade" })
       .notNull(),
     content: text("content").notNull(),
     contentType: MessageTypeEnums("content_type").default("text").notNull(),

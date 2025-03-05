@@ -1,15 +1,15 @@
 import { index, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
-import { Users } from "../Users/Users.js";
+import { User } from "../User/User.js";
 
-export const Bookmarks = pgTable(
-  "bookmarks",
+export const Bookmark = pgTable(
+  "bookmark",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
     bookmarkerId: uuid("bookmarker_id")
-      .references(() => Users.id, { onDelete: "cascade" })
+      .references(() => User.id, { onDelete: "cascade" })
       .notNull(),
     bookmarkedId: uuid("bookmarked_id")
-      .references(() => Users.id, { onDelete: "cascade" })
+      .references(() => User.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),

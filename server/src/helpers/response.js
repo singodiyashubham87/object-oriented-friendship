@@ -1,4 +1,4 @@
-import API from "./api";
+import API from "./api.js";
 
 const Response = {
   success: (res, message, data = {}) => {

@@ -13,4 +13,4 @@ router.use("/bookmark", bookmarkRouter);
 router.use("/chat", chatRouter);
 router.use("/message", messageRouter);
 
-export { router };
+export default router;

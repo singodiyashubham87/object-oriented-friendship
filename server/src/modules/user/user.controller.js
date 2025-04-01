@@ -1,11 +1,7 @@
 import Response from "@/helpers/response";
 
 import { API } from "@/helpers/api";
-const User = require("../models/user");
-const userValidator = require("../validators/user");
-const userService = require("../services/user");
-const bcrypt = require("bcrypt");
-const validator = require("validator");
+import userValidator from "./user.validator";
 
 const signup = async (req, res) => {
 	try {

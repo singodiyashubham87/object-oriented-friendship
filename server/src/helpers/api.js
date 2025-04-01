@@ -26,4 +26,4 @@ const API = {
   INVALID_CREDENTIALS: "invalid credentials",
 };
 
-export { API };
+export default API;

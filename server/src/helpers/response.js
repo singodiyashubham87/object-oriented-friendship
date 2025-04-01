@@ -1,4 +1,4 @@
-const { API } = require("./api");
+import API from "./api";
 
 const Response = {
   success: (res, message, data = {}) => {
@@ -31,4 +31,4 @@ const Response = {
   },
 };
 
-module.exports = Response;
+export default Response;

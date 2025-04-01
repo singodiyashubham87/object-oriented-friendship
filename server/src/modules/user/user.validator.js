@@ -5,20 +5,22 @@ const validateForCreate = async (user) => {
   const userSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
-    phone: Joi.string().custom((value, helpers) => {
-      if (!validator.isMobilePhone(value, "any")) {
-        return helpers.error("any.invalid", {
-          message: "Invalid phone number",
-        });
-      }
-      return value;
-    }),
-    userName: Joi.string(),
+    userName: Joi.string().required(),
+    phone: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!validator.isMobilePhone(value, "en-IN")) {
+          return helpers.message("Invalid phone number");
+        }
+        return value;
+      }),
     password: Joi.string()
       .required()
       .custom((value, helpers) => {
         if (!validator.isStrongPassword(value)) {
-          return helpers.error("Invalid password");
+          return helpers.message(
+            "Password must be strong: Min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.",
+          );
         }
         return value;
       }),
@@ -28,7 +30,7 @@ const validateForCreate = async (user) => {
       .messages({ "any.only": "Passwords do not match" }),
   });
 
-  const result = await userSchema.validateAsync(user);
+  return await userSchema.validateAsync(user);
 };
 
 const validateForUpdate = (newData) => {};

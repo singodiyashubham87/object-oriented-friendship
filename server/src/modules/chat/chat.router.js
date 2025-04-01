@@ -5,4 +5,4 @@ router.get("/", (req, res) => {
   res.json({ message: "Hello from chat module!" });
 });
 
-export { router };
+export default router;

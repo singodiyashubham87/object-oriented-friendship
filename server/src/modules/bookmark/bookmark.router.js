@@ -5,4 +5,4 @@ router.get("/", (req, res) => {
   res.json({ message: "Hello from bookmark module!" });
 });
 
-export { router };
+export default router;

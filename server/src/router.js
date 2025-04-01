@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { router as bookmarkRouter } from "./modules/bookmark/bookmark.router.js";
-import { router as chatRouter } from "./modules/chat/chat.router.js";
-import { router as messageRouter } from "./modules/message/message.router.js";
-import { router as requestRouter } from "./modules/request/request.router.js";
-import { router as userRouter } from "./modules/user/user.router.js";
+import bookmarkRouter from "./modules/bookmark/bookmark.router.js";
+import chatRouter from "./modules/chat/chat.router.js";
+import messageRouter from "./modules/message/message.router.js";
+import requestRouter from "./modules/request/request.router.js";
+import userRouter from "./modules/user/user.router.js";
 
 const router = Router();
 

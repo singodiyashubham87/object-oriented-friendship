@@ -5,4 +5,4 @@ const router = Router();
 
 router.post("/signup", userController.signup);
 
-export { router };
+export default router;

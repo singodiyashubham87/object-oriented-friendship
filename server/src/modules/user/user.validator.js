@@ -27,6 +27,8 @@ const validateForCreate = async (user) => {
       .valid(Joi.ref("password"))
       .messages({ "any.only": "Passwords do not match" }),
   });
+
+  const result = await userSchema.validateAsync(user);
 };
 
 const validateForUpdate = (newData) => {};

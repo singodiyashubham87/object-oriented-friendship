@@ -1,6 +1,6 @@
+import { API } from "@/helpers/api";
 import Response from "@/helpers/response";
 
-import { API } from "@/helpers/api";
 import userValidator from "./user.validator";
 
 const signup = async (req, res) => {

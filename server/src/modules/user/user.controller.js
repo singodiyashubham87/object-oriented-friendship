@@ -1,12 +1,14 @@
 import API from "../../helpers/api.js";
 import Response from "../../helpers/response.js";
 
+import * as userService from "./user.service.js";
 import * as userValidator from "./user.validator.js";
 
 const register = async (req, res) => {
   try {
-    const validatedData = await userValidator.validateForCreate(req.body);
-    const user = await userService.create(validatedData);
+    const validatedData = await userValidator.validateForRegister(req.body);
+
+    const user = await userService.register(validatedData);
     if (!user) {
       return Response.exception(res, API.FAILED_TO_CREATE_USER);
     }

@@ -1,19 +1,20 @@
 import Joi from "joi";
 import validator from "validator";
 
-const validateForCreate = async (user) => {
+// phone: Joi.string()
+//       .required()
+//       .custom((value, helpers) => {
+//         if (!validator.isMobilePhone(value, "en-IN")) {
+//           return helpers.message("Invalid phone number");
+//         }
+//         return value;
+//       }).optional(),
+
+const validateForRegister = async (user) => {
   const userSchema = Joi.object({
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
     userName: Joi.string().required(),
-    phone: Joi.string()
-      .required()
-      .custom((value, helpers) => {
-        if (!validator.isMobilePhone(value, "en-IN")) {
-          return helpers.message("Invalid phone number");
-        }
-        return value;
-      }),
+    email: Joi.string().email().required(),
     password: Joi.string()
       .required()
       .custom((value, helpers) => {
@@ -24,10 +25,6 @@ const validateForCreate = async (user) => {
         }
         return value;
       }),
-    confirmPassword: Joi.string()
-      .required()
-      .valid(Joi.ref("password"))
-      .messages({ "any.only": "Passwords do not match" }),
   });
 
   return await userSchema.validateAsync(user);
@@ -76,7 +73,7 @@ const validateForFeedQuery = (query) => {
 };
 
 export {
-  validateForCreate,
+  validateForRegister,
   validateForUpdate,
   validateForLogin,
   validateForFeedQuery,

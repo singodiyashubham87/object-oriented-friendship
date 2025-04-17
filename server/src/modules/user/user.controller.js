@@ -3,7 +3,7 @@ import Response from "../../helpers/response.js";
 
 import * as userValidator from "./user.validator.js";
 
-const signup = async (req, res) => {
+const register = async (req, res) => {
   try {
     const validatedData = await userValidator.validateForCreate(req.body);
     const user = await userService.create(validatedData);
@@ -71,4 +71,4 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-export { signup, login, logout, forgotPassword };
+export { register, login, logout, forgotPassword };

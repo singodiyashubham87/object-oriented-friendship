@@ -15,6 +15,13 @@
       "when": 1741199583140,
       "tag": "0001_concerned_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744910135639,
+      "tag": "0002_unusual_stardust",
+      "breakpoints": true
     }
   ]
 }

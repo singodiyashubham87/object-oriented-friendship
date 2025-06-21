@@ -12,8 +12,9 @@ import validator from "validator";
 
 const validateForRegister = async (user) => {
   const userSchema = Joi.object({
-    name: Joi.string().required(),
-    userName: Joi.string().required(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    user_name: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string()
       .required()

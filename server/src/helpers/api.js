@@ -1,4 +1,4 @@
-const API = {
+const API_RESPONSE = {
   REQUEST_SUCCESSFUL: "request successful",
   INVALID_REQUEST: "invalid request",
   FORBIDDEN: "forbidden",
@@ -26,4 +26,4 @@ const API = {
   INVALID_CREDENTIALS: "invalid credentials",
 };
 
-export default API;
+export default API_RESPONSE;

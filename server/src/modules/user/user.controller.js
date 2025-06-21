@@ -9,9 +9,11 @@ const register = async (req, res) => {
     const validatedData = await userValidator.validateForRegister(req.body);
 
     const user = await userService.register(validatedData);
+
     if (!user) {
       return Response.exception(res, API_RESPONSE.FAILED_TO_CREATE_USER);
     }
+
     return Response.created(res, API_RESPONSE.USER_CREATED, { data: { user } });
   } catch (error) {
     return Response.exception(res, API_RESPONSE.FAILED_TO_REGISTER_USER, {

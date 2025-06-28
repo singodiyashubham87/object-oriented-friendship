@@ -1,4 +1,11 @@
-import { index, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgEnum,
+  pgTable,
+  timestamp,
+  unique,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { User } from "../User/User.js";
 
 export const RequestStatusEnums = pgEnum("request_status", [
@@ -10,20 +17,20 @@ export const RequestStatusEnums = pgEnum("request_status", [
 export const Request = pgTable(
   "request",
   {
-    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
     senderId: uuid("sender_id")
       .references(() => User.id, { onDelete: "cascade" })
       .notNull(),
     receiverId: uuid("receiver_id")
       .references(() => User.id, { onDelete: "cascade" })
       .notNull(),
-    status: RequestStatusEnums("status").default("pending"),
-    createdAt: timestamp("created_at").defaultNow(),
+    status: RequestStatusEnums("status").default("pending").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => [
     index(table.senderId),
     index(table.receiverId),
-    index(table.status),
+    unique("unique_request").on(table.senderId, table.receiverId),
   ],
 );

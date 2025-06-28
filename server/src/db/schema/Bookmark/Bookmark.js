@@ -1,4 +1,4 @@
-import { index, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { User } from "../User/User.js";
 
 export const Bookmark = pgTable(
@@ -14,5 +14,9 @@ export const Bookmark = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
-  (table) => [index(table.bookmarkerId), index(table.bookmarkedId)],
+  (table) => [
+    index(table.bookmarkerId),
+    index(table.bookmarkedId),
+    unique("unique_bookmark").on(table.bookmarkerId, table.bookmarkedId),
+  ],
 );

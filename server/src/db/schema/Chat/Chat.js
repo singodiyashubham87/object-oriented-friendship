@@ -1,4 +1,11 @@
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { User } from "../User/User.js";
 
 export const Chat = pgTable(
@@ -16,5 +23,10 @@ export const Chat = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
-  (table) => [index(table.senderId), index(table.receiverId)],
+  (table) => [
+    index(table.senderId),
+    index(table.receiverId),
+    index(table.lastMessageAt),
+    unique("unique_chat_thread").on(table.senderId, table.receiverId),
+  ],
 );

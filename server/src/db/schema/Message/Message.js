@@ -4,6 +4,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 import { Chat } from "../Chat/Chat.js";
@@ -29,13 +30,12 @@ export const Message = pgTable(
       .notNull(),
     content: text("content").notNull(),
     contentType: MessageTypeEnums("content_type").default("text").notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => [
     index(table.chatId),
     index(table.senderId),
-    index(table.contentType),
     index(table.createdAt),
   ],
 );

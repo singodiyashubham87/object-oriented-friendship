@@ -1,39 +1,63 @@
 import API_RESPONSE from "./api.js";
 
 const Response = {
-  success: (res, message, data = {}) => {
+  success: (res, message, payload = null) => {
     const body = {
       message: message ?? API_RESPONSE.REQUEST_SUCCESSFUL,
-      ...data,
     };
+    if (payload) body.data = payload;
     res.status(200).send(body);
   },
-  created: (res, message, data = {}) => {
-    const body = { message: message ?? API_RESPONSE.CREATED, ...data };
+
+  created: (res, message, payload = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.CREATED,
+    };
+    if (payload) body.data = payload;
     res.status(201).send(body);
   },
-  updated: (res, message, data = {}) => {
-    const body = { message: message ?? API_RESPONSE.UPDATED, ...data };
+
+  updated: (res, message, payload = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.UPDATED,
+    };
+    if (payload) body.data = payload;
     res.status(200).send(body);
   },
-  notFound: (res, message, data = {}) => {
-    const body = { message: message ?? API_RESPONSE.NOT_FOUND, ...data };
+
+  notFound: (res, message, extra = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.NOT_FOUND,
+    };
+    if (extra) body.extra = extra;
     res.status(404).send(body);
   },
-  unauthorized: (res, message, data = {}) => {
-    const body = { message: message ?? API_RESPONSE.UNAUTHORIZED, ...data };
+
+  unauthorized: (res, message, extra = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.UNAUTHORIZED,
+    };
+    if (extra) body.extra = extra;
     res.status(401).send(body);
   },
-  exception: (res, message, data = {}) => {
+
+  forbidden: (res, message, extra = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.FORBIDDEN,
+    };
+    if (extra) body.extra = extra;
+    res.status(403).send(body);
+  },
+
+  exception: (res, message, error = null) => {
     const body = {
       message: message ?? API_RESPONSE.EXCEPTION_OCCURRED,
-      ...data,
     };
+    if (error) {
+      body.errorMessage =
+        error?.message || error?.toString() || "Unexpected error occurred";
+    }
     res.status(500).send(body);
-  },
-  forbidden: (res, message, data = {}) => {
-    const body = { message: message ?? API_RESPONSE.FORBIDDEN, ...data };
-    res.status(403).send(body);
   },
 };
 

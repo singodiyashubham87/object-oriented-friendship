@@ -1,4 +1,4 @@
-import API_RESPONSE from "@/helpers/api.js";
+import API_RESPONSE from "../../helpers/api.js";
 import Response from "../../helpers/response.js";
 
 import * as userService from "./user.service.js";
@@ -14,11 +14,10 @@ const register = async (req, res) => {
       return Response.exception(res, API_RESPONSE.FAILED_TO_CREATE_USER);
     }
 
-    return Response.created(res, API_RESPONSE.USER_CREATED, { data: { user } });
+    const { password, ...safeUser } = user;
+    return Response.created(res, API_RESPONSE.USER_CREATED, { user: safeUser });
   } catch (error) {
-    return Response.exception(res, API_RESPONSE.FAILED_TO_REGISTER_USER, {
-      errorMessage: error.message,
-    });
+    return Response.exception(res, API_RESPONSE.FAILED_TO_REGISTER_USER, error);
   }
 };
 

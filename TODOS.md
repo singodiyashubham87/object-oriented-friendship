@@ -1,2 +1,3 @@
 - Implement rate limit for all api routes
 - Implement caching using node-cache
+- Delete user feature in frontend

@@ -54,7 +54,7 @@ const Response = {
       message: message ?? API_RESPONSE.EXCEPTION_OCCURRED,
     };
     if (error) {
-      body.errorMessage =
+      body.error_message =
         error?.message || error?.toString() || "Unexpected error occurred";
     }
     res.status(500).send(body);

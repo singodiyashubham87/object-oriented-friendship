@@ -24,7 +24,10 @@ const register = async (validatedData) => {
   );
 
   const userData = {
-    ...validatedData,
+    firstName: validatedData.first_name,
+    lastName: validatedData.last_name,
+    userName: validatedData.user_name,
+    email: validatedData.email,
     password: hashedPassword,
     profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(validatedData.user_name)}`,
   };

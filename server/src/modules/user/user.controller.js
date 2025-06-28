@@ -76,4 +76,32 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-export { register, login, logout, forgotPassword };
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const validatedData = await userValidator.validateForUpdate(req.body);
+    const updatedUser = await userService.updateUser(userId, validatedData);
+    return Response.success(res, API_RESPONSE.USER_UPDATED, {
+      user: updatedUser,
+    });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_USER, error);
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await userService.deleteUser(userId);
+    if (!deletedUser) {
+      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
+    }
+    return Response.success(res, API_RESPONSE.USER_DELETED, {
+      user: deletedUser,
+    });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_DELETE_USER, error);
+  }
+};
+
+export { register, login, logout, forgotPassword, updateUser, deleteUser };

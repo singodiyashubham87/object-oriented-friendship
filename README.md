@@ -1,5 +1,7 @@
 # Object-Oriented Friendship - Let's make friends
 
+OOF is like a social-media but specifically for IT-Professionals.
+
 *Where strangers become family.*
 
 ## Tech Stack

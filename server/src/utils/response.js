@@ -59,6 +59,14 @@ const Response = {
     }
     res.status(500).send(body);
   },
+
+  badRequest: (res, message, extra = null) => {
+    const body = {
+      message: message ?? API_RESPONSE.BAD_REQUEST,
+    };
+    if (extra) body.extra = extra;
+    res.status(400).send(body);
+  },
 };
 
 export default Response;

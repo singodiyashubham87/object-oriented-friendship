@@ -1,10 +1,16 @@
 import Joi from "joi";
 import validator from "validator";
 
+const USERNAME_REGEX = /^[a-zA-Z0-9._]{3,20}$/;
+
 const baseUserSchemaFields = {
   first_name: Joi.string(),
   last_name: Joi.string(),
-  user_name: Joi.string(),
+  user_name: Joi.string()
+    .pattern(USERNAME_REGEX)
+    .message(
+      "Username must be 3–20 characters long and contain only letters, numbers, or underscores.",
+    ),
   email: Joi.string().email(),
   password: Joi.string().custom((value, helpers) => {
     if (!validator.isStrongPassword(value)) {

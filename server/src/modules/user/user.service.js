@@ -82,4 +82,15 @@ const updateUser = async (payload) => {
   return updatedUser;
 };
 
-export { register, login, updateUser };
+const deleteUser = async (userId) => {
+  if (!userId) throw new Error("User ID is required");
+
+  const [deletedUser] = await db
+    .delete(User)
+    .where(eq(User.id, userId))
+    .returning();
+
+  return deletedUser;
+};
+
+export { register, login, updateUser, deleteUser };

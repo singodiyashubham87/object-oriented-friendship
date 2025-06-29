@@ -75,6 +75,24 @@ const updateUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const deletedUser = await userService.deleteUser(userId);
+
+    if (!deletedUser) {
+      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
+    }
+
+    return Response.success(res, API_RESPONSE.USER_DELETED, {
+      user: deletedUser,
+    });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_DELETE_USER, error);
+  }
+};
+
 const forgotPassword = async (req, res) => {
   try {
     const { email, password: newPassword } = req.body;
@@ -95,21 +113,6 @@ const forgotPassword = async (req, res) => {
     return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_PASSWORD, {
       errorMessage: error.message,
     });
-  }
-};
-
-const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const deletedUser = await userService.deleteUser(userId);
-    if (!deletedUser) {
-      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
-    }
-    return Response.success(res, API_RESPONSE.USER_DELETED, {
-      user: deletedUser,
-    });
-  } catch (error) {
-    return Response.exception(res, API_RESPONSE.FAILED_TO_DELETE_USER, error);
   }
 };
 

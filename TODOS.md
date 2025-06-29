@@ -2,7 +2,7 @@
 
 ## 👤 User Management
 - [x] POST `/api/user/register` — Register user
-- [ ] POST `/api/user/login` — Login user
+- [x] POST `/api/user/login` — Login user
 - [ ] POST `/api/user/logout` — Logout user
 - [ ] PUT  `/api/user/update/:id` — Update user profile
 - [ ] DELETE `/api/user/delete/:id` — Delete user account
@@ -47,6 +47,9 @@
 - [ ] Setup BullMQ queue (e.g., for welcome email)
 - [ ] Integrate Firebase for health alerts
 - [ ] Integrate Sentry for error monitoring
+
+## Misc
+- [ ] Implement image encryption with Steganography techniques
 
 ## 🧪 Testing
 - [ ] Unit test for user controller & service (Vitest)

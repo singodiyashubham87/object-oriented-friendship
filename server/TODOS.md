@@ -7,8 +7,8 @@
 - [x] PUT  `/api/user/update/:id` — Update user profile
 - [x] DELETE `/api/user/delete/:id` — Delete user account
 - [x] POST `/api/user/forgot-password` — Forgot password (update password via email)
+- [x] GET  `/api/user/me` — Get logged-in user info (JWT protected)
 - [ ] POST `/api/user/verify-phone` — Send & verify OTP via Twilio
-- [ ] GET  `/api/user/me` — Get logged-in user info (JWT protected)
 
 ## 🧑‍🤝‍🧑 Connection Requests
 - [ ] POST `/api/request/send/:toUserId` — Send connection request

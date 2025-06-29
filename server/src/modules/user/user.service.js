@@ -7,11 +7,11 @@ import { User } from "../../db/schema/index.js";
 const BASE_PLACEHOLDER_IMG_URL = "https://api.dicebear.com/6.x/initials/svg";
 const SALT_ROUNDS_FOR_HASHING = 10;
 
-const register = async (validatedData) => {
+const register = async (payload) => {
   const existingUser = await db
     .select()
     .from(User)
-    .where(eq(User.email, validatedData.email));
+    .where(eq(User.email, payload.email));
 
   if (size(existingUser)) {
     throw new Error("User already exists");
@@ -19,21 +19,45 @@ const register = async (validatedData) => {
 
   // Hash the password before storing to db
   const hashedPassword = await bcrypt.hash(
-    validatedData.password,
+    payload.password,
     SALT_ROUNDS_FOR_HASHING,
   );
 
   const userData = {
-    firstName: validatedData.first_name,
-    lastName: validatedData.last_name,
-    userName: validatedData.user_name,
-    email: validatedData.email,
+    firstName: payload.first_name,
+    lastName: payload.last_name,
+    userName: payload.user_name,
+    email: payload.email,
     password: hashedPassword,
-    profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(validatedData.user_name)}`,
+    profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(payload.user_name)}`,
   };
 
-  const inserted = await db.insert(User).values(userData).returning();
-  return inserted[0];
+  // Destructing array first element since drizzle or sql in general return array of modified rows
+  const [user] = await db.insert(User).values(userData).returning();
+
+  const { password, ...safeUser } = user;
+
+  return safeUser;
 };
 
-export { register };
+const login = async (payload) => {
+  const [user] = await db
+    .select()
+    .from(User)
+    .where(eq(User.email, payload.email));
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const isValidPassword = await bcrypt.compare(payload.password, user.password);
+
+  if (!isValidPassword) {
+    throw new Error("Incorrect Password, please try again");
+  }
+
+  const { password, ...safeUser } = user;
+
+  return safeUser;
+};
+
+export { register, login };

@@ -9,5 +9,7 @@ router.post("/logout", userController.logout);
 router.post("/forgot-password", userController.forgotPassword);
 router.put("/update/:id", userController.updateUser);
 router.delete("/delete/:id", userController.deleteUser);
+router.post("/verify-phone/:id", userController.verifyPhone);
+router.get("/me", userController.getCurrentUser);
 
 export default router;

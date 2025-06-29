@@ -1,6 +1,9 @@
-import API_RESPONSE from "../../helpers/api.js";
-import Response from "../../helpers/response.js";
+import { User } from "../../db/schema/index.js";
+import API_RESPONSE from "../../utils/api.js";
+import { generateToken } from "../../utils/jwt.js";
+import Response from "../../utils/response.js";
 
+import { isProd } from "../../utils/common.js";
 import * as userService from "./user.service.js";
 import * as userValidator from "./user.validator.js";
 
@@ -14,8 +17,7 @@ const register = async (req, res) => {
       return Response.exception(res, API_RESPONSE.FAILED_TO_CREATE_USER);
     }
 
-    const { password, ...safeUser } = user;
-    return Response.created(res, API_RESPONSE.USER_CREATED, { user: safeUser });
+    return Response.created(res, API_RESPONSE.USER_CREATED, { user });
   } catch (error) {
     return Response.exception(res, API_RESPONSE.FAILED_TO_REGISTER_USER, error);
   }
@@ -23,28 +25,24 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const validatedCredentials = userValidator.validateForLogin(req.body);
-    const user = await User.findOne({
-      email: validatedCredentials.email,
+    const validatedCredentials = await userValidator.validateForLogin(req.body);
+
+    const user = await userService.login(validatedCredentials);
+
+    const jwtToken = generateToken(user);
+
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "Strict",
     });
-    if (!user) {
-      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
-    }
-    const isPasswordValid = await user.validatePassword(
-      validatedCredentials.password,
-    );
-    if (!isPasswordValid) {
-      return Response.unauthorized(res, API_RESPONSE.INVALID_CREDENTIALS);
-    }
-    const token = await user.getJwtToken();
-    res.cookie("token", token);
+
     return Response.success(res, API_RESPONSE.LOGIN_SUCCESSFUL, {
-      data: { token },
+      user,
+      token: jwtToken,
     });
   } catch (error) {
-    return Response.exception(res, API_RESPONSE.FAILED_TO_LOGIN_USER, {
-      errorMessage: error.message,
-    });
+    return Response.exception(res, API_RESPONSE.FAILED_TO_LOGIN_USER, error);
   }
 };
 
@@ -104,4 +102,40 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { register, login, logout, forgotPassword, updateUser, deleteUser };
+const verifyPhone = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { phoneNumber } = req.body;
+    if (!phoneNumber) {
+      return Response.badRequest(res, API_RESPONSE.PHONE_NUMBER_REQUIRED);
+    }
+    const user = await userService.verifyPhone(userId, phoneNumber);
+    return Response.success(res, API_RESPONSE.PHONE_VERIFIED, { user });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_VERIFY_PHONE, error);
+  }
+};
+
+const getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Assuming user ID is stored in req.user
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
+    }
+    return Response.success(res, API_RESPONSE.USER_FETCHED, { user });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_FETCH_USER, error);
+  }
+};
+
+export {
+  register,
+  login,
+  logout,
+  forgotPassword,
+  updateUser,
+  deleteUser,
+  verifyPhone,
+  getCurrentUser,
+};

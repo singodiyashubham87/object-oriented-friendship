@@ -10,7 +10,7 @@ import validator from "validator";
 //         return value;
 //       }).optional(),
 
-const validateForRegister = async (user) => {
+const validateForRegister = async (payload) => {
   const userSchema = Joi.object({
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
@@ -28,27 +28,18 @@ const validateForRegister = async (user) => {
       }),
   });
 
-  return await userSchema.validateAsync(user);
+  return await userSchema.validateAsync(payload);
 };
 
 const validateForUpdate = (newData) => {};
 
-const validateForLogin = (user) => {
-  if (!user.email) {
-    throw new Error("Please provide your email");
-  }
-  if (!validator.isEmail(user.email)) {
-    throw new Error("Invalid email format");
-  }
+const validateForLogin = (payload) => {
+  const loginSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  });
 
-  if (!user.password) {
-    throw new Error("Please provide a password");
-  }
-
-  return {
-    email: user.email,
-    password: user.password,
-  };
+  return loginSchema.validateAsync(payload);
 };
 
 const validateForFeedQuery = (query) => {

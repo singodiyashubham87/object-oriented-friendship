@@ -1,4 +1,3 @@
-import { User } from "../../db/schema/index.js";
 import API_RESPONSE from "../../utils/api.js";
 import { generateToken } from "../../utils/jwt.js";
 import Response from "../../utils/response.js";
@@ -93,26 +92,22 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const forgotPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
-    const { email, password: newPassword } = req.body;
-    if (!newPassword) {
-      throw new Error("Please provide a password");
-    }
-    if (!validator.isStrongPassword(newPassword)) {
-      throw new Error("Password must be strong");
-    }
-    const user = await User.findOne({ email });
-    if (!user) {
-      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
-    }
-    user.password = bcrypt.hashSync(newPassword, 10);
-    await user.save();
-    return Response.success(res, API_RESPONSE.PASSWORD_UPDATED_SUCCESSFULLY);
-  } catch (error) {
-    return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_PASSWORD, {
-      errorMessage: error.message,
+    const updatedUser = await userService.resetPassword(req.body);
+
+    return Response.success(res, API_RESPONSE.PASSWORD_UPDATED_SUCCESSFULLY, {
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+      },
     });
+  } catch (error) {
+    return Response.exception(
+      res,
+      API_RESPONSE.FAILED_TO_UPDATE_PASSWORD,
+      error,
+    );
   }
 };
 
@@ -147,7 +142,7 @@ export {
   register,
   login,
   logout,
-  forgotPassword,
+  resetPassword,
   updateUser,
   deleteUser,
   verifyPhone,

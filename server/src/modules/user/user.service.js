@@ -93,4 +93,26 @@ const deleteUser = async (userId) => {
   return deletedUser;
 };
 
-export { register, login, updateUser, deleteUser };
+const resetPassword = async (payload) => {
+  const [user] = await db
+    .select()
+    .from(User)
+    .where(eq(User.email, payload.email));
+
+  if (!user) throw new Error("User not found");
+
+  const hashedPassword = await bcrypt.hash(
+    payload.password,
+    SALT_ROUNDS_FOR_HASHING,
+  );
+
+  const [updatedUser] = await db
+    .update(User)
+    .set({ password: hashedPassword })
+    .where(eq(User.email, payload.email))
+    .returning();
+
+  return updatedUser;
+};
+
+export { register, login, updateUser, deleteUser, resetPassword };

@@ -61,6 +61,15 @@ const validateForLogin = (payload) => {
   return loginSchema.validateAsync(payload);
 };
 
+const validateForResetPassword = (payload) => {
+  const forgotPasswordSchema = Joi.object({
+    email: baseUserSchemaFields.email.required(),
+    password: baseUserSchemaFields.password.required(),
+  });
+
+  return forgotPasswordSchema.validateAsync(payload);
+};
+
 const validateForFeedQuery = (query) => {
   const validatedQuery = {};
 
@@ -87,5 +96,6 @@ export {
   validateForRegister,
   validateForUpdate,
   validateForLogin,
+  validateForResetPassword,
   validateForFeedQuery,
 };

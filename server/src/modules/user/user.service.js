@@ -115,4 +115,12 @@ const resetPassword = async (payload) => {
   return updatedUser;
 };
 
-export { register, login, updateUser, deleteUser, resetPassword };
+const getUserById = async (userId) => {
+  const [user] = await db.select().from(User).where(eq(User.id, userId));
+
+  const { password, ...safeUser } = user;
+
+  return safeUser;
+};
+
+export { register, login, updateUser, deleteUser, resetPassword, getUserById };

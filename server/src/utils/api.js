@@ -18,6 +18,7 @@ const API_RESPONSE = {
   FAILED_TO_REGISTER_USER: "failed to register user",
   FAILED_TO_LOGIN_USER: "failed to login user",
   FAILED_TO_UPDATE_USER: "failed to update user",
+  FAILED_TO_FETCH_USER: "failed to fetch user",
   FAILED_TO_READ_USER: "failed to read user",
   FAILED_TO_GET_REQUESTS: "failed to get requests",
   FAILED_TO_GET_FEED: "failed to get feed",

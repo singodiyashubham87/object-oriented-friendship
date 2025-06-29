@@ -3,6 +3,7 @@ import API_RESPONSE from "../../utils/api.js";
 import { generateToken } from "../../utils/jwt.js";
 import Response from "../../utils/response.js";
 
+import dayjs from "dayjs";
 import { isProd } from "../../utils/common.js";
 import * as userService from "./user.service.js";
 import * as userValidator from "./user.validator.js";
@@ -47,8 +48,31 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie("token", null, { expires: new Date(0) });
+  res.cookie("token", null, { expires: dayjs().toDate() });
   return Response.success(res, API_RESPONSE.LOGOUT_SUCCESSFUL);
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const validatedData = await userValidator.validateForUpdate(req.body);
+
+    const updatedUser = await userService.updateUser({
+      id: userId,
+      ...validatedData,
+    });
+
+    if (!updatedUser) {
+      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
+    }
+
+    return Response.success(res, API_RESPONSE.USER_UPDATED, {
+      user: updatedUser,
+    });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_USER, error);
+  }
 };
 
 const forgotPassword = async (req, res) => {
@@ -71,19 +95,6 @@ const forgotPassword = async (req, res) => {
     return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_PASSWORD, {
       errorMessage: error.message,
     });
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const validatedData = await userValidator.validateForUpdate(req.body);
-    const updatedUser = await userService.updateUser(userId, validatedData);
-    return Response.success(res, API_RESPONSE.USER_UPDATED, {
-      user: updatedUser,
-    });
-  } catch (error) {
-    return Response.exception(res, API_RESPONSE.FAILED_TO_UPDATE_USER, error);
   }
 };
 

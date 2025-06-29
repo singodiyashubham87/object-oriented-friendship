@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
+import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
 import { User } from "../../db/schema/index.js";
+import { mapUpdateUserDTO } from "./user.dto.js";
 
 const BASE_PLACEHOLDER_IMG_URL = "https://api.dicebear.com/6.x/initials/svg";
 const SALT_ROUNDS_FOR_HASHING = 10;
@@ -30,6 +32,8 @@ const register = async (payload) => {
     email: payload.email,
     password: hashedPassword,
     profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(payload.user_name)}`,
+    createdAt: dayjs().toDate(),
+    updatedAt: dayjs().toDate(),
   };
 
   // Destructing array first element since drizzle or sql in general return array of modified rows
@@ -60,4 +64,22 @@ const login = async (payload) => {
   return safeUser;
 };
 
-export { register, login };
+const updateUser = async (payload) => {
+  const { id, ...rest } = payload;
+  if (!id) throw new Error("User ID is required");
+
+  const userData = mapUpdateUserDTO(rest);
+  if (size(userData) === 0) throw new Error("Nothing to update");
+
+  userData.updatedAt = dayjs().toDate();
+
+  const [updatedUser] = await db
+    .update(User)
+    .set(userData)
+    .where(eq(User.id, id))
+    .returning();
+
+  return updatedUser;
+};
+
+export { register, login, updateUser };

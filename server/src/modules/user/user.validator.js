@@ -1,42 +1,55 @@
 import Joi from "joi";
 import validator from "validator";
 
-// phone: Joi.string()
-//       .required()
-//       .custom((value, helpers) => {
-//         if (!validator.isMobilePhone(value, "en-IN")) {
-//           return helpers.message("Invalid phone number");
-//         }
-//         return value;
-//       }).optional(),
-
-const validateForRegister = async (payload) => {
-  const userSchema = Joi.object({
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
-    user_name: Joi.string().required(),
-    email: Joi.string().email().required(),
-    password: Joi.string()
-      .required()
-      .custom((value, helpers) => {
-        if (!validator.isStrongPassword(value)) {
-          return helpers.message(
-            "Password must be strong: Min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.",
-          );
-        }
-        return value;
-      }),
-  });
-
-  return await userSchema.validateAsync(payload);
+const baseUserSchemaFields = {
+  first_name: Joi.string(),
+  last_name: Joi.string(),
+  user_name: Joi.string(),
+  email: Joi.string().email(),
+  password: Joi.string().custom((value, helpers) => {
+    if (!validator.isStrongPassword(value)) {
+      return helpers.message(
+        "Password must be strong: Min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.",
+      );
+    }
+    return value;
+  }),
+  avatar: Joi.string(),
+  phone: Joi.string(),
+  bio: Joi.string(),
+  skills: Joi.array().items(Joi.string()),
 };
 
-const validateForUpdate = (newData) => {};
+const validateForRegister = async (payload) => {
+  const registerSchema = Joi.object({
+    first_name: baseUserSchemaFields.first_name.required(),
+    last_name: baseUserSchemaFields.last_name.required(),
+    user_name: baseUserSchemaFields.user_name.required(),
+    email: baseUserSchemaFields.email.required(),
+    password: baseUserSchemaFields.password.required(),
+  });
+
+  return await registerSchema.validateAsync(payload);
+};
+
+const validateForUpdate = async (payload) => {
+  const updateSchema = Joi.object({
+    first_name: baseUserSchemaFields.first_name.optional(),
+    last_name: baseUserSchemaFields.last_name.optional(),
+    email: baseUserSchemaFields.email.optional(),
+    avatar: baseUserSchemaFields.avatar.optional(),
+    phone: baseUserSchemaFields.phone.optional(),
+    bio: baseUserSchemaFields.bio.optional(),
+    skills: baseUserSchemaFields.skills.optional(),
+  });
+
+  return updateSchema.validateAsync(payload);
+};
 
 const validateForLogin = (payload) => {
   const loginSchema = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    email: baseUserSchemaFields.email.required(),
+    password: baseUserSchemaFields.password.required(),
   });
 
   return loginSchema.validateAsync(payload);

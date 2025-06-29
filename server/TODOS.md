@@ -6,7 +6,7 @@
 - [x] POST `/api/user/logout` — Logout user
 - [x] PUT  `/api/user/update/:id` — Update user profile
 - [x] DELETE `/api/user/delete/:id` — Delete user account
-- [ ] POST `/api/user/forgot-password` — Forgot password (update password via email)
+- [x] POST `/api/user/forgot-password` — Forgot password (update password via email)
 - [ ] POST `/api/user/verify-phone` — Send & verify OTP via Twilio
 - [ ] GET  `/api/user/me` — Get logged-in user info (JWT protected)
 

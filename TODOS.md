@@ -3,8 +3,8 @@
 ## 👤 User Management
 - [x] POST `/api/user/register` — Register user
 - [x] POST `/api/user/login` — Login user
-- [ ] POST `/api/user/logout` — Logout user
-- [ ] PUT  `/api/user/update/:id` — Update user profile
+- [x] POST `/api/user/logout` — Logout user
+- [x] PUT  `/api/user/update/:id` — Update user profile
 - [ ] DELETE `/api/user/delete/:id` — Delete user account
 - [ ] POST `/api/user/forgot-password` — Forgot password (update password via email)
 - [ ] POST `/api/user/verify-phone` — Send & verify OTP via Twilio

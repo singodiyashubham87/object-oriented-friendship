@@ -11,7 +11,7 @@
 - [ ] POST `/api/user/verify-phone` — Send & verify OTP via Twilio
 
 ## 🧑‍🤝‍🧑 Connection Requests
-- [ ] POST `/api/request/send/:toUserId` — Send connection request
+- [x] POST `/api/request/send/:toUserId` — Send connection request
 - [ ] PUT  `/api/request/accept/:requestId` — Accept request
 - [ ] PUT  `/api/request/reject/:requestId` — Reject request
 - [ ] DELETE `/api/request/cancel/:requestId` — Cancel sent request

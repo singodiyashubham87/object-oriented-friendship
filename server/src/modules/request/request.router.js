@@ -1,8 +1,12 @@
 import { Router } from "express";
 const router = Router();
+import { isValidUser } from "../../utils/middleware.js";
+import * as requestController from "./request.controller.js";
 
-router.get("/", (req, res) => {
-  res.json({ message: "Hello from request module!" });
-});
+router.post(
+  "/send/:toUserId",
+  [isValidUser],
+  requestController.sendConnectionRequest,
+);
 
 export default router;

@@ -1,3 +1,4 @@
+import { REQUEST_STATUS } from "@/enums/requestStatus.js";
 import dayjs from "dayjs";
 import db from "../../db/index.js";
 import { Request } from "../../db/schema/index.js";
@@ -16,4 +17,16 @@ const createRequest = async (payload) => {
   return request;
 };
 
-export { createRequest };
+const acceptRequest = async (payload) => {
+  const [request] = await db
+    .update(Request)
+    .set({
+      status: REQUEST_STATUS.ACCEPTED,
+    })
+    .where({ id: payload.requestId })
+    .returning();
+
+  return request;
+};
+
+export { createRequest, acceptRequest };

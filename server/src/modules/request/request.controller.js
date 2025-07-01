@@ -12,7 +12,7 @@ const sendConnectionRequest = async (req, res) => {
       senderId,
     });
 
-    const request = requestService.createRequest(validatedData);
+    const request = await requestService.createRequest(validatedData);
 
     if (!request) {
       throw new Error("Failed to send request");
@@ -24,4 +24,14 @@ const sendConnectionRequest = async (req, res) => {
   }
 };
 
-export { sendConnectionRequest };
+const acceptConnectionRequest = async (req, res) => {
+  const requestId = req.params.requestId;
+
+  const validatedData = await requestValidator.validateForAcceptRequest({
+    requestId,
+  });
+
+  const request = await requestService.acceptRequest(validatedData);
+};
+
+export { sendConnectionRequest, acceptConnectionRequest };

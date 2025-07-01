@@ -9,4 +9,10 @@ router.post(
   requestController.sendConnectionRequest,
 );
 
+router.put(
+  "/accept/:requestId",
+  [isValidUser],
+  requestController.acceptConnectionRequest,
+);
+
 export default router;

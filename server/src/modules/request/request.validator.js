@@ -17,4 +17,16 @@ const validateForCreate = async (payload) => {
   return createSchema.validateAsync(payload);
 };
 
-export { validateForCreate };
+const validateForAcceptRequest = async (payload) => {
+  const acceptSchema = Joi.object({
+    requestId: Joi.string()
+      .guid({
+        version: ["uuidv4"],
+      })
+      .required(),
+  });
+
+  return acceptSchema.validateAsync(payload);
+};
+
+export { validateForCreate, validateForAcceptRequest };

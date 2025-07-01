@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { and, eq } from "drizzle-orm";
 import db from "../../db/index.js";
 import { Request } from "../../db/schema/index.js";
 import { REQUEST_STATUS } from "../../enums/requestStatus.js";
@@ -23,7 +24,7 @@ const acceptRequest = async (payload) => {
     .set({
       status: REQUEST_STATUS.ACCEPTED,
     })
-    .where({ id: payload.requestId })
+    .where(eq(Request.id, payload.requestId))
     .returning();
 
   return request;
@@ -35,10 +36,24 @@ const rejectRequest = async (payload) => {
     .set({
       status: REQUEST_STATUS.REJECTED,
     })
-    .where({ id: payload.requestId })
+    .where(eq(Request.id, payload.requestId))
     .returning();
 
   return request;
 };
 
-export { createRequest, acceptRequest, rejectRequest };
+const getAllPendingRequest = async (payload) => {
+  const [allPendingRequests] = await db
+    .select()
+    .from(Request)
+    .where(
+      and(
+        eq(Request.receiverId, payload.userId),
+        eq(Request.status, REQUEST_STATUS.PENDING),
+      ),
+    );
+
+  return allPendingRequests;
+};
+
+export { createRequest, acceptRequest, rejectRequest, getAllPendingRequest };

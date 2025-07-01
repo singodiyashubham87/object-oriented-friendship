@@ -21,4 +21,10 @@ router.put(
   requestController.rejectConnectionRequest,
 );
 
+router.get(
+  "/api/request/pending",
+  [isValidUser],
+  requestController.getAllPendingRequests,
+);
+
 export default router;

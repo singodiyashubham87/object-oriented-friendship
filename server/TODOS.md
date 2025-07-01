@@ -16,7 +16,7 @@
 - [x] PUT  `/api/request/reject/:requestId` — Reject request
 - [x] DELETE `/api/request/cancel/:requestId` — Cancel sent request
 - [x] GET  `/api/request/pending` — View pending incoming requests
-- [ ] GET  `/api/request/sent` — View sent requests
+- [x] GET  `/api/request/sent` — View sent requests
 
 ## 👫 Friends
 - [ ] GET `/api/user/friends` — Get friend list

@@ -42,6 +42,15 @@ const rejectRequest = async (payload) => {
   return request;
 };
 
+const cancelRequest = async (payload) => {
+  const [request] = await db
+    .delete(Request)
+    .where(eq(Request.id, payload.requestId))
+    .returning();
+
+  return request;
+};
+
 const getAllPendingRequest = async (payload) => {
   const [allPendingRequests] = await db
     .select()
@@ -56,4 +65,10 @@ const getAllPendingRequest = async (payload) => {
   return allPendingRequests;
 };
 
-export { createRequest, acceptRequest, rejectRequest, getAllPendingRequest };
+export {
+  createRequest,
+  acceptRequest,
+  rejectRequest,
+  cancelRequest,
+  getAllPendingRequest,
+};

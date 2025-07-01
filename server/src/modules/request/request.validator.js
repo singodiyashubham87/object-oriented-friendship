@@ -17,7 +17,7 @@ const validateForCreate = async (payload) => {
   return createSchema.validateAsync(payload);
 };
 
-const validateForAcceptOrRejectRequest = async (payload) => {
+const validateForRequestUpdate = async (payload) => {
   const acceptSchema = Joi.object({
     requestId: Joi.string()
       .guid({
@@ -29,4 +29,4 @@ const validateForAcceptOrRejectRequest = async (payload) => {
   return acceptSchema.validateAsync(payload);
 };
 
-export { validateForCreate, validateForAcceptOrRejectRequest };
+export { validateForCreate, validateForRequestUpdate };

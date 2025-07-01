@@ -21,6 +21,12 @@ router.put(
   requestController.rejectConnectionRequest,
 );
 
+router.delete(
+  "/cancel/:requestId",
+  [isValidUser],
+  requestController.cancelConnectionRequest,
+);
+
 router.get(
   "/api/request/pending",
   [isValidUser],

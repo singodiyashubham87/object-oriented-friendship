@@ -28,10 +28,9 @@ const acceptConnectionRequest = async (req, res) => {
   try {
     const requestId = req.params.requestId;
 
-    const validatedData =
-      await requestValidator.validateForAcceptOrRejectRequest({
-        requestId,
-      });
+    const validatedData = await requestValidator.validateForRequestUpdate({
+      requestId,
+    });
 
     const request = await requestService.acceptRequest(validatedData);
 
@@ -53,10 +52,9 @@ const rejectConnectionRequest = async (req, res) => {
   try {
     const requestId = req.params.requestId;
 
-    const validatedData =
-      await requestValidator.validateForAcceptOrRejectRequest({
-        requestId,
-      });
+    const validatedData = await requestValidator.validateForRequestUpdate({
+      requestId,
+    });
 
     const request = await requestService.rejectRequest(validatedData);
 
@@ -69,6 +67,30 @@ const rejectConnectionRequest = async (req, res) => {
     return Response.exception(
       res,
       "Failed to reject connection request",
+      error,
+    );
+  }
+};
+
+const cancelConnectionRequest = async (req, res) => {
+  try {
+    const requestId = req.params.requestId;
+
+    const validatedData = await requestValidator.validateForRequestUpdate({
+      requestId,
+    });
+
+    const request = await requestService.cancelRequest(validatedData);
+
+    if (!request) {
+      throw new Error("Failed to cancel request");
+    }
+
+    return Response.created(res, "Request canceled successfully");
+  } catch (error) {
+    return Response.exception(
+      res,
+      "Failed to cancel connection request",
       error,
     );
   }
@@ -98,5 +120,6 @@ export {
   sendConnectionRequest,
   acceptConnectionRequest,
   rejectConnectionRequest,
+  cancelConnectionRequest,
   getAllPendingRequests,
 };

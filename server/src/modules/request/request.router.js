@@ -27,16 +27,8 @@ router.delete(
   requestController.cancelConnectionRequest,
 );
 
-router.get(
-  "/api/request/pending",
-  [isValidUser],
-  requestController.getAllPendingRequests,
-);
+router.get("/pending", [isValidUser], requestController.getAllPendingRequests);
 
-router.get(
-  "/api/request/sent",
-  [isValidUser],
-  requestController.getAllSentRequests,
-);
+router.get("/sent", [isValidUser], requestController.getAllSentRequests);
 
 export default router;

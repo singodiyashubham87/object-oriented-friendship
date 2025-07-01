@@ -23,6 +23,7 @@ const acceptRequest = async (payload) => {
     .update(Request)
     .set({
       status: REQUEST_STATUS.ACCEPTED,
+      updatedAt: dayjs().toDate(),
     })
     .where(eq(Request.id, payload.requestId))
     .returning();
@@ -35,6 +36,7 @@ const rejectRequest = async (payload) => {
     .update(Request)
     .set({
       status: REQUEST_STATUS.REJECTED,
+      updatedAt: dayjs().toDate(),
     })
     .where(eq(Request.id, payload.requestId))
     .returning();
@@ -52,7 +54,7 @@ const cancelRequest = async (payload) => {
 };
 
 const getAllPendingRequest = async (payload) => {
-  const [allPendingRequests] = await db
+  const allPendingRequests = await db
     .select()
     .from(Request)
     .where(
@@ -66,7 +68,7 @@ const getAllPendingRequest = async (payload) => {
 };
 
 const getAllSentRequest = async (payload) => {
-  const [allSentRequests] = await db
+  const allSentRequests = await db
     .select()
     .from(Request)
     .where(

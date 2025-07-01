@@ -13,7 +13,7 @@
 ## 🧑‍🤝‍🧑 Connection Requests
 - [x] POST `/api/request/send/:toUserId` — Send connection request
 - [x] PUT  `/api/request/accept/:requestId` — Accept request
-- [ ] PUT  `/api/request/reject/:requestId` — Reject request
+- [x] PUT  `/api/request/reject/:requestId` — Reject request
 - [ ] DELETE `/api/request/cancel/:requestId` — Cancel sent request
 - [ ] GET  `/api/request/pending` — View pending incoming requests
 - [ ] GET  `/api/request/sent` — View sent requests

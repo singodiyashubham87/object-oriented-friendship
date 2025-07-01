@@ -25,13 +25,57 @@ const sendConnectionRequest = async (req, res) => {
 };
 
 const acceptConnectionRequest = async (req, res) => {
-  const requestId = req.params.requestId;
+  try {
+    const requestId = req.params.requestId;
 
-  const validatedData = await requestValidator.validateForAcceptRequest({
-    requestId,
-  });
+    const validatedData =
+      await requestValidator.validateForAcceptOrRejectRequest({
+        requestId,
+      });
 
-  const request = await requestService.acceptRequest(validatedData);
+    const request = await requestService.acceptRequest(validatedData);
+
+    if (!request) {
+      throw new Error("Failed to accept request");
+    }
+
+    return Response.created(res, "Request accepted successfully");
+  } catch (error) {
+    return Response.exception(
+      res,
+      "Failed to accept connection request",
+      error,
+    );
+  }
 };
 
-export { sendConnectionRequest, acceptConnectionRequest };
+const rejectConnectionRequest = async (req, res) => {
+  try {
+    const requestId = req.params.requestId;
+
+    const validatedData =
+      await requestValidator.validateForAcceptOrRejectRequest({
+        requestId,
+      });
+
+    const request = await requestService.rejectRequest(validatedData);
+
+    if (!request) {
+      throw new Error("Failed to reject request");
+    }
+
+    return Response.created(res, "Request rejected successfully");
+  } catch (error) {
+    return Response.exception(
+      res,
+      "Failed to reject connection request",
+      error,
+    );
+  }
+};
+
+export {
+  sendConnectionRequest,
+  acceptConnectionRequest,
+  rejectConnectionRequest,
+};

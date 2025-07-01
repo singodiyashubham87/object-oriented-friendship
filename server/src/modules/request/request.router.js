@@ -15,4 +15,10 @@ router.put(
   requestController.acceptConnectionRequest,
 );
 
+router.put(
+  "/reject/:requestId",
+  [isValidUser],
+  requestController.rejectConnectionRequest,
+);
+
 export default router;

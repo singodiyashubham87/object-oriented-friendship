@@ -116,10 +116,31 @@ const getAllPendingRequests = async (req, res) => {
   }
 };
 
+const getAllSentRequests = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const allSentRequests = await requestService.getAllSentRequest({
+      userId,
+    });
+
+    if (!allSentRequests) {
+      throw new Error("Failed to fetch requests");
+    }
+
+    return Response.success(res, "Request fetched successfully", {
+      requests: allSentRequests,
+    });
+  } catch (error) {
+    return Response.exception(res, "Failed to fetch requests", error);
+  }
+};
+
 export {
   sendConnectionRequest,
   acceptConnectionRequest,
   rejectConnectionRequest,
   cancelConnectionRequest,
   getAllPendingRequests,
+  getAllSentRequests,
 };

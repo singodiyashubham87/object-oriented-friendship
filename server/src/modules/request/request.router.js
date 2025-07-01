@@ -33,4 +33,10 @@ router.get(
   requestController.getAllPendingRequests,
 );
 
+router.get(
+  "/api/request/sent",
+  [isValidUser],
+  requestController.getAllSentRequests,
+);
+
 export default router;

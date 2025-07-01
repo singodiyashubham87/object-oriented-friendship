@@ -65,10 +65,25 @@ const getAllPendingRequest = async (payload) => {
   return allPendingRequests;
 };
 
+const getAllSentRequest = async (payload) => {
+  const [allSentRequests] = await db
+    .select()
+    .from(Request)
+    .where(
+      and(
+        eq(Request.senderId, payload.userId),
+        eq(Request.status, REQUEST_STATUS.PENDING),
+      ),
+    );
+
+  return allSentRequests;
+};
+
 export {
   createRequest,
   acceptRequest,
   rejectRequest,
   cancelRequest,
   getAllPendingRequest,
+  getAllSentRequest,
 };

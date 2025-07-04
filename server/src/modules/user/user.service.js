@@ -145,6 +145,47 @@ const getFriends = async (userId) => {
   return friendIdsList;
 };
 
+const unfriend = async (payload) => {
+  const { userId, friendId } = payload;
+  const isFriendIdExist = await db
+    .select()
+    .from(User)
+    .where(eq(User.id, friendId));
+
+  if (!isFriendIdExist) {
+    throw new Error("User does not exist.");
+  }
+
+  const isBothFriends = await db
+    .select()
+    .from(Request)
+    .where(
+      or(
+        and(eq(Request.senderId, userId), eq(Request.receiverId, friendId)),
+        and(eq(Request.senderId, friendId), eq(Request.receiverId, userId)),
+      ),
+    );
+
+  if (!isBothFriends) {
+    throw new Error("Provided user is not a friend of logged in user");
+  }
+
+  const [updatedRequest] = await db
+    .update(Request)
+    .set({
+      status: REQUEST_STATUS.REJECTED,
+    })
+    .where(
+      or(
+        and(eq(Request.senderId, userId), eq(Request.receiverId, friendId)),
+        and(eq(Request.senderId, friendId), eq(Request.receiverId, userId)),
+      ),
+    )
+    .returning();
+
+  return updatedRequest;
+};
+
 export {
   register,
   login,
@@ -153,4 +194,5 @@ export {
   resetPassword,
   getUserById,
   getFriends,
+  unfriend,
 };

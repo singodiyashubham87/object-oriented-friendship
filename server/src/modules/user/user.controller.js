@@ -145,15 +145,37 @@ const getFriends = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await userService.getFriends(userId);
+    const friends = await userService.getFriends(userId);
 
-    if (!user) {
+    if (!friends) {
       return Response.notFound(res, "Failed to fetch friends");
     }
 
-    return Response.success(res, _, { user });
+    return Response.success(res, _, { friends });
   } catch (error) {
     return Response.exception(res, API_RESPONSE.FAILED_TO_FETCH_USER, error);
+  }
+};
+
+const unfriend = async (req, res) => {
+  try {
+    const friendId = req.params.friendId;
+    const userId = req.user.id;
+
+    const res = await userService.unfriend({
+      userId,
+      friendId,
+    });
+
+    if (!res) {
+      return Response.notFound(res, "User not found");
+    }
+
+    return Response.success(res, "Unfriend successful", {
+      unfriendedUser: friendId,
+    });
+  } catch (error) {
+    return Response.exception(res, "Failed to unfriend", error);
   }
 };
 
@@ -167,4 +189,5 @@ export {
   verifyPhone,
   getCurrentUser,
   getFriends,
+  unfriend,
 };

@@ -19,7 +19,7 @@
 - [x] GET  `/api/request/sent` — View sent requests
 
 ## 👫 Friends
-- [ ] GET `/api/user/friends` — Get friend list
+- [x] GET `/api/user/friends` — Get friend list
 - [ ] DELETE `/api/user/unfriend/:userId` — Unfriend a user
 
 ## 📚 Bookmarks

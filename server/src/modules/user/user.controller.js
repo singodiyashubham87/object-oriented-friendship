@@ -141,6 +141,22 @@ const verifyPhone = async (req, res) => {
   }
 };
 
+const getFriends = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await userService.getFriends(userId);
+
+    if (!user) {
+      return Response.notFound(res, "Failed to fetch friends");
+    }
+
+    return Response.success(res, _, { user });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_FETCH_USER, error);
+  }
+};
+
 export {
   register,
   login,
@@ -150,4 +166,5 @@ export {
   deleteUser,
   verifyPhone,
   getCurrentUser,
+  getFriends,
 };

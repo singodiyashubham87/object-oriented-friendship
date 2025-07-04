@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
-import { User } from "../../db/schema/index.js";
+import { Request, User } from "../../db/schema/index.js";
+import { REQUEST_STATUS } from "../../enums/requestStatus.js";
 import { mapUpdateUserDTO } from "./user.dto.js";
 
 const BASE_PLACEHOLDER_IMG_URL = "https://api.dicebear.com/6.x/initials/svg";
@@ -123,4 +124,33 @@ const getUserById = async (userId) => {
   return safeUser;
 };
 
-export { register, login, updateUser, deleteUser, resetPassword, getUserById };
+const getFriends = async (userId) => {
+  const rows = await db
+    .select({
+      senderId: Request.senderId,
+      receiverId: Request.receiverId,
+    })
+    .from(Request)
+    .where(
+      and(
+        or(eq(Request.senderId, userId), eq(Request.receiverId, userId)),
+        eq(Request.status, REQUEST_STATUS.ACCEPTED),
+      ),
+    );
+
+  const friendIdsList = rows.map((row) =>
+    row.senderId === userId ? row.receiverId : row.senderId,
+  );
+
+  return friendIdsList;
+};
+
+export {
+  register,
+  login,
+  updateUser,
+  deleteUser,
+  resetPassword,
+  getUserById,
+  getFriends,
+};

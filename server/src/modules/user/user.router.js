@@ -12,5 +12,6 @@ router.delete("/delete/:id", userController.deleteUser);
 router.post("/reset-password", userController.resetPassword);
 router.post("/verify-phone/:id", userController.verifyPhone);
 router.get("/me", [isValidUser], userController.getCurrentUser);
+router.get("/friends", [isValidUser], userController.getFriends);
 
 export default router;

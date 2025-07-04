@@ -12,6 +12,7 @@ const API_RESPONSE = {
   USER_CREATED: "user created",
   USER_UPDATED: "user updated",
   USER_DELETED: "user deleted",
+  USER_FETCHED: "user fetched",
   USER_NOT_FOUND: "user not found",
   FAILED_TO_CREATE_USER: "failed to create user",
   FAILED_TO_DELETE_USER: "failed to delete user",

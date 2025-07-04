@@ -13,6 +13,6 @@ router.post("/reset-password", userController.resetPassword);
 router.post("/verify-phone/:id", userController.verifyPhone);
 router.get("/me", [isValidUser], userController.getCurrentUser);
 router.get("/friends", [isValidUser], userController.getFriends);
-router.get("/unfriend/:friendId", [isValidUser], userController.unfriend);
+router.delete("/unfriend/:friendId", [isValidUser], userController.unfriend);
 
 export default router;

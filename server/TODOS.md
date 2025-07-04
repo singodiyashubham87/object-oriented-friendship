@@ -20,7 +20,7 @@
 
 ## 👫 Friends
 - [x] GET `/api/user/friends` — Get friend list
-- [ ] DELETE `/api/user/unfriend/:userId` — Unfriend a user
+- [x] DELETE `/api/user/unfriend/:userId` — Unfriend a user
 
 ## 📚 Bookmarks
 - [ ] POST `/api/bookmark/:userId` — Bookmark a user

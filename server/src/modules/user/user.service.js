@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
 import { Request, User } from "../../db/schema/index.js";
@@ -142,7 +142,12 @@ const getFriends = async (userId) => {
     row.senderId === userId ? row.receiverId : row.senderId,
   );
 
-  return friendIdsList;
+  const friends = await db
+    .select()
+    .from(User)
+    .where(inArray(User.id, friendIdsList));
+
+  return friends;
 };
 
 const unfriend = async (payload) => {
@@ -151,7 +156,6 @@ const unfriend = async (payload) => {
     .select()
     .from(User)
     .where(eq(User.id, friendId));
-
   if (!isFriendIdExist) {
     throw new Error("User does not exist.");
   }
@@ -174,6 +178,7 @@ const unfriend = async (payload) => {
     .update(Request)
     .set({
       status: REQUEST_STATUS.REJECTED,
+      updatedAt: dayjs().toDate(),
     })
     .where(
       or(

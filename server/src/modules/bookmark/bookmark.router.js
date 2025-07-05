@@ -1,8 +1,15 @@
 import { Router } from "express";
+import { isValidUser } from "../../utils/middleware.js";
+import * as bookmarkController from "./bookmark.controller.js";
+
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Hello from bookmark module!" });
-});
+router.post("/:userId", [isValidUser], bookmarkController.createBookmark);
+router.delete(
+  "/delete/:userId",
+  [isValidUser],
+  bookmarkController.deleteBookmark,
+);
+router.get("/", [isValidUser], bookmarkController.getBookmarkedUsers);
 
 export default router;

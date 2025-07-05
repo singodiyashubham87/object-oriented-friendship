@@ -23,9 +23,9 @@
 - [x] DELETE `/api/user/unfriend/:userId` — Unfriend a user
 
 ## 📚 Bookmarks
-- [ ] POST `/api/bookmark/:userId` — Bookmark a user
-- [ ] DELETE `/api/bookmark/:userId` — Remove bookmark
-- [ ] GET `/api/bookmark` — Get all bookmarked users
+- [x] POST `/api/bookmark/:userId` — Bookmark a user
+- [x] DELETE `/api/bookmark/:userId` — Remove bookmark
+- [x] GET `/api/bookmark` — Get all bookmarked users
 
 ## 🔍 Discovery & Feed
 - [ ] GET `/api/user/feed` — Discover new people

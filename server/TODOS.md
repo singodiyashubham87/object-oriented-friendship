@@ -28,7 +28,7 @@
 - [x] GET `/api/bookmark` — Get all bookmarked users
 
 ## 🔍 Discovery & Feed
-- [ ] GET `/api/user/feed` — Discover new people
+- [x] GET `/api/user/feed` — Discover new people
 - [ ] GET `/api/user/search?q=javascript` — Search users by tech, name, skills
 
 ## 💬 Chat & Messaging

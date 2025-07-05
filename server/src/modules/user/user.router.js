@@ -6,13 +6,14 @@ const router = Router();
 
 router.post("/register", userController.register);
 router.post("/login", userController.login);
-router.post("/logout", userController.logout);
-router.put("/update/:id", userController.updateUser);
-router.delete("/delete/:id", userController.deleteUser);
-router.post("/reset-password", userController.resetPassword);
-router.post("/verify-phone/:id", userController.verifyPhone);
+router.post("/logout", [isValidUser], userController.logout);
+router.put("/update/:id", [isValidUser], userController.updateUser);
+router.delete("/delete/:id", [isValidUser], userController.deleteUser);
+router.post("/reset-password", [isValidUser], userController.resetPassword);
+router.post("/verify-phone/:id", [isValidUser], userController.verifyPhone);
 router.get("/me", [isValidUser], userController.getCurrentUser);
 router.get("/friends", [isValidUser], userController.getFriends);
 router.delete("/unfriend/:friendId", [isValidUser], userController.unfriend);
+router.get("/feed", [isValidUser], userController.getUserFeed);
 
 export default router;

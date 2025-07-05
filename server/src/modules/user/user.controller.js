@@ -179,6 +179,22 @@ const unfriend = async (req, res) => {
   }
 };
 
+const getUserFeed = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const feed = await userService.getUserFeed(userId);
+
+    if (!feed) {
+      return Response.notFound(res, "Failed to fetch user feed");
+    }
+
+    return Response.success(res, "", { feed });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_FETCH_USER, error);
+  }
+};
+
 export {
   register,
   login,
@@ -190,4 +206,5 @@ export {
   getCurrentUser,
   getFriends,
   unfriend,
+  getUserFeed,
 };

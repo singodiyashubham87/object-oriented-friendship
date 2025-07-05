@@ -191,6 +191,27 @@ const unfriend = async (payload) => {
   return updatedRequest;
 };
 
+const getUserFeed = async (userId) => {
+  const requests = await db
+    .select({
+      senderId: Request.senderId,
+      receiverId: Request.receiverId,
+    })
+    .from(Request)
+    .where(or(eq(Request.senderId, userId), eq(Request.receiverId, userId)));
+
+  const unknownUserIdsList = requests
+    .flatMap((req) => [req.receiverId, req.senderId])
+    .filter((id) => id !== userId);
+
+  const feed = await db
+    .select()
+    .from(User)
+    .where(inArray(User.id, unknownUserIdsList));
+
+  return feed;
+};
+
 export {
   register,
   login,
@@ -200,4 +221,5 @@ export {
   getUserById,
   getFriends,
   unfriend,
+  getUserFeed,
 };

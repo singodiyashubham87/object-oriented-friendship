@@ -14,6 +14,8 @@ const createBookmark = async (req, res) => {
       bookmarkedId,
     });
 
+    if (!bookmarkedUser) throw new Error("Failed to bookmark user");
+
     return Response.success(res, "Bookmarked successful", { bookmarkedUser });
   } catch (error) {
     return Response.exception(res, "Failed to bookmark user", error);
@@ -33,6 +35,8 @@ const deleteBookmark = async (req, res) => {
       bookmarkedId,
     });
 
+    if (!deletedBookmark) throw new Error("Failed to remove bookmark");
+
     return Response.success(res, "Bookmark removed successful", {
       deletedBookmark,
     });
@@ -46,6 +50,8 @@ const getBookmarkedUsers = async (req, res) => {
     const userId = req.user.id;
 
     const bookmarkedUsers = await bookmarkService.getBookmarkedUsers(userId);
+
+    if (!bookmarkedUsers) throw new Error("Failed to fetch bookmarked users");
 
     return Response.success(res, "Bookmarks fetched successful", {
       bookmarkedUsers,

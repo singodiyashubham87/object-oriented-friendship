@@ -105,6 +105,13 @@ const Register = () => {
                 >
                   Register
                 </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className="bg-primary-silver w-full text-secondary-dark text-md uppercase font-semibold py-2 rounded-custom-xs border-2 border-primary-dark hover:border-primary-silver hover:text-primary-silver hover:bg-secondary-dark cursor-pointer"
+                >
+                  Login
+                </button>
               </Form>
             )}
           </Formik>

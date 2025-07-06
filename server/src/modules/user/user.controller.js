@@ -32,6 +32,7 @@ const login = async (req, res) => {
     const jwtToken = generateToken(user);
 
     res.cookie("token", jwtToken, {
+      expires: dayjs().add(7, "days").toDate(),
       httpOnly: true,
       secure: isProd,
       sameSite: "Strict",

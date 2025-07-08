@@ -1,6 +1,6 @@
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Loader from "../components/Loader.jsx";
 import axios from "../config/axios.js";
 
@@ -10,19 +10,22 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = Cookies.get("token");
-      if (!token) {
-        setAuthenticated(false);
-        setLoading(false);
-        return;
-      }
-
       try {
-        await axios.get("/user/verify");
+        const res = await axios.get("/user/verify");
+        const user = res.data?.data?.user;
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        localStorage.setItem("user", JSON.stringify(user));
         setAuthenticated(true);
       } catch (err) {
-        Cookies.remove("token");
         setAuthenticated(false);
+        toast.error(
+          `❗Failed to authenticate: ${
+            err.response?.data?.error_message || err.message
+          }`,
+        );
       } finally {
         setLoading(false);
       }

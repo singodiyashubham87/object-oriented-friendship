@@ -1,19 +1,47 @@
 import logo from "@/assets/images/oof-logo.png";
+import axiosInstance from "@/config/axios";
+import { userNameRegex } from "@/config/regex";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const loginValidationSchema = Yup.object({
-    email: Yup.string().email("❗Invalid email address").required("❗Required"),
+    usernameOrEmail: Yup.string()
+      .required("❗Required")
+      .test(
+        "is-username-or-email",
+        "❗Must be a valid email or username (at least 3 characters, letters, numbers, underscores)",
+        (value) => {
+          if (!value) return false;
+          return (
+            Yup.string().email().isValidSync(value) || userNameRegex.test(value)
+          );
+        },
+      ),
     password: Yup.string().required("❗Required"),
   });
 
-  const handleSubmit = (values) => {
-    console.log("Form values", values);
-    navigate("/");
+  const handleSubmit = async (values) => {
+    const loginData = {
+      username_or_email: values.usernameOrEmail,
+      password: values.password,
+    };
+
+    try {
+      const user = await axiosInstance.post("/user/login", loginData);
+      const firstName = user.data?.data?.user?.firstName || "User";
+      toast.success(`🎉 Welcome back, ${firstName}!`);
+      navigate("/feed");
+    } catch (error) {
+      toast.error(
+        `❗Error: ${error.response?.data?.error_message || error.message}`,
+      );
+    }
   };
 
   return (
@@ -23,7 +51,7 @@ const Login = () => {
           <img src={logo} alt="logo" width={"148px"} height={"60px"} />
           <Formik
             initialValues={{
-              email: "",
+              usernameOrEmail: "",
               password: "",
             }}
             validationSchema={loginValidationSchema}
@@ -33,13 +61,13 @@ const Login = () => {
               <Form className="w-full flex flex-col gap-4 my-4">
                 <div>
                   <Field
-                    name="email"
-                    type="email"
-                    placeholder="EMAIL"
+                    name="usernameOrEmail"
+                    type="text"
+                    placeholder="Username or Email"
                     className="bg-transparent text-secondary-silver font-semibold text-s border-2 border-primary-silver p-2 pl-5 w-full rounded-custom-xs outline-none"
                   />
                   <ErrorMessage
-                    name="email"
+                    name="usernameOrEmail"
                     component="div"
                     className="text-red-500 text-sm mt-1 font-semibold"
                   />
@@ -48,7 +76,7 @@ const Login = () => {
                   <Field
                     name="password"
                     type="password"
-                    placeholder="PASSWORD"
+                    placeholder="Password"
                     className="bg-transparent text-secondary-silver font-semibold text-s border-2 border-primary-silver p-2 pl-5 w-full rounded-custom-xs outline-none"
                   />
                   <ErrorMessage

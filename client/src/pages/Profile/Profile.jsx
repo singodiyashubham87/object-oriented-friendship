@@ -66,7 +66,6 @@ const Profile = () => {
 
   return (
     <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
-      <ToastContainer position="top-left" />
       <div className="flex justify-center h-1/5 ">
         <h2 className="text-4xl text-primary-silver font-bold uppercase">
           Profile

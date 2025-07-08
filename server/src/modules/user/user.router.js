@@ -15,5 +15,6 @@ router.get("/me", [isValidUser], userController.getCurrentUser);
 router.get("/friends", [isValidUser], userController.getFriends);
 router.delete("/unfriend/:friendId", [isValidUser], userController.unfriend);
 router.get("/feed", [isValidUser], userController.getUserFeed);
+router.get("/verify", [isValidUser], userController.verifyToken);
 
 export default router;

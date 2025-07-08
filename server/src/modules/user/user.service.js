@@ -14,10 +14,12 @@ const register = async (payload) => {
   const existingUser = await db
     .select()
     .from(User)
-    .where(eq(User.email, payload.email));
+    .where(
+      or(eq(User.userName, payload.user_name), eq(User.email, payload.email)),
+    );
 
   if (size(existingUser)) {
-    throw new Error("User already exists");
+    throw new Error("User with this username or email already exists");
   }
 
   // Hash the password before storing to db
@@ -49,7 +51,12 @@ const login = async (payload) => {
   const [user] = await db
     .select()
     .from(User)
-    .where(eq(User.email, payload.email));
+    .where(
+      or(
+        eq(User.userName, payload.username_or_email),
+        eq(User.email, payload.username_or_email),
+      ),
+    );
   if (!user) {
     throw new Error("User not found");
   }

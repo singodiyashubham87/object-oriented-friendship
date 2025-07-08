@@ -128,6 +128,22 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+const verifyToken = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await userService.getUserById(userId);
+
+    if (!user) {
+      return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);
+    }
+
+    return Response.success(res, API_RESPONSE.TOKEN_VERIFIED, { user });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.FAILED_TO_VERIFY_TOKEN, error);
+  }
+};
+
 const verifyPhone = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -203,6 +219,7 @@ export {
   resetPassword,
   updateUser,
   deleteUser,
+  verifyToken,
   verifyPhone,
   getCurrentUser,
   getFriends,

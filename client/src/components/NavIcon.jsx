@@ -5,6 +5,7 @@ const NavIcon = ({
   IconComponent,
   iconName,
   hoveredIcon,
+  onClick = () => {},
   setHoveredIcon,
   isActive,
 }) => {
@@ -19,6 +20,12 @@ const NavIcon = ({
           }`}
           onMouseEnter={() => setHoveredIcon(iconName)}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={onClick}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onClick(e);
+            }
+          }}
         >
           <IconComponent
             color={isActive || hoveredIcon === iconName ? "#373737" : "#92918D"}

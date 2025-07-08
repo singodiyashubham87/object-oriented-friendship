@@ -26,6 +26,8 @@ const API_RESPONSE = {
   PASSWORD_UPDATED_SUCCESSFULLY: "password updated successfully",
   FAILED_TO_UPDATE_PASSWORD: "failed to update password",
   INVALID_CREDENTIALS: "invalid credentials",
+  TOKEN_VERIFIED: "token verified",
+  FAILED_TO_VERIFY_TOKEN: "failed to verify token",
 };
 
 export default API_RESPONSE;

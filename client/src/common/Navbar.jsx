@@ -7,8 +7,21 @@ import FriendsIcon from "@/components/icons/FriendsIcon";
 import InboxIcon from "@/components/icons/InboxIcon";
 import LogoutIcon from "@/components/icons/LogoutIcon";
 import RequestsIcon from "@/components/icons/RequestsIcon";
+import axiosInstance from "@/config/axios";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const handleLogout = async () => {
+  try {
+    await axiosInstance.post("/user/logout");
+    localStorage.removeItem("user");
+  } catch (error) {
+    toast.error(
+      `❗Error: ${error.response?.data?.error_message || error.message}`,
+    );
+  }
+};
 
 const Navbar = () => {
   const location = useLocation();
@@ -19,7 +32,7 @@ const Navbar = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
 
   const leftNavIcons = [
-    { href: "/login", Icon: LogoutIcon, name: "logout" },
+    { href: "/login", Icon: LogoutIcon, name: "logout", onClick: handleLogout },
     { href: "/friends", Icon: FriendsIcon, name: "friends" },
     { href: "/messages", Icon: InboxIcon, name: "inbox" },
   ];
@@ -39,6 +52,7 @@ const Navbar = () => {
               IconComponent={icon.Icon}
               iconName={icon.name}
               hoveredIcon={hoveredIcon}
+              onClick={icon.onClick}
               setHoveredIcon={setHoveredIcon}
               isActive={location.pathname === icon.href}
             />

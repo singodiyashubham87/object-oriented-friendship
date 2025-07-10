@@ -21,11 +21,6 @@ const ProtectedRoute = ({ children }) => {
         setAuthenticated(true);
       } catch (err) {
         setAuthenticated(false);
-        toast.error(
-          `❗Failed to authenticate: ${
-            err.response?.data?.error_message || err.message
-          }`,
-        );
       } finally {
         setLoading(false);
       }

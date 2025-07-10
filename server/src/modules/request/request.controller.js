@@ -18,7 +18,7 @@ const sendConnectionRequest = async (req, res) => {
       throw new Error("Failed to send request");
     }
 
-    return Response.created(res, "Request sent successfully");
+    return Response.created(res, "Request sent successfully", { request });
   } catch (error) {
     return Response.exception(res, "Failed to send connection request", error);
   }

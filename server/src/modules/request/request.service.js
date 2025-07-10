@@ -5,6 +5,14 @@ import { Request } from "../../db/schema/index.js";
 import { REQUEST_STATUS } from "../../enums/requestStatus.js";
 
 const createRequest = async (payload) => {
+  if (!payload.senderId || !payload.receiverId) {
+    throw new Error("Sender ID and Receiver ID are required");
+  }
+
+  if (payload.senderId === payload.receiverId) {
+    throw new Error("Sender and Receiver cannot be the same");
+  }
+
   const [request] = await db
     .insert(Request)
     .values({

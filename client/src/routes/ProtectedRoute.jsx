@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import Loader from "../components/Loader.jsx";
 import axios from "../config/axios.js";
 
@@ -16,9 +15,8 @@ const ProtectedRoute = ({ children }) => {
         if (!user) {
           throw new Error("User not found");
         }
-
-        localStorage.setItem("user", JSON.stringify(user));
         setAuthenticated(true);
+        localStorage.setItem("user", JSON.stringify(user));
       } catch (err) {
         setAuthenticated(false);
       } finally {

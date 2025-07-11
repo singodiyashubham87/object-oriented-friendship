@@ -11,12 +11,10 @@ import Register from "@/pages/Register/Register";
 import ReceivedRequests from "@/pages/Requests/ReceivedRequests";
 import SentRequests from "@/pages/Requests/SentRequests";
 import UserProfile from "@/pages/UserProfile/UserProfile";
-import Cookies from "js-cookie";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 const RootRoute = () => {
-  const token = Cookies.get("oofAuthToken");
-  return <Navigate to={token ? "/feed" : "/login"} replace />;
+  return <Navigate to="/feed" replace />;
 };
 
 const App = () => {

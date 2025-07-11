@@ -60,14 +60,6 @@ const INDIAN_STATES = [
   "Uttar Pradesh",
   "Uttarakhand",
   "West Bengal",
-  "Delhi",
-  "Jammu and Kashmir",
-  "Ladakh",
-  "Andaman and Nicobar Islands",
-  "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu",
-  "Lakshadweep",
-  "Puducherry",
 ];
 
 const seedUser = async () => {
@@ -83,9 +75,9 @@ const seedUser = async () => {
       const updatedUser = await db
         .update(User)
         .set({
-          age: randomAge,
+          // age: randomAge,
           location: randomLocation,
-          gender: randomGender,
+          // gender: randomGender,
           updatedAt: dayjs().toDate(),
         })
         .where(eq(User.id, user.id))
@@ -141,6 +133,6 @@ const seedUserProfile = async () => {
 };
 
 // Execute seeding functions
-Promise.all([seedUserProfile()]).then(() => {
+Promise.all([seedUser()]).then(() => {
   console.log("All seeding completed");
 });

@@ -1,4 +1,11 @@
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const User = pgTable(
   "user",
@@ -9,6 +16,9 @@ export const User = pgTable(
     userName: text("username").notNull().unique(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    location: text("location"),
+    age: integer("age"),
+    gender: text("gender"),
     avatar: text("avatar"),
     phone: text("phone"),
     bio: text("bio"),

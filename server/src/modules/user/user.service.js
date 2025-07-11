@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, eq, inArray, ne, notInArray, or } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
 import { Request, User } from "../../db/schema/index.js";
@@ -207,14 +207,26 @@ const getUserFeed = async (userId) => {
     .from(Request)
     .where(or(eq(Request.senderId, userId), eq(Request.receiverId, userId)));
 
-  const unknownUserIdsList = requests
-    .flatMap((req) => [req.receiverId, req.senderId])
-    .filter((id) => id !== userId);
+  const connectedUserIds = [
+    ...new Set(
+      requests
+        .flatMap((req) => [req.senderId, req.receiverId])
+        .filter((id) => id !== userId),
+    ),
+  ];
 
   const feed = await db
     .select()
     .from(User)
-    .where(inArray(User.id, unknownUserIdsList));
+    .where(
+      and(
+        notInArray(
+          User.id,
+          connectedUserIds.length > 0 ? connectedUserIds : ["none"],
+        ),
+        ne(User.id, userId),
+      ),
+    );
 
   return feed;
 };

@@ -59,7 +59,7 @@ const Navbar = () => {
           ))}
         </div>
         <li className="hidden md:block cursor-pointer">
-          <Link to="/">
+          <Link to="/feed">
             <img src={logo} alt="Logo" width={"125px"} title="Feed" />
           </Link>
         </li>

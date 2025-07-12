@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "^1.0.14",
+    "@hugeicons/react": "^1.0.5",
     "axios": "^1.7.9",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",

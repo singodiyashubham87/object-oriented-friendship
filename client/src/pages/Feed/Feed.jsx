@@ -1,10 +1,8 @@
+import FeedCardActions from "@/components/FeedCardActions";
 import Loader from "@/components/Loader";
-import AcceptRequestIcon from "@/components/icons/AcceptRequestIcon";
-import BookmarkRequestUserIcon from "@/components/icons/BookmarkRequestUserIcon";
 import FeedNextArrowIcon from "@/components/icons/FeedNextArrowIcon";
 import FeedPrevArrowIcon from "@/components/icons/FeedPrevArrowIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
-import RejectRequestIcon from "@/components/icons/RejectRequestIcon";
 import axiosInstance from "@/config/axios";
 import { get, size } from "lodash-es";
 import { useEffect, useState } from "react";
@@ -156,17 +154,7 @@ const Feed = () => {
                 }, `}</p>
                 <p className="text-primary-dark">{`${prevUser?.gender}`}</p>
               </div>
-              <div className="buttons flex gap-8 mt-4 justify-center">
-                <div className="p-2 bg-primary-pink rounded-full border-xs border-primary-dark cursor-pointer">
-                  <RejectRequestIcon size="26" />
-                </div>
-                <div className="p-2 bg-primary-cyan rounded-full border-xs border-primary-dark cursor-pointer">
-                  <BookmarkRequestUserIcon size="26" />
-                </div>
-                <div className="p-2 bg-primary-green rounded-full border-xs border-primary-dark cursor-pointer">
-                  <AcceptRequestIcon size="26" />
-                </div>
-              </div>
+              <FeedCardActions />
             </div>
           )}
 
@@ -204,29 +192,11 @@ const Feed = () => {
               }, `}</p>
               <p className="text-primary-dark">{`${currentUser?.gender}`}</p>
             </div>
-            <div className="buttons flex gap-8 mt-4 justify-center">
-              <button
-                type="button"
-                className="p-2 bg-primary-pink hover:bg-primary-pink-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleRejectClick(currentUser?.id)}
-              >
-                <RejectRequestIcon size="26" />
-              </button>
-              <button
-                type="button"
-                className="p-2 bg-primary-cyan hover:bg-primary-cyan-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleBookmarkClick(currentUser?.id)}
-              >
-                <BookmarkRequestUserIcon size="26" />
-              </button>
-              <button
-                type="button"
-                className="p-2 bg-primary-green hover:bg-primary-green-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleAcceptClick(currentUser?.id)}
-              >
-                <AcceptRequestIcon size="26" />
-              </button>
-            </div>
+            <FeedCardActions
+              onReject={() => handleRejectClick(currentUser?.id)}
+              onBookmark={() => handleBookmarkClick(currentUser?.id)}
+              onAccept={() => handleAcceptClick(currentUser?.id)}
+            />
           </div>
 
           {/* Right faded card */}
@@ -264,17 +234,7 @@ const Feed = () => {
                 }, `}</p>
                 <p className="text-primary-dark">{`${nextUser?.gender}`}</p>
               </div>
-              <div className="buttons flex gap-8 mt-4 justify-center">
-                <div className="p-2 bg-primary-pink rounded-full border-xs border-primary-dark cursor-pointer">
-                  <RejectRequestIcon size="26" />
-                </div>
-                <div className="p-2 bg-primary-cyan rounded-full border-xs border-primary-dark cursor-pointer">
-                  <BookmarkRequestUserIcon size="26" />
-                </div>
-                <div className="p-2 bg-primary-green rounded-full border-xs border-primary-dark cursor-pointer">
-                  <AcceptRequestIcon size="26" />
-                </div>
-              </div>
+              <FeedCardActions />
             </div>
           )}
         </div>

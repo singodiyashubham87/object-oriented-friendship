@@ -9,6 +9,7 @@ import InboxIcon from "@/components/icons/InboxIcon";
 import LogoutIcon from "@/components/icons/LogoutIcon";
 import RequestsIcon from "@/components/icons/RequestsIcon";
 import axiosInstance from "@/config/axios";
+import { getErrorMessage } from "@/utils/common";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -29,9 +30,7 @@ const Navbar = () => {
       localStorage.removeItem("user");
       navigate("/login");
     } catch (error) {
-      toast.error(
-        `❗Error: ${error.response?.data?.error_message || error.message}`,
-      );
+      toast.error(`Error: ${getErrorMessage(error)}`);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,7 @@
 import logo from "@/assets/images/oof-logo.png";
 import axiosInstance from "@/config/axios";
 import { strongPasswordRegex, userNameRegex } from "@/config/regex";
+import { getErrorMessage } from "@/utils/common";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -50,9 +51,7 @@ const Register = () => {
       toast.success(`🎉 Registration successful! Welcome, ${firstName}!`);
       navigate("/login");
     } catch (error) {
-      toast.error(
-        `Error: ${error.response?.data?.error_message || error.message}`,
-      );
+      toast.error(`Error: ${getErrorMessage(error)}`);
     }
   };
 

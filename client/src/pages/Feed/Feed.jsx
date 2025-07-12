@@ -87,8 +87,8 @@ const Feed = () => {
 
   if (!size(feedUsers)) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-primary-silver text-2xl">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+        <p className="text-primary-silver text-2xl text-center w-1/2">
           No users found in the feed.
         </p>
       </div>

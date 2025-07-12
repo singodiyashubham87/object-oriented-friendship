@@ -52,8 +52,8 @@ const Friends = () => {
 
   if (!size(friends)) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-primary-silver text-2xl">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+        <p className="text-primary-silver text-2xl text-center w-1/2">
           No friends found. Start connecting with others!
         </p>
       </div>
@@ -69,8 +69,8 @@ const Friends = () => {
       </div>
       <div className="w-full h-4/5 flex justify-center flex-wrap px-4 my-6 gap-6 overflow-y-auto overflow-x-hidden">
         {friends?.map((friend, index) => {
-          // get full name by appending first and last name
           const fullName = `${friend.firstName} ${friend.lastName}`;
+
           return (
             <div
               key={friend.id}

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import db from "../../db/index.js";
-import { Request } from "../../db/schema/index.js";
+import { Request, User } from "../../db/schema/index.js";
 import { REQUEST_STATUS } from "../../enums/requestStatus.js";
 
 const createRequest = async (payload) => {
@@ -63,7 +63,9 @@ const cancelRequest = async (payload) => {
 
 const getAllPendingRequest = async (payload) => {
   const allPendingRequests = await db
-    .select()
+    .select({
+      senderId: Request.senderId,
+    })
     .from(Request)
     .where(
       and(
@@ -72,12 +74,18 @@ const getAllPendingRequest = async (payload) => {
       ),
     );
 
-  return allPendingRequests;
+  const senderIds = allPendingRequests.map((request) => request.senderId);
+
+  const users = await db.select().from(User).where(inArray(User.id, senderIds));
+
+  return users;
 };
 
 const getAllSentRequest = async (payload) => {
   const allSentRequests = await db
-    .select()
+    .select({
+      receiverId: Request.receiverId,
+    })
     .from(Request)
     .where(
       and(
@@ -86,7 +94,14 @@ const getAllSentRequest = async (payload) => {
       ),
     );
 
-  return allSentRequests;
+  const receiverIds = allSentRequests.map((request) => request.receiverId);
+
+  const users = await db
+    .select()
+    .from(User)
+    .where(inArray(User.id, receiverIds));
+
+  return users;
 };
 
 export {

@@ -1,11 +1,49 @@
 import userAvatar from "@/assets/images/userAvatar.png";
+import Loader from "@/components/Loader";
 import LocationIcon from "@/components/icons/LocationIcon";
 import RevertRequestIcon from "@/components/icons/RevertRequestIcon";
-import { friendsData } from "@/pages/Friends/data/friends";
-import React from "react";
+import axiosInstance from "@/config/axios";
+import { get, size } from "lodash-es";
+import React, { Fragment, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
 
 const SentRequests = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [requestedUsers, setRequestedUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchRequestedUsers = async () => {
+      setIsLoading(true);
+      try {
+        const res = await axiosInstance.get("/request/sent");
+        const requestedUsers = get(res, "data.data.requests", []);
+
+        setRequestedUsers(requestedUsers);
+      } catch (error) {
+        toast.error("Failed to fetch sent requests");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRequestedUsers();
+  }, []);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!size(requestedUsers)) {
+    return (
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+        <p className="text-primary-silver text-2xl w-1/2 text-center">
+          No sent requests found. Start sending connection requests to others!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
       <div className="flex justify-center h-1/5">
@@ -14,58 +52,66 @@ const SentRequests = () => {
         </h2>
       </div>
       <div className="w-full h-4/5 flex justify-center flex-wrap px-4 my-6 gap-6 overflow-y-auto overflow-x-hidden">
-        {friendsData?.map((friend, index) => (
-          <div
-            key={friend.id}
-            className="flex flex-col gap-2 items-center justify-stretch bg-dark-glassmorphism-70 rounded-custom-xs p-4 shadow-lg border-2 border-primary-gray-30"
-          >
-            <div className="w-20 border-2 border-primary-gray-30 overflow-hidden rounded-full">
-              <img
-                src={userAvatar}
-                alt="user-avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <div className="relative group text-center">
-                {friend.name.length > 7 ? (
-                  <>
-                    <p
-                      className="text-primary-silver text-base font-semibold truncate max-w-[100px] text-center"
-                      data-tooltip-id={`tooltip-${index}`}
-                    >
-                      {friend.name.length > 7
-                        ? `${friend.name.slice(0, 7)}...`
-                        : friend.name}
+        {requestedUsers?.map((user, index) => {
+          const fullName = `${user.firstName} ${user.lastName}`;
+
+          return (
+            <div
+              key={user.id}
+              className="flex flex-col gap-2 items-center justify-stretch bg-dark-glassmorphism-70 rounded-custom-xs p-4 shadow-lg border-2 border-primary-gray-30"
+            >
+              <div className="w-20 border-2 border-primary-gray-30 overflow-hidden rounded-full">
+                <img
+                  src={user.avatar || userAvatar}
+                  alt="user-avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="relative group text-center">
+                  {fullName.length > 7 ? (
+                    <Fragment>
+                      <p
+                        className="text-primary-silver text-base font-semibold truncate max-w-[100px] text-center"
+                        data-tooltip-id={`tooltip-${index}`}
+                      >
+                        {fullName.length > 7
+                          ? `${fullName.slice(0, 7)}...`
+                          : fullName}
+                      </p>
+                      <Tooltip
+                        id={`tooltip-${index}`}
+                        place="top"
+                        effect="solid"
+                      >
+                        {fullName}
+                      </Tooltip>
+                    </Fragment>
+                  ) : (
+                    <span className="text-primary-silver text-base font-semibold text-center">
+                      {fullName}
+                    </span>
+                  )}
+                  <div className="flex items-center gap-1">
+                    <LocationIcon />
+                    <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
+                      {user.location}
                     </p>
-                    <Tooltip id={`tooltip-${index}`} place="top" effect="solid">
-                      {friend.name}
-                    </Tooltip>
-                  </>
-                ) : (
-                  <span className="text-primary-silver text-base font-semibold text-center">
-                    {friend.name}
-                  </span>
-                )}
-                <div className="flex items-center gap-1">
-                  <LocationIcon />
-                  <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
-                    {friend.location}
-                  </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer">
+                  <RevertRequestIcon size={16} />
+                  <button
+                    type="button"
+                    className="uppercase text-base font-primary font-semibold"
+                  >
+                    Revert
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer">
-                <RevertRequestIcon size={16} />
-                <button
-                  type="button"
-                  className="uppercase text-base font-primary font-semibold"
-                >
-                  Revert
-                </button>
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

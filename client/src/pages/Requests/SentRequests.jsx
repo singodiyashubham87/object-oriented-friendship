@@ -1,12 +1,12 @@
 import userAvatar from "@/assets/images/userAvatar.png";
 import Loader from "@/components/Loader";
+import NameWithTooltip from "@/components/NameWithTooltip";
 import LocationIcon from "@/components/icons/LocationIcon";
 import RevertRequestIcon from "@/components/icons/RevertRequestIcon";
 import axiosInstance from "@/config/axios";
 import { get, size } from "lodash-es";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Tooltip } from "react-tooltip";
 
 const SentRequests = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,29 +69,7 @@ const SentRequests = () => {
               </div>
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
-                  {fullName.length > 7 ? (
-                    <Fragment>
-                      <p
-                        className="text-primary-silver text-base font-semibold truncate max-w-[100px] text-center"
-                        data-tooltip-id={`tooltip-${index}`}
-                      >
-                        {fullName.length > 7
-                          ? `${fullName.slice(0, 7)}...`
-                          : fullName}
-                      </p>
-                      <Tooltip
-                        id={`tooltip-${index}`}
-                        place="top"
-                        effect="solid"
-                      >
-                        {fullName}
-                      </Tooltip>
-                    </Fragment>
-                  ) : (
-                    <span className="text-primary-silver text-base font-semibold text-center">
-                      {fullName}
-                    </span>
-                  )}
+                  <NameWithTooltip name={fullName} index={index} />
                   <div className="flex items-center gap-1">
                     <LocationIcon />
                     <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">

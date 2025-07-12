@@ -16,6 +16,9 @@ import { feedData, indianStatesMap } from "./feedData";
 const Feed = () => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(1);
+  const [prevUser, setPrevUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [nextUser, setNextUser] = useState(null);
   const [feedUsers, setFeedUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [prevArrowColor, setPrevArrowColor] = useState("#C7C2C2");
@@ -57,6 +60,12 @@ const Feed = () => {
     // TODO: Add API call to bookmark the user
     alert("User bookmarked!");
   };
+
+  useEffect(() => {
+    setPrevUser(feedUsers[currentIndex - 1]);
+    setCurrentUser(feedUsers[currentIndex]);
+    setNextUser(feedUsers[currentIndex + 1]);
+  }, [currentIndex, feedUsers]);
 
   useEffect(() => {
     const fetchFeedData = async () => {
@@ -121,14 +130,14 @@ const Feed = () => {
             >
               <div className="h-[10rem] border-2 border-primary-dark rounded-custom-xs object-cover overflow-hidden">
                 <img
-                  src={feedUsers[currentIndex - 1]?.avatar || userAvatar}
+                  src={prevUser?.avatar || userAvatar}
                   alt="Friend"
                   className="w-56 h-56 rounded-xl"
                 />
               </div>
               <div className="flex justify-between">
                 <p className="text-center text-primary-dark font-bold text-lg">
-                  {feedUsers[currentIndex - 1]?.firstName}
+                  {prevUser?.firstName}
                 </p>
                 <div className="flex items-center gap-1">
                   <LocationIcon
@@ -137,26 +146,24 @@ const Feed = () => {
                     styles={{ paddingBottom: "0.2rem" }}
                   />
                   <p className="text-primary-dark">
-                    {indianStatesMap[feedUsers[currentIndex - 1]?.location]}
+                    {indianStatesMap[prevUser?.location]}
                   </p>
                 </div>
               </div>
               <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
                 <p className="text-primary-dark">{`${
-                  feedUsers[currentIndex - 1]?.age || 21
+                  prevUser?.age || 21
                 }, `}</p>
-                <p className="text-primary-dark">{`${
-                  feedUsers[currentIndex - 1]?.gender
-                }`}</p>
+                <p className="text-primary-dark">{`${prevUser?.gender}`}</p>
               </div>
               <div className="buttons flex gap-8 mt-4 justify-center">
-                <div className="p-2 bg-primary-pink hover:bg-primary-pink-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-pink rounded-full border-xs border-primary-dark cursor-pointer">
                   <RejectRequestIcon size="26" />
                 </div>
-                <div className="p-2 bg-primary-cyan hover:bg-primary-cyan-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-cyan rounded-full border-xs border-primary-dark cursor-pointer">
                   <BookmarkRequestUserIcon size="26" />
                 </div>
-                <div className="p-2 bg-primary-green hover:bg-primary-green-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-green rounded-full border-xs border-primary-dark cursor-pointer">
                   <AcceptRequestIcon size="26" />
                 </div>
               </div>
@@ -178,7 +185,7 @@ const Feed = () => {
             </div>
             <div className="flex justify-between">
               <p className="text-center text-primary-dark font-bold text-lg">
-                {feedUsers[currentIndex]?.firstName}
+                {currentUser?.firstName}
               </p>
               <div className="flex items-center gap-1">
                 <LocationIcon
@@ -187,35 +194,35 @@ const Feed = () => {
                   styles={{ paddingBottom: "0.2rem" }}
                 />
                 <p className="text-primary-dark">
-                  {indianStatesMap[feedUsers[currentIndex]?.location]}
+                  {indianStatesMap[currentUser?.location]}
                 </p>
               </div>
             </div>
             <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
               <p className="text-primary-dark">{`${
-                feedUsers[currentIndex]?.age || 21
+                currentUser?.age || 21
               }, `}</p>
-              <p className="text-primary-dark">{`${feedUsers[currentIndex]?.gender}`}</p>
+              <p className="text-primary-dark">{`${currentUser?.gender}`}</p>
             </div>
             <div className="buttons flex gap-8 mt-4 justify-center">
               <button
                 type="button"
                 className="p-2 bg-primary-pink hover:bg-primary-pink-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleRejectClick(feedUsers[currentIndex]?.id)}
+                onClick={() => handleRejectClick(currentUser?.id)}
               >
                 <RejectRequestIcon size="26" />
               </button>
               <button
                 type="button"
                 className="p-2 bg-primary-cyan hover:bg-primary-cyan-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleBookmarkClick(feedUsers[currentIndex]?.id)}
+                onClick={() => handleBookmarkClick(currentUser?.id)}
               >
                 <BookmarkRequestUserIcon size="26" />
               </button>
               <button
                 type="button"
                 className="p-2 bg-primary-green hover:bg-primary-green-70 rounded-full border-xs border-primary-dark cursor-pointer"
-                onClick={() => handleAcceptClick(feedUsers[currentIndex]?.id)}
+                onClick={() => handleAcceptClick(currentUser?.id)}
               >
                 <AcceptRequestIcon size="26" />
               </button>
@@ -231,14 +238,14 @@ const Feed = () => {
             >
               <div className="h-[10rem] border-2 border-primary-dark rounded-custom-xs object-cover overflow-hidden">
                 <img
-                  src={feedUsers[currentIndex + 1]?.avatar || userAvatar}
+                  src={nextUser?.avatar || userAvatar}
                   alt="Friend"
                   className="w-56 h-56 rounded-xl"
                 />
               </div>
               <div className="flex justify-between">
                 <p className="text-center text-primary-dark font-bold text-lg">
-                  {feedUsers[currentIndex + 1]?.firstName}
+                  {nextUser?.firstName}
                 </p>
                 <div className="flex items-center gap-1">
                   <LocationIcon
@@ -247,26 +254,24 @@ const Feed = () => {
                     styles={{ paddingBottom: "0.2rem" }}
                   />
                   <p className="text-primary-dark">
-                    {indianStatesMap[feedUsers[currentIndex + 1]?.location]}
+                    {indianStatesMap[nextUser?.location]}
                   </p>
                 </div>
               </div>
               <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
                 <p className="text-primary-dark">{`${
-                  feedUsers[currentIndex + 1]?.age || 21
+                  nextUser?.age || 21
                 }, `}</p>
-                <p className="text-primary-dark">{`${
-                  feedUsers[currentIndex + 1]?.gender
-                }`}</p>
+                <p className="text-primary-dark">{`${nextUser?.gender}`}</p>
               </div>
               <div className="buttons flex gap-8 mt-4 justify-center">
-                <div className="p-2 bg-primary-pink hover:bg-primary-pink-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-pink rounded-full border-xs border-primary-dark cursor-pointer">
                   <RejectRequestIcon size="26" />
                 </div>
-                <div className="p-2 bg-primary-cyan hover:bg-primary-cyan-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-cyan rounded-full border-xs border-primary-dark cursor-pointer">
                   <BookmarkRequestUserIcon size="26" />
                 </div>
-                <div className="p-2 bg-primary-green hover:bg-primary-green-70 rounded-full border-xs border-primary-dark cursor-pointer">
+                <div className="p-2 bg-primary-green rounded-full border-xs border-primary-dark cursor-pointer">
                   <AcceptRequestIcon size="26" />
                 </div>
               </div>

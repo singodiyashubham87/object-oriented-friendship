@@ -6,6 +6,18 @@ import { Bookmark, User } from "../../db/schema/index.js";
 const createBookmark = async (payload) => {
   const { bookmarkedId, bookmarkerId } = payload;
 
+  const [existing] = await db
+    .select()
+    .from(Bookmark)
+    .where(
+      and(
+        eq(Bookmark.bookmarkerId, bookmarkerId),
+        eq(Bookmark.bookmarkedId, bookmarkedId),
+      ),
+    );
+
+  if (existing) throw new Error("User already bookmarked!");
+
   const [bookmark] = await db
     .insert(Bookmark)
     .values({

@@ -10,13 +10,13 @@ router.post(
 );
 
 router.put(
-  "/accept/:requestId",
+  "/accept/:userId",
   [isValidUser],
   requestController.acceptConnectionRequest,
 );
 
 router.put(
-  "/reject/:requestId",
+  "/reject/:userId",
   [isValidUser],
   requestController.rejectConnectionRequest,
 );

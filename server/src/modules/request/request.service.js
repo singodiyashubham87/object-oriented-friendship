@@ -33,7 +33,13 @@ const acceptRequest = async (payload) => {
       status: REQUEST_STATUS.ACCEPTED,
       updatedAt: dayjs().toDate(),
     })
-    .where(eq(Request.id, payload.requestId))
+    .where(
+      and(
+        eq(Request.senderId, payload.senderId),
+        eq(Request.receiverId, payload.receiverId),
+        eq(Request.status, REQUEST_STATUS.PENDING),
+      ),
+    )
     .returning();
 
   return request;
@@ -46,7 +52,13 @@ const rejectRequest = async (payload) => {
       status: REQUEST_STATUS.REJECTED,
       updatedAt: dayjs().toDate(),
     })
-    .where(eq(Request.id, payload.requestId))
+    .where(
+      and(
+        eq(Request.senderId, payload.senderId),
+        eq(Request.receiverId, payload.receiverId),
+        eq(Request.status, REQUEST_STATUS.PENDING),
+      ),
+    )
     .returning();
 
   return request;

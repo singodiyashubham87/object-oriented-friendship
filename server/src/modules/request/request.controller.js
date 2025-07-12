@@ -26,17 +26,17 @@ const sendConnectionRequest = async (req, res) => {
 
 const acceptConnectionRequest = async (req, res) => {
   try {
-    const requestId = req.params.requestId;
+    const senderId = req.params.userId;
+    const receiverId = req.user.id;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      requestId,
+      senderId,
+      receiverId,
     });
 
     const request = await requestService.acceptRequest(validatedData);
 
-    if (!request) {
-      throw new Error("Failed to accept request");
-    }
+    if (!request) throw new Error("Failed to accept request");
 
     return Response.created(res, "Request accepted successfully");
   } catch (error) {
@@ -50,17 +50,17 @@ const acceptConnectionRequest = async (req, res) => {
 
 const rejectConnectionRequest = async (req, res) => {
   try {
-    const requestId = req.params.requestId;
+    const senderId = req.params.userId;
+    const receiverId = req.user.id;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      requestId,
+      senderId,
+      receiverId,
     });
 
     const request = await requestService.rejectRequest(validatedData);
 
-    if (!request) {
-      throw new Error("Failed to reject request");
-    }
+    if (!request) throw new Error("Failed to reject request");
 
     return Response.created(res, "Request rejected successfully");
   } catch (error) {

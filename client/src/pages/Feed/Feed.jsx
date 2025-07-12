@@ -4,6 +4,7 @@ import FeedNextArrowIcon from "@/components/icons/FeedNextArrowIcon";
 import FeedPrevArrowIcon from "@/components/icons/FeedPrevArrowIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import axiosInstance from "@/config/axios";
+import { getErrorMessage } from "@/utils/common";
 import { get, size } from "lodash-es";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,19 +45,78 @@ const Feed = () => {
     navigate(`/profile/${feedData[currentIndex]?.id}`);
   };
 
-  const handleRejectClick = () => {
-    // TODO: Add API call to reject the request
-    alert("Request rejected!");
+  const handleAcceptClick = async () => {
+    try {
+      setIsLoading(true);
+
+      const userId = currentUser?.id;
+      const res = await axiosInstance.put(`/request/accept/${userId}`);
+
+      if (res.status === 200 || res.status === 201) {
+        toast.success(`${currentUser?.firstName || "User"} accepted!`);
+
+        const updatedUsers = feedUsers.filter((user) => user.id !== userId);
+
+        setFeedUsers(updatedUsers);
+        setCurrentIndex((prev) => Math.min(prev, updatedUsers.length - 1));
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch (error) {
+      toast.error(`Error: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleAcceptClick = () => {
-    // TODO: Add API call to accept the request
-    alert("Request accepted!");
+  const handleRejectClick = async () => {
+    try {
+      setIsLoading(true);
+
+      const userId = currentUser?.id;
+      const res = await axiosInstance.put(`/request/reject/${userId}`);
+
+      if (res.status === 200 || res.status === 201) {
+        toast.success(`${currentUser?.firstName || "User"} rejected.`);
+
+        const updatedUsers = feedUsers.filter((user) => user.id !== userId);
+
+        setFeedUsers(updatedUsers);
+        setCurrentIndex((prev) => Math.min(prev, updatedUsers.length - 1));
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch (error) {
+      toast.error(`Error: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleBookmarkClick = () => {
-    // TODO: Add API call to bookmark the user
-    alert("User bookmarked!");
+  const handleBookmarkClick = async () => {
+    try {
+      setIsLoading(true);
+
+      const userId = currentUser?.id;
+      const firstName = currentUser?.firstName || "User";
+
+      const res = await axiosInstance.post(`/bookmark/${userId}`);
+
+      if (res.status === 200 || res.status === 201) {
+        const updatedUsers = feedUsers.map((user) =>
+          user.id === userId ? { ...user, isBookmarked: true } : user,
+        );
+
+        setFeedUsers(updatedUsers);
+        toast.success(`${firstName} bookmarked!`);
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch (error) {
+      toast.error(`Error: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -72,7 +132,12 @@ const Feed = () => {
         const res = await axiosInstance.get("/user/feed");
         const feedUsers = get(res, "data.data.feed", []);
 
-        setFeedUsers(feedUsers);
+        const transformedUsers = feedUsers.map((user) => ({
+          ...user,
+          isBookmarked: false,
+        }));
+
+        setFeedUsers(transformedUsers);
       } catch (error) {
         toast.error("Failed to fetch feed data.");
       } finally {
@@ -154,7 +219,7 @@ const Feed = () => {
                 }, `}</p>
                 <p className="text-primary-dark">{`${prevUser?.gender}`}</p>
               </div>
-              <FeedCardActions />
+              <FeedCardActions isBookmarked={prevUser?.isBookmarked} />
             </div>
           )}
 
@@ -193,9 +258,10 @@ const Feed = () => {
               <p className="text-primary-dark">{`${currentUser?.gender}`}</p>
             </div>
             <FeedCardActions
-              onReject={() => handleRejectClick(currentUser?.id)}
-              onBookmark={() => handleBookmarkClick(currentUser?.id)}
-              onAccept={() => handleAcceptClick(currentUser?.id)}
+              onReject={handleRejectClick}
+              onBookmark={handleBookmarkClick}
+              onAccept={handleAcceptClick}
+              isBookmarked={currentUser?.isBookmarked}
             />
           </div>
 
@@ -234,7 +300,7 @@ const Feed = () => {
                 }, `}</p>
                 <p className="text-primary-dark">{`${nextUser?.gender}`}</p>
               </div>
-              <FeedCardActions />
+              <FeedCardActions isBookmarked={nextUser?.isBookmarked} />
             </div>
           )}
         </div>

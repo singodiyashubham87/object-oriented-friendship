@@ -96,28 +96,28 @@ const seedUserProfile = async () => {
     const allUsers = await db.select().from(User);
 
     // Fetch avatar URLs from RandomUser.me
-    const response = await fetch(
-      `https://randomuser.me/api/?results=${allUsers.length}&inc=picture,gender`,
-    );
-    const data = await response.json();
-    const avatars = data.results.map((result) => ({
-      url: result.picture.large,
-      gender: result.gender, // 'male' or 'female'
-    }));
+    // const response = await fetch(
+    //   `https://randomuser.me/api/?results=${allUsers.length}&inc=picture,gender`,
+    // );
+    // const data = await response.json();
+    // const avatars = data.results.map((result) => ({
+    //   url: result.picture.large,
+    //   gender: result.gender, // 'male' or 'female'
+    // }));
 
     // Update each user with a matching avatar URL
     for (let i = 0; i < allUsers.length; i++) {
       const user = allUsers[i];
-      // Find an avatar with matching gender, if possible
-      const avatar =
-        avatars.find((a) =>
-          user.gender === "M" ? a.gender === "male" : a.gender === "female",
-        ) || avatars[i]; // Fallback to any avatar if no match
+
+      const avatarUrl =
+        user.gender === "M"
+          ? `https://randomuser.me/api/portraits/men/${i}.jpg`
+          : `https://randomuser.me/api/portraits/women/${i}.jpg`;
 
       const updatedUser = await db
         .update(User)
         .set({
-          avatar: avatar.url,
+          avatar: avatarUrl,
           updatedAt: dayjs().toDate(),
         })
         .where(eq(User.id, user.id))
@@ -133,6 +133,6 @@ const seedUserProfile = async () => {
 };
 
 // Execute seeding functions
-Promise.all([seedUser()]).then(() => {
+Promise.all([seedUserProfile()]).then(() => {
   console.log("All seeding completed");
 });

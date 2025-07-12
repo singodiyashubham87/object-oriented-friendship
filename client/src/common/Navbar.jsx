@@ -1,5 +1,6 @@
 import logo from "@/assets/images/oof-logo.png";
 import profileImage from "@/assets/images/profile.png";
+import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
 import RequestButtons from "@/components/RequestButtons";
 import BookmarkIcon from "@/components/icons/BookmarkIcon";
@@ -9,30 +10,41 @@ import LogoutIcon from "@/components/icons/LogoutIcon";
 import RequestsIcon from "@/components/icons/RequestsIcon";
 import axiosInstance from "@/config/axios";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const handleLogout = async () => {
-  try {
-    await axiosInstance.post("/user/logout");
-    localStorage.removeItem("user");
-  } catch (error) {
-    toast.error(
-      `❗Error: ${error.response?.data?.error_message || error.message}`,
-    );
-  }
-};
 
 const Navbar = () => {
   const location = useLocation();
-  // location.pathname.split('-')[0].slice(1) => /sent-requests => sent
-  const requestRouteName = location.pathname.split("-")[0].slice(1);
+  const navigate = useNavigate();
+  const requestRouteName = location.pathname.split("-")[0].slice(1); // e.g., "/received-requests" => "received"
   const isReceivedRoute = requestRouteName === "received";
   const isSentRoute = requestRouteName === "sent";
   const [hoveredIcon, setHoveredIcon] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoading(true);
+      await axiosInstance.post("/user/logout");
+      localStorage.removeItem("user");
+      navigate("/login");
+    } catch (error) {
+      toast.error(
+        `❗Error: ${error.response?.data?.error_message || error.message}`,
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const leftNavIcons = [
-    { href: "/login", Icon: LogoutIcon, name: "logout", onClick: handleLogout },
+    {
+      href: "/login",
+      Icon: LogoutIcon,
+      name: "logout",
+      onClick: handleLogout,
+      isAppRoute: false,
+    },
     { href: "/friends", Icon: FriendsIcon, name: "friends" },
     { href: "/messages", Icon: InboxIcon, name: "inbox" },
   ];
@@ -40,6 +52,8 @@ const Navbar = () => {
   const rightNavIcons = [
     { href: "/bookmark", Icon: BookmarkIcon, name: "bookmark" },
   ];
+
+  if (isLoading) return <Loader />;
 
   return (
     <nav className="w-full bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s blur-76 backdrop-blur-76">
@@ -53,6 +67,9 @@ const Navbar = () => {
               iconName={icon.name}
               hoveredIcon={hoveredIcon}
               onClick={icon.onClick}
+              isAppRoute={
+                icon.isAppRoute !== undefined ? icon.isAppRoute : true
+              }
               setHoveredIcon={setHoveredIcon}
               isActive={location.pathname === icon.href}
             />

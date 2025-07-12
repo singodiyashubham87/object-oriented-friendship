@@ -4,7 +4,7 @@ import ConnectionRequestIcon from "@/components/icons/ConnectionRequestIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import axiosInstance from "@/config/axios";
 import { get, size } from "lodash-es";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
 
@@ -18,10 +18,6 @@ const Bookmark = () => {
       try {
         const res = await axiosInstance.get("/bookmark");
         const bookmarkedFriends = get(res, "data.data.bookmarkedUsers", []);
-
-        if (!size(bookmarkedFriends)) {
-          toast.error("No bookmarked friends found");
-        }
 
         setBookmarkedFriends(bookmarkedFriends);
       } catch (error) {
@@ -47,6 +43,7 @@ const Bookmark = () => {
       </div>
     );
   }
+
   return (
     <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
       <div className="flex justify-center h-1/5">
@@ -73,7 +70,7 @@ const Bookmark = () => {
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   {size(fullName) > 7 ? (
-                    <>
+                    <Fragment>
                       <p
                         className="text-primary-silver text-base font-semibold truncate max-w-[100px] text-center"
                         data-tooltip-id={`tooltip-${index}`}
@@ -89,7 +86,7 @@ const Bookmark = () => {
                       >
                         {fullName}
                       </Tooltip>
-                    </>
+                    </Fragment>
                   ) : (
                     <span className="text-primary-silver text-base font-semibold text-center">
                       {friend.name}

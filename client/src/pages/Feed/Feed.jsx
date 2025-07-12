@@ -65,11 +65,6 @@ const Feed = () => {
         const res = await axiosInstance.get("/user/feed");
         const feedUsers = get(res, "data.data.feed", []);
 
-        if (!size(feedUsers)) {
-          toast.error("No users found in the feed.");
-          return;
-        }
-
         setFeedUsers(feedUsers);
       } catch (error) {
         toast.error("Failed to fetch feed data.");

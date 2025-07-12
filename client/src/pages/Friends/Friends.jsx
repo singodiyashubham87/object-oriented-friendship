@@ -4,7 +4,7 @@ import LocationIcon from "@/components/icons/LocationIcon";
 import MessageIcon from "@/components/icons/MessageIcon";
 import axiosInstance from "@/config/axios";
 import { get, size } from "lodash-es";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
@@ -30,11 +30,6 @@ const Friends = () => {
       try {
         const res = await axiosInstance.get("/user/friends");
         const friends = get(res, "data.data.friends", []);
-
-        if (!size(friends)) {
-          toast.error("No friends found");
-        }
-
         setFriends(friends);
       } catch (error) {
         toast.error("Failed to fetch friends");
@@ -88,7 +83,7 @@ const Friends = () => {
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   {fullName.length > 7 ? (
-                    <>
+                    <Fragment>
                       <p
                         className="text-primary-silver text-base font-semibold truncate max-w-[100px] text-center"
                         data-tooltip-id={`tooltip-${index}`}
@@ -104,7 +99,7 @@ const Friends = () => {
                       >
                         {fullName}
                       </Tooltip>
-                    </>
+                    </Fragment>
                   ) : (
                     <span className="text-primary-silver text-base font-semibold text-center">
                       {fullName}

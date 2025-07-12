@@ -1,6 +1,6 @@
-import userAvatar from "@/assets/images/userAvatar.png";
 import Loader from "@/components/Loader";
 import NameWithTooltip from "@/components/NameWithTooltip";
+import UserAvatar from "@/components/UserAvatar";
 import ConnectionRequestIcon from "@/components/icons/ConnectionRequestIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import axiosInstance from "@/config/axios";
@@ -60,13 +60,7 @@ const Bookmark = () => {
               key={friend.id}
               className="flex flex-col gap-2 items-center justify-stretch bg-dark-glassmorphism-70 rounded-custom-xs p-4 shadow-lg border-2 border-primary-gray-30"
             >
-              <div className="w-24 border-2 border-primary-gray-30 overflow-hidden rounded-full">
-                <img
-                  src={friend.avatar || userAvatar}
-                  alt="user-avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <UserAvatar avatarUrl={friend.avatar} />
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   <NameWithTooltip name={fullName} index={index} />

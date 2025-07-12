@@ -1,6 +1,6 @@
-import userAvatar from "@/assets/images/userAvatar.png";
 import Loader from "@/components/Loader";
 import NameWithTooltip from "@/components/NameWithTooltip";
+import UserAvatar from "@/components/UserAvatar";
 import AcceptRequestIcon from "@/components/icons/AcceptRequestIcon";
 import BookmarkRequestUserIcon from "@/components/icons/BookmarkRequestUserIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
@@ -62,13 +62,7 @@ const ReceivedRequests = () => {
               key={user.id}
               className="flex flex-col gap-2 items-center justify-stretch bg-dark-glassmorphism-70 rounded-custom-xs p-4 shadow-lg border-2 border-primary-gray-30"
             >
-              <div className="w-20 border-2 border-primary-gray-30 overflow-hidden rounded-full">
-                <img
-                  src={user.avatar || userAvatar}
-                  alt="user-avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <UserAvatar avatarUrl={user.avatar} />
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   <NameWithTooltip name={fullName} index={index} />

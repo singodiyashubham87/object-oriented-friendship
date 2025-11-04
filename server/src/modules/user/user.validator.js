@@ -54,18 +54,10 @@ const validateForUpdate = async (payload) => {
 
 const validateForLogin = (payload) => {
   const loginSchema = Joi.object({
-    username_or_email: Joi.alternatives()
-      .try(
-        baseUserSchemaFields.email,
-        Joi.string()
-          .regex(/^[a-zA-Z0-9_]{3,}$/)
-          .message(
-            "Username must be at least 3 characters long and can only contain letters, numbers, and underscores",
-          ),
-      )
-      .required(),
+    email: baseUserSchemaFields.email.optional(),
+    user_name: baseUserSchemaFields.user_name.optional(),
     password: baseUserSchemaFields.password.required(),
-  });
+  }).or("email", "user_name");
 
   return loginSchema.validateAsync(payload);
 };

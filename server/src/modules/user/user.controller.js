@@ -212,6 +212,26 @@ const getUserFeed = async (req, res) => {
   }
 };
 
+const searchUsers = async (req, res) => {
+  try {
+    const query = req.query.q;
+
+    if (!query) {
+      return Response.badRequest(res, "Query parameter 'q' is required");
+    }
+
+    const users = await userService.searchUsers(query);
+
+    if (!users) {
+      return Response.notFound(res, "No users found");
+    }
+
+    return Response.success(res, "Users fetched successfully", { users });
+  } catch (error) {
+    return Response.exception(res, "Failed to search users", error);
+  }
+};
+
 export {
   register,
   login,
@@ -225,4 +245,5 @@ export {
   getFriends,
   unfriend,
   getUserFeed,
+  searchUsers,
 };

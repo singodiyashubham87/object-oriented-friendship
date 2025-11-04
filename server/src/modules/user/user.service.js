@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { and, eq, inArray, ne, notInArray, or } from "drizzle-orm";
+import { and, eq, ilike, inArray, ne, notInArray, or, sql } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
 import { Request, User } from "../../db/schema/index.js";
@@ -34,7 +34,9 @@ const register = async (payload) => {
     userName: payload.user_name,
     email: payload.email,
     password: hashedPassword,
-    profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(payload.user_name)}`,
+    profilePic: `${BASE_PLACEHOLDER_IMG_URL}?seed=${encodeURIComponent(
+      payload.user_name,
+    )}`,
     createdAt: dayjs().toDate(),
     updatedAt: dayjs().toDate(),
   };
@@ -48,15 +50,19 @@ const register = async (payload) => {
 };
 
 const login = async (payload) => {
-  const [user] = await db
-    .select()
-    .from(User)
-    .where(
-      or(
-        eq(User.userName, payload.username_or_email),
-        eq(User.email, payload.username_or_email),
-      ),
-    );
+  const { user_name, email } = payload;
+
+  let condition;
+  if (user_name && email) {
+    condition = or(eq(User.userName, user_name), eq(User.email, email));
+  } else if (user_name) {
+    condition = eq(User.userName, user_name);
+  } else if (email) {
+    condition = eq(User.email, email);
+  }
+
+  const [user] = await db.select().from(User).where(condition);
+
   if (!user) {
     throw new Error("User not found");
   }
@@ -231,6 +237,25 @@ const getUserFeed = async (userId) => {
   return feed;
 };
 
+const searchUsers = async (query) => {
+  const users = await db
+    .select()
+    .from(User)
+    .where(
+      or(
+        ilike(User.firstName, `%${query}%`),
+        ilike(User.lastName, `%${query}%`),
+        ilike(User.userName, `%${query}%`),
+        sql`EXISTS (
+        SELECT 1 FROM unnest(${User.skills}) AS skill
+        WHERE skill ILIKE ${`%${query}%`}
+      )`,
+      ),
+    );
+
+  return users;
+};
+
 export {
   register,
   login,
@@ -241,4 +266,5 @@ export {
   getFriends,
   unfriend,
   getUserFeed,
+  searchUsers,
 };

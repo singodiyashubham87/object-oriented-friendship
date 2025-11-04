@@ -29,7 +29,7 @@
 
 ## 🔍 Discovery & Feed
 - [x] GET `/api/user/feed` — Discover new people
-- [ ] GET `/api/user/search?q=javascript` — Search users by tech, name, skills
+- [x] GET `/api/user/search?q=javascript` — Search users by tech, name, skills
 
 ## 💬 Chat & Messaging
 - [ ] GET `/api/chat` — Get all chat rooms for logged-in user

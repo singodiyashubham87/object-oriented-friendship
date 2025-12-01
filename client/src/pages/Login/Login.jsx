@@ -1,6 +1,6 @@
 import logo from "@/assets/images/oof-logo.png";
-import axiosInstance from "@/config/axios";
 import { userNameRegex } from "@/config/regex";
+import { authAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -34,8 +34,8 @@ const Login = () => {
     };
 
     try {
-      const user = await axiosInstance.post("/user/login", loginData);
-      const firstName = user.data?.data?.user?.firstName || "User";
+      const response = await authAPI.login(loginData);
+      const firstName = response.data?.data?.user?.firstName || "User";
       toast.success(`🎉 Welcome back, ${firstName}!`);
       navigate("/feed");
     } catch (error) {

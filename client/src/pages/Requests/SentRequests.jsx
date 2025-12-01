@@ -3,7 +3,8 @@ import NameWithTooltip from "@/components/NameWithTooltip";
 import UserAvatar from "@/components/UserAvatar";
 import LocationIcon from "@/components/icons/LocationIcon";
 import RevertRequestIcon from "@/components/icons/RevertRequestIcon";
-import axiosInstance from "@/config/axios";
+import { requestAPI } from "@/services/api";
+import { getErrorMessage } from "@/utils/common";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -13,22 +14,32 @@ const SentRequests = () => {
   const [requestedUsers, setRequestedUsers] = useState([]);
 
   useEffect(() => {
-    const fetchRequestedUsers = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axiosInstance.get("/request/sent");
-        const requestedUsers = get(res, "data.data.requests", []);
-
-        setRequestedUsers(requestedUsers);
-      } catch (error) {
-        toast.error("Failed to fetch sent requests");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchRequestedUsers();
   }, []);
+
+  const fetchRequestedUsers = async () => {
+    setIsLoading(true);
+    try {
+      const res = await requestAPI.getSentRequests();
+      const requests = get(res, "data.data.requests", []);
+      setRequestedUsers(requests);
+    } catch (error) {
+      toast.error(`Failed to fetch sent requests: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelRequest = async (requestId, userName) => {
+    try {
+      await requestAPI.cancelRequest(requestId);
+      toast.success(`Request to ${userName} cancelled`);
+      // Remove from list
+      setRequestedUsers((prev) => prev.filter((req) => req.id !== requestId));
+    } catch (error) {
+      toast.error(`Failed to cancel request: ${getErrorMessage(error)}`);
+    }
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -71,7 +82,14 @@ const SentRequests = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer">
+                <div
+                  className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer"
+                  onClick={() => handleCancelRequest(user.requestId, fullName)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter")
+                      handleCancelRequest(user.requestId, fullName);
+                  }}
+                >
                   <RevertRequestIcon size={16} />
                   <button
                     type="button"

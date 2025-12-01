@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import Loader from "../components/Loader.jsx";
-import axios from "../config/axios.js";
+import { authAPI } from "../services/api.js";
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const res = await axios.get("/user/verify");
+        const res = await authAPI.verifyToken();
         const user = res.data?.data?.user;
         if (!user) {
           throw new Error("User not found");

@@ -3,7 +3,7 @@ import Loader from "@/components/Loader";
 import FeedNextArrowIcon from "@/components/icons/FeedNextArrowIcon";
 import FeedPrevArrowIcon from "@/components/icons/FeedPrevArrowIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
-import axiosInstance from "@/config/axios";
+import { bookmarkAPI, requestAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { get, size } from "lodash-es";
 import { useEffect, useState } from "react";
@@ -35,6 +35,7 @@ const Feed = () => {
       setCurrentIndex(currentIndex - 1);
     }
   };
+
   const handleProfileClick = (e) => {
     e.preventDefault();
     const tagName = e.target.tagName.toLowerCase();
@@ -50,7 +51,7 @@ const Feed = () => {
       setIsLoading(true);
 
       const userId = currentUser?.id;
-      const res = await axiosInstance.put(`/request/accept/${userId}`);
+      const res = await requestAPI.acceptRequest(userId);
 
       if (res.status === 200 || res.status === 201) {
         toast.success(`${currentUser?.firstName || "User"} accepted!`);
@@ -74,7 +75,7 @@ const Feed = () => {
       setIsLoading(true);
 
       const userId = currentUser?.id;
-      const res = await axiosInstance.put(`/request/reject/${userId}`);
+      const res = await requestAPI.rejectRequest(userId);
 
       if (res.status === 200 || res.status === 201) {
         toast.success(`${currentUser?.firstName || "User"} rejected.`);
@@ -100,7 +101,7 @@ const Feed = () => {
       const userId = currentUser?.id;
       const firstName = currentUser?.firstName || "User";
 
-      const res = await axiosInstance.post(`/bookmark/${userId}`);
+      const res = await bookmarkAPI.addBookmark(userId);
 
       if (res.status === 200 || res.status === 201) {
         const updatedUsers = feedUsers.map((user) =>
@@ -129,7 +130,7 @@ const Feed = () => {
     const fetchFeedData = async () => {
       setIsLoading(true);
       try {
-        const res = await axiosInstance.get("/user/feed");
+        const res = await userAPI.getUserFeed();
         const feedUsers = get(res, "data.data.feed", []);
 
         const transformedUsers = feedUsers.map((user) => ({

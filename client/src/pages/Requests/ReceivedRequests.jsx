@@ -5,7 +5,8 @@ import AcceptRequestIcon from "@/components/icons/AcceptRequestIcon";
 import BookmarkRequestUserIcon from "@/components/icons/BookmarkRequestUserIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import RejectRequestIcon from "@/components/icons/RejectRequestIcon";
-import axiosInstance from "@/config/axios";
+import { bookmarkAPI, requestAPI } from "@/services/api";
+import { getErrorMessage } from "@/utils/common";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -15,22 +16,54 @@ const ReceivedRequests = () => {
   const [pendingRequests, setPendingRequests] = useState([]);
 
   useEffect(() => {
-    const fetchPendingRequests = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axiosInstance.get("/request/pending");
-        const pendingRequests = get(res, "data.data.requests", []);
-
-        setPendingRequests(pendingRequests);
-      } catch (error) {
-        toast.error("Failed to fetch pending requests");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchPendingRequests();
   }, []);
+
+  const fetchPendingRequests = async () => {
+    setIsLoading(true);
+    try {
+      const res = await requestAPI.getPendingRequests();
+      const requests = get(res, "data.data.requests", []);
+      setPendingRequests(requests);
+    } catch (error) {
+      toast.error(
+        `Failed to fetch pending requests: ${getErrorMessage(error)}`,
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAcceptRequest = async (requestId, userName) => {
+    try {
+      await requestAPI.acceptRequest(requestId);
+      toast.success(`${userName}'s request accepted!`);
+      // Remove from list
+      setPendingRequests((prev) => prev.filter((req) => req.id !== requestId));
+    } catch (error) {
+      toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
+    }
+  };
+
+  const handleRejectRequest = async (requestId, userName) => {
+    try {
+      await requestAPI.rejectRequest(requestId);
+      toast.success(`${userName}'s request rejected`);
+      // Remove from list
+      setPendingRequests((prev) => prev.filter((req) => req.id !== requestId));
+    } catch (error) {
+      toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
+    }
+  };
+
+  const handleBookmarkUser = async (userId, userName) => {
+    try {
+      await bookmarkAPI.addBookmark(userId);
+      toast.success(`${userName} bookmarked!`);
+    } catch (error) {
+      toast.error(`Failed to bookmark: ${getErrorMessage(error)}`);
+    }
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -74,13 +107,38 @@ const ReceivedRequests = () => {
                   </div>
                 </div>
                 <div className="flex gap-3 items-center justify-evenly py-1 rounded-custom-xs px-4">
-                  <div className="p-sm bg-primary-pink hover:bg-primary-pink-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer">
+                  <div
+                    className="p-sm bg-primary-pink hover:bg-primary-pink-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer"
+                    onClick={() =>
+                      handleRejectRequest(user.requestId, fullName)
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter")
+                        handleRejectRequest(user.requestId, fullName);
+                    }}
+                  >
                     <RejectRequestIcon size="20" />
                   </div>
-                  <div className="p-sm bg-primary-cyan hover:bg-primary-cyan-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer">
+                  <div
+                    className="p-sm bg-primary-cyan hover:bg-primary-cyan-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer"
+                    onClick={() => handleBookmarkUser(user.id, fullName)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter")
+                        handleBookmarkUser(user.id, fullName);
+                    }}
+                  >
                     <BookmarkRequestUserIcon size="20" />
                   </div>
-                  <div className="p-sm bg-primary-green hover:bg-primary-green-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer">
+                  <div
+                    className="p-sm bg-primary-green hover:bg-primary-green-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer"
+                    onClick={() =>
+                      handleAcceptRequest(user.requestId, fullName)
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter")
+                        handleAcceptRequest(user.requestId, fullName);
+                    }}
+                  >
                     <AcceptRequestIcon size="20" />
                   </div>
                 </div>

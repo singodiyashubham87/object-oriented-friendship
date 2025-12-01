@@ -1,25 +1,93 @@
+import Loader from "@/components/Loader";
 import AcceptRequestIcon from "@/components/icons/AcceptRequestIcon";
 import LocationIcon from "@/components/icons/LocationIcon";
 import RejectRequestIcon from "@/components/icons/RejectRequestIcon";
-import React from "react";
-import { FaLinkedin } from "react-icons/fa";
-import { FaGithubSquare } from "react-icons/fa";
+import { requestAPI, userAPI } from "@/services/api";
+import { getErrorMessage } from "@/utils/common";
+import { REQUEST_STATUS } from "@/utils/constants";
+import { get } from "lodash-es";
+import React, { useEffect, useState } from "react";
+import { FaGithubSquare, FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const imageSrc =
-  "https://imgs.search.brave.com/FYmsuChFcB46GmHEP9uO7qHz1b2vSK1YhJWr8s8m7sM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzE4LzA0LzYz/LzM2MF9GXzcxODA0/NjM2NF9rWGtTWGJG/dVZHeHNBNXVxZFlj/S0Q5SllIMlVrTjVi/Ui5qcGc";
 const UserProfile = () => {
-  const userSkills = [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "ReactJS",
-    "NodeJS",
-    "ExpressJS",
-  ];
+  const { userId } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [requestStatus, setRequestStatus] = useState(null);
 
   const skillBadgeStyle =
     "leading-5 bg-primary-dark px-2 py-1 rounded-custom-xxs text-primary-silver";
+
+  useEffect(() => {
+    fetchUserProfile(userId);
+  }, [userId]);
+
+  const fetchUserProfile = async (userId) => {
+    setIsLoading(true);
+    try {
+      const res = await userAPI.getUserById(userId);
+      const user = get(res, "data.data.user", null);
+      setUserData(user);
+
+      // TODO: Fetch request status between current user and this user
+      // For now, we'll assume 'none' - this would need backend support
+      setRequestStatus(REQUEST_STATUS.NONE);
+    } catch (error) {
+      toast.error(`Failed to load user profile: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendRequest = async () => {
+    try {
+      await requestAPI.sendRequest(userId);
+      toast.success(`Connection request sent to ${userData.firstName}!`);
+      setRequestStatus(REQUEST_STATUS.PENDING);
+    } catch (error) {
+      toast.error(`Failed to send request: ${getErrorMessage(error)}`);
+    }
+  };
+
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await requestAPI.acceptRequest(requestId);
+      toast.success(`${userData.firstName}'s request accepted!`);
+      setRequestStatus(REQUEST_STATUS.ACCEPTED);
+    } catch (error) {
+      toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
+    }
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    try {
+      await requestAPI.rejectRequest(requestId);
+      toast.success(`${userData.firstName}'s request rejected`);
+      setRequestStatus(REQUEST_STATUS.NONE);
+    } catch (error) {
+      toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
+    }
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!userData) {
+    return (
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+        <p className="text-primary-silver text-2xl text-center">
+          User not found
+        </p>
+      </div>
+    );
+  }
+
+  const userSkills = userData.skills || [];
+  const fullName = `${userData.firstName} ${userData.lastName || ""}`.trim();
 
   return (
     <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
@@ -32,7 +100,10 @@ const UserProfile = () => {
         <div className="flex justify-evenly gap-4">
           <div className="relative w-64 h-64 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver">
             <img
-              src={imageSrc}
+              src={
+                userData.avatar ||
+                `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(fullName)}`
+              }
               alt="Profile"
               className="w-full h-full object-contain"
             />
@@ -40,31 +111,33 @@ const UserProfile = () => {
           <div className="userInfoAndSocials w-2/3 flex justify-between gap-4 p-8 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s">
             <div className="userInfo flex flex-col gap-3">
               <h3 className="text-2xl leading-5 text-primary-silver font-bold">
-                Shubham Singodiya
+                {fullName}
               </h3>
               <div className="location flex gap-2 items-center">
                 <LocationIcon width="16" height="17" />
                 <p className="text-[18px] text-primary-silver opacity-70 leading-5">
-                  Karnataka, India
+                  {userData.location || "N/A"}
                 </p>
               </div>
-              <button
-                type="button"
-                className="py-[4px] px-[10px] text-primary-silver font-semibold text-sm rounded-full border-2 border-primary-silver hover:bg-primary-silver hover:text-primary-dark"
-              >
-                View Portfolio
-              </button>
+              {userData.age && userData.gender && (
+                <p className="text-primary-silver">
+                  {userData.age} years, {userData.gender}
+                </p>
+              )}
             </div>
             <div className="socials flex flex-col gap-2 justify-end">
               <a
-                href="https://www.google.com"
+                href={`mailto:${userData.email}`}
                 className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
               >
                 <MdEmail size={20} />
                 <span>Email</span>
               </a>
+              {/* GitHub and LinkedIn links would come from user data if available */}
               <a
-                href="https://www.google.com"
+                href="https://www.github.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
               >
                 <FaGithubSquare size={20} />
@@ -72,7 +145,9 @@ const UserProfile = () => {
               </a>
 
               <a
-                href="https://www.google.com"
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
               >
                 <FaLinkedin size={20} />
@@ -80,48 +155,65 @@ const UserProfile = () => {
               </a>
             </div>
           </div>
-          {/* </div> */}
         </div>
 
         <div className="first flex justify-evenly items-center gap-4 ">
-          <button
-            type="button"
-            className="rejectButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
-          >
-            <span className="text-xl uppercase">Reject</span>
-            <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
-              <RejectRequestIcon size="18" />
+          {requestStatus === REQUEST_STATUS.NONE && (
+            <button
+              type="button"
+              className="connectButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-custom-s"
+              onClick={handleSendRequest}
+            >
+              <span className="text-xl uppercase">Send Request</span>
+            </button>
+          )}
+          {requestStatus === REQUEST_STATUS.PENDING && (
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className="rejectButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
+                onClick={() => handleRejectRequest(userData.requestId)}
+              >
+                <span className="text-xl uppercase">Reject</span>
+                <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
+                  <RejectRequestIcon size="18" />
+                </div>
+              </button>
+              <button
+                type="button"
+                className="acceptButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
+                onClick={() => handleAcceptRequest(userData.requestId)}
+              >
+                <span className="text-xl uppercase">Accept</span>
+                <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
+                  <AcceptRequestIcon size="18" />
+                </div>
+              </button>
             </div>
-          </button>
+          )}
+          {requestStatus === REQUEST_STATUS.ACCEPTED && (
+            <div className="text-primary-silver text-xl">
+              ✓ Already connected
+            </div>
+          )}
           <p className="bio px-4 w-2/3 border-2 border-primary-silver text-primary-silver rounded-custom-xs">
-            BIO: Engineer by Choice!
+            BIO: {userData.bio || "No bio available"}
           </p>
         </div>
 
         <div className="second flex justify-evenly gap-4">
-          <button
-            type="button"
-            className="acceptButton flex justify-center items-center gap-4 w-64 bg-primary-light bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
-          >
-            <span className="text-xl uppercase">Accept</span>
-            <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
-              <AcceptRequestIcon size="18" />
-            </div>
-          </button>
-          <div className="skills w-2/3 flex items-center gap-2 bg-primary-silver px-4 rounded-custom-xs">
+          <div className="skills w-full flex items-center gap-2 bg-primary-silver px-4 rounded-custom-xs">
             <p className="text-primary-dark font-bold leading-5">Skills: </p>
-            <ul className="flex gap-2">
-              {userSkills && userSkills.length > 5
-                ? userSkills.map((skill) => (
-                    <li className={skillBadgeStyle} key={skill}>
-                      {skill}
-                    </li>
-                  ))
-                : userSkills.slice(0, 5)?.map((skill) => (
-                    <li className={skillBadgeStyle} key={skill}>
-                      {skill}
-                    </li>
-                  ))}
+            <ul className="flex gap-2 flex-wrap py-2">
+              {userSkills && userSkills.length > 0 ? (
+                userSkills.slice(0, 10).map((skill) => (
+                  <li className={skillBadgeStyle} key={skill}>
+                    {skill}
+                  </li>
+                ))
+              ) : (
+                <li className="text-primary-dark">No skills listed</li>
+              )}
             </ul>
           </div>
         </div>

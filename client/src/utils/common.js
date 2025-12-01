@@ -1,5 +1,19 @@
 export const getErrorMessage = (error) => {
-  const errorMessage = error.response?.data?.error_message || error.message;
+  if (error.response?.data?.error?.message) {
+    return error.response.data.error.message;
+  }
 
-  return errorMessage || "Something went wrong";
+  if (error.response?.data?.error_message) {
+    return error.response.data.error_message;
+  }
+
+  if (error.response?.data?.message) {
+    return error.response.data.message;
+  }
+
+  if (error.message) {
+    return error.message;
+  }
+
+  return "Something went wrong";
 };

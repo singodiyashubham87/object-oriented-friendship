@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import db from "../../db/index.js";
 import { Bookmark, User } from "../../db/schema/index.js";
+import * as userService from "../user/user.service.js";
 
 const createBookmark = async (payload) => {
   const { bookmarkedId, bookmarkerId } = payload;
@@ -47,19 +48,25 @@ const deleteBookmark = async (payload) => {
 };
 
 const getBookmarkedUsers = async (userId) => {
-  const bookmarks = await db
-    .select()
-    .from(Bookmark)
-    .where(eq(Bookmark.bookmarkerId, userId));
+  const friends = await userService.getFriends(userId);
+  const friendIdSet = new Set(friends.map((f) => f.id));
+  const friendIdsArray = Array.from(friendIdSet);
 
-  const bookmarkedUserIdsList = bookmarks.map(
-    (bookmark) => bookmark.bookmarkedId,
-  );
+  let isFriendSql;
+  if (friendIdsArray.length > 0) {
+    isFriendSql = sql`CASE WHEN ${inArray(User.id, friendIdsArray)} THEN true ELSE false END`;
+  } else {
+    isFriendSql = sql`false`;
+  }
 
   const bookmarkedUsers = await db
-    .select()
-    .from(User)
-    .where(inArray(User.id, bookmarkedUserIdsList));
+    .select({
+      ...User,
+      isFriend: isFriendSql,
+    })
+    .from(Bookmark)
+    .leftJoin(User, eq(User.id, Bookmark.bookmarkedId))
+    .where(eq(Bookmark.bookmarkerId, userId));
 
   return bookmarkedUsers;
 };

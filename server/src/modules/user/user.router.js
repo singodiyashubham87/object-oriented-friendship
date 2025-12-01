@@ -4,23 +4,19 @@ import * as userController from "./user.controller.js";
 
 const router = Router();
 
-router.post("/register", userController.register);
-router.post("/login", userController.login);
-router.post("/logout", [isValidUser], userController.logout);
-
 router.put("/update/:id", [isValidUser], userController.updateUser);
 router.delete("/delete/:id", [isValidUser], userController.deleteUser);
 
-router.post("/reset-password", userController.resetPassword);
 router.post("/verify-phone/:id", [isValidUser], userController.verifyPhone);
 
+// Specific GET routes must come BEFORE dynamic /:id route
 router.get("/me", [isValidUser], userController.getCurrentUser);
-
 router.get("/friends", [isValidUser], userController.getFriends);
-router.delete("/unfriend/:friendId", [isValidUser], userController.unfriend);
-
 router.get("/feed", [isValidUser], userController.getUserFeed);
-router.get("/verify", [isValidUser], userController.verifyToken);
 router.get("/search", [isValidUser], userController.searchUsers);
+
+// Dynamic route - must be last among GET routes
+router.get("/:id", [isValidUser], userController.getUserById);
+router.delete("/unfriend/:friendId", [isValidUser], userController.unfriend);
 
 export default router;

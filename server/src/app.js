@@ -4,10 +4,11 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import baseRouter from "./router.js";
+import { errorHandler, notFoundHandler } from "./utils/errorHandler.js";
+import { generalLimiter } from "./utils/rateLimiter.js";
 
 const app = express();
 
-// Middlewares
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -25,7 +26,11 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms"),
 );
 
-// Routes
+app.use("/api/", generalLimiter);
 app.use("/api/", baseRouter);
+
+// Error handlers
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

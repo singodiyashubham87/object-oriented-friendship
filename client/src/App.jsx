@@ -42,7 +42,7 @@ const App = () => {
           <Route path="sent-requests" element={<SentRequests />} />
           <Route path="received-requests" element={<ReceivedRequests />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="profile/:id" element={<UserProfile />} />
+          <Route path="profile/:userId" element={<UserProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

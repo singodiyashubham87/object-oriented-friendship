@@ -46,12 +46,12 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
 
   const initialFormValues = {
-    firstName: userData.firstName || "",
-    lastName: userData.lastName || "",
-    gender: userData.gender || "",
-    age: userData.age || "",
-    phone: userData.phone || "",
-    location: userData.location || "",
+    firstName: userData?.firstName || "",
+    lastName: userData?.lastName || "",
+    gender: userData?.gender || "",
+    age: userData?.age || "",
+    phone: userData?.phone || "",
+    location: userData?.location || "",
   };
 
   const genderOptionsArray = [

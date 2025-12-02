@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { and, eq, ilike, inArray, ne, notInArray, or, sql } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
-import { Request, User } from "../../db/schema/index.js";
+import { Bookmark, Request, User } from "../../db/schema/index.js";
 import { REQUEST_STATUS } from "../../enums/requestStatus.js";
 import { mapUpdateUserDTO } from "./user.dto.js";
 
@@ -136,7 +136,19 @@ const getUserFeed = async (userId) => {
 
   const feed = await db.select().from(User).where(condition);
 
-  return feed;
+  const bookmarks = await db
+    .select({ bookmarkedId: Bookmark.bookmarkedId })
+    .from(Bookmark)
+    .where(eq(Bookmark.bookmarkerId, userId));
+
+  const bookmarkedIds = new Set(bookmarks.map((b) => b.bookmarkedId));
+
+  const feedWithBookmarkStatus = feed.map((user) => ({
+    ...user,
+    isBookmarked: bookmarkedIds.has(user.id),
+  }));
+
+  return feedWithBookmarkStatus;
 };
 
 const searchUsers = async (query) => {

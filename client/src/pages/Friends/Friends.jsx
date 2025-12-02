@@ -19,7 +19,9 @@ const Friends = () => {
 
     return isMessageBtnClicked
       ? navigate("/messages", {
-          state: { id: userId },
+          state: {
+            selectedFriendId: userId,
+          },
         })
       : navigate(`/profile/${userId}`);
   };

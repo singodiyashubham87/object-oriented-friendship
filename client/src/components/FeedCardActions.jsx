@@ -3,11 +3,12 @@ import { Tick03FreeIcons } from "@hugeicons/core-free-icons/index";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
-  const renderAction = (icon, colorClass, handler, fill = "") => {
+  const renderAction = (icon, colorClass, handler, fill = "", title = "") => {
     if (!handler) {
       return (
         <div
           className={`p-2 ${colorClass} rounded-full border-xs border-primary-dark`}
+          title={title}
         >
           <HugeiconsIcon icon={icon} size={26} fill={fill} />
         </div>
@@ -18,6 +19,7 @@ const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
         type="button"
         onClick={handler}
         className={`p-2 ${colorClass} hover:opacity-90 rounded-full border-xs border-primary-dark cursor-pointer`}
+        title={title}
       >
         <HugeiconsIcon icon={icon} size={26} fill={fill} />
       </button>
@@ -26,14 +28,27 @@ const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
 
   return (
     <div className="buttons flex gap-8 mt-4 justify-center">
-      {renderAction(Cancel01FreeIcons, "bg-primary-pink", onReject)}
+      {renderAction(
+        Cancel01FreeIcons,
+        "bg-primary-pink",
+        onReject,
+        "",
+        "Reject",
+      )}
       {renderAction(
         StarIcon,
-        "bg-primary-cyan",
+        isBookmarked ? "bg-yellow-400" : "bg-primary-cyan",
         onBookmark,
-        isBookmarked ? "currentColor" : "",
+        isBookmarked ? "black" : "",
+        isBookmarked ? "Bookmarked" : "Bookmark",
       )}
-      {renderAction(Tick03FreeIcons, "bg-primary-green", onAccept)}
+      {renderAction(
+        Tick03FreeIcons,
+        "bg-primary-green",
+        onAccept,
+        "",
+        "Accept",
+      )}
     </div>
   );
 };

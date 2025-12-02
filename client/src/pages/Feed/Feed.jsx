@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import userAvatar from "../../assets/images/userAvatar.png";
-import { feedData, indianStatesMap } from "./feedData";
+import { indianStatesMap } from "./feedData";
 
 const Feed = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Feed = () => {
   const transitionStyle = "ease-in-out transition-transform duration-300";
 
   const handleNext = () => {
-    if (currentIndex < feedData.length - 1) {
+    if (currentIndex < feedUsers.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -43,7 +43,7 @@ const Feed = () => {
     if (["button", "svg", "path"].includes(tagName)) {
       return;
     }
-    navigate(`/profile/${feedData[currentIndex]?.id}`);
+    navigate(`/profile/${feedUsers[currentIndex]?.id}`);
   };
 
   const handleAcceptClick = async () => {
@@ -133,12 +133,7 @@ const Feed = () => {
         const res = await userAPI.getUserFeed();
         const feedUsers = get(res, "data.data.feed", []);
 
-        const transformedUsers = feedUsers.map((user) => ({
-          ...user,
-          isBookmarked: false,
-        }));
-
-        setFeedUsers(transformedUsers);
+        setFeedUsers(feedUsers);
       } catch (error) {
         toast.error("Failed to fetch feed data.");
       } finally {

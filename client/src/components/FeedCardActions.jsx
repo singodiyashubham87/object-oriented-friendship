@@ -28,13 +28,7 @@ const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
 
   return (
     <div className="buttons flex gap-8 mt-4 justify-center">
-      {renderAction(
-        Cancel01FreeIcons,
-        "bg-primary-pink",
-        onReject,
-        "",
-        "Reject",
-      )}
+      {renderAction(Cancel01FreeIcons, "bg-primary-pink", onReject, "", "Skip")}
       {renderAction(
         StarIcon,
         isBookmarked ? "bg-yellow-400" : "bg-primary-cyan",
@@ -47,7 +41,7 @@ const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
         "bg-primary-green",
         onAccept,
         "",
-        "Accept",
+        "Connect",
       )}
     </div>
   );

@@ -8,6 +8,9 @@ const baseUserSchemaFields = {
   phone: Joi.string(),
   bio: Joi.string(),
   skills: Joi.array().items(Joi.string()),
+  location: Joi.string(),
+  gender: Joi.string(),
+  age: Joi.number(),
 };
 
 const validateForUpdate = async (payload) => {
@@ -19,6 +22,9 @@ const validateForUpdate = async (payload) => {
     phone: baseUserSchemaFields.phone.optional(),
     bio: baseUserSchemaFields.bio.optional(),
     skills: baseUserSchemaFields.skills.optional(),
+    location: baseUserSchemaFields.location.optional(),
+    gender: baseUserSchemaFields.gender.optional(),
+    age: baseUserSchemaFields.age.optional(),
   });
 
   return updateSchema.validateAsync(payload);

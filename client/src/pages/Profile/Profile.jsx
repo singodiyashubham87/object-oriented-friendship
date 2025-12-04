@@ -13,30 +13,56 @@ const imageSrc =
   "https://imgs.search.brave.com/KrIBfwcMYTw5y8uMbjRLirmXFrIp_8-pxvdzPQ6-VX4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vcGljanVt/Ym8uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy9nb3JnZW91cy1z/dW5zZXQtb3Zlci10/aGUtc2VhLWZyZWUt/aW1hZ2UuanBlZz9o/PTgwMCZxdWFsaXR5/PTgw";
 
 const profileSchema = Yup.object().shape({
-  firstName: Yup.string().matches(
-    /^[a-zA-Z]+$/,
-    "Only letters are allowed in first name",
-  ),
-  lastName: Yup.string().matches(
-    /^[a-zA-Z]+$/,
-    "Only letters are allowed in last name",
-  ),
-  gender: Yup.string().matches(
-    /^(male|female|Male|Female)$/,
-    "Gender must be male or female",
-  ),
+  firstName: Yup.string()
+    .optional()
+    .test(
+      "firstName-validation",
+      "Only letters are allowed in first name",
+      (value) => !value || /^[a-zA-Z]+$/.test(value),
+    ),
+  lastName: Yup.string()
+    .optional()
+    .test(
+      "lastName-validation",
+      "Only letters are allowed in last name",
+      (value) => !value || /^[a-zA-Z]+$/.test(value),
+    ),
+  gender: Yup.string()
+    .optional()
+    .test(
+      "gender-validation",
+      "Gender must be male or female",
+      (value) => !value || /^(male|female|Male|Female)$/.test(value),
+    ),
   age: Yup.number()
     .nullable()
+    .optional()
+    .transform((value, originalValue) => {
+      if (
+        originalValue === "" ||
+        originalValue === null ||
+        originalValue === undefined
+      ) {
+        return undefined;
+      }
+      return value;
+    })
     .positive("Age must be a positive number")
     .integer("Age must be an integer"),
-  phone: Yup.string().matches(
-    /^\d{10}$/,
-    "Phone number must be exactly 10 digits",
-  ),
-  location: Yup.string().matches(
-    /^[a-zA-Z\s]+$/,
-    "Only letters are allowed in location",
-  ),
+  phone: Yup.string()
+    .optional()
+    .test(
+      "phone-validation",
+      "Phone number must be exactly 10 digits",
+      (value) => !value || /^\d{10}$/.test(value),
+    ),
+  location: Yup.string()
+    .optional()
+    .test(
+      "location-validation",
+      "Only letters are allowed in location",
+      (value) => !value || /^[a-zA-Z\s]+$/.test(value),
+    ),
 });
 
 const Profile = () => {

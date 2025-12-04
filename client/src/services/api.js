@@ -11,9 +11,8 @@ export const authAPI = {
 export const userAPI = {
   getCurrentUser: () => axiosInstance.get("/user/me"),
   getUserById: (userId) => axiosInstance.get(`/user/${userId}`),
-  updateUser: (userId, data) =>
-    axiosInstance.put(`/user/update/${userId}`, data),
-  deleteUser: (userId) => axiosInstance.delete(`/user/delete/${userId}`),
+  updateUser: (userId, data) => axiosInstance.put(`/user/${userId}`, data),
+  deleteUser: (userId) => axiosInstance.delete(`/user/${userId}`),
   verifyPhone: (userId, data) =>
     axiosInstance.post(`/user/verify-phone/${userId}`, data),
 

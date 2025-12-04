@@ -4,8 +4,8 @@ import * as userController from "./user.controller.js";
 
 const router = Router();
 
-router.put("/update/:id", [isValidUser], userController.updateUser);
-router.delete("/delete/:id", [isValidUser], userController.deleteUser);
+router.put("/:id", [isValidUser], userController.updateUser);
+router.delete("/:id", [isValidUser], userController.deleteUser);
 
 router.post("/verify-phone/:id", [isValidUser], userController.verifyPhone);
 

@@ -15,8 +15,8 @@ export const Bookmark = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => [
-    index(table.bookmarkerId),
-    index(table.bookmarkedId),
+    index("bookmark_bookmarker_id_idx").on(table.bookmarkerId),
+    index("bookmark_bookmarked_id_idx").on(table.bookmarkedId),
     unique("unique_bookmark").on(table.bookmarkerId, table.bookmarkedId),
   ],
 );

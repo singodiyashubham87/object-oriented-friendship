@@ -29,8 +29,8 @@ export const Request = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => [
-    index(table.senderId),
-    index(table.receiverId),
+    index("request_sender_id_idx").on(table.senderId),
+    index("request_receiver_id_idx").on(table.receiverId),
     unique("unique_request").on(table.senderId, table.receiverId),
   ],
 );

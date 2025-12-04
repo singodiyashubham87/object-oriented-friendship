@@ -26,5 +26,5 @@ export const User = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
-  (table) => [index(table.createdAt)],
+  (table) => [index("user_created_at_idx").on(table.createdAt)],
 );

@@ -1,0 +1,11 @@
+Todos:
+
+1. Gender trim in feed card,
+2. Search feature in feed
+3. On sending request from bookmark, a. add loader b. on request sent change the CTA message
+4. Action pending bindu on all the icons
+5. User detail profile state sync & withdraw button if request sent
+6. Don't show location if not exists
+7. Remove dummy profile
+8. Add profile update feature
+9. Logout page

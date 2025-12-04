@@ -34,23 +34,23 @@ const ReceivedRequests = () => {
     }
   };
 
-  const handleAcceptRequest = async (requestId, userName) => {
+  const handleAcceptRequest = async (id, userName) => {
     try {
-      await requestAPI.acceptRequest(requestId);
+      await requestAPI.acceptRequest(id);
       toast.success(`${userName}'s request accepted!`);
       // Remove from list
-      setPendingRequests((prev) => prev.filter((req) => req.id !== requestId));
+      setPendingRequests((prev) => prev.filter((req) => req.id !== id));
     } catch (error) {
       toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
     }
   };
 
-  const handleRejectRequest = async (requestId, userName) => {
+  const handleRejectRequest = async (id, userName) => {
     try {
-      await requestAPI.rejectRequest(requestId);
+      await requestAPI.rejectRequest(id);
       toast.success(`${userName}'s request rejected`);
       // Remove from list
-      setPendingRequests((prev) => prev.filter((req) => req.id !== requestId));
+      setPendingRequests((prev) => prev.filter((req) => req.id !== id));
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
     }
@@ -109,12 +109,10 @@ const ReceivedRequests = () => {
                 <div className="flex gap-3 items-center justify-evenly py-1 rounded-custom-xs px-4">
                   <div
                     className="p-sm bg-primary-pink hover:bg-primary-pink-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer"
-                    onClick={() =>
-                      handleRejectRequest(user.requestId, fullName)
-                    }
+                    onClick={() => handleRejectRequest(user.id, fullName)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter")
-                        handleRejectRequest(user.requestId, fullName);
+                        handleRejectRequest(user.id, fullName);
                     }}
                   >
                     <RejectRequestIcon size="20" />
@@ -131,12 +129,10 @@ const ReceivedRequests = () => {
                   </div>
                   <div
                     className="p-sm bg-primary-green hover:bg-primary-green-70 rounded-custom-xxs border-xs border-primary-dark cursor-pointer"
-                    onClick={() =>
-                      handleAcceptRequest(user.requestId, fullName)
-                    }
+                    onClick={() => handleAcceptRequest(user.id, fullName)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter")
-                        handleAcceptRequest(user.requestId, fullName);
+                        handleAcceptRequest(user.id, fullName);
                     }}
                   >
                     <AcceptRequestIcon size="20" />

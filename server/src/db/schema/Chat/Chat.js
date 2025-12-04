@@ -24,9 +24,9 @@ export const Chat = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => [
-    index(table.senderId),
-    index(table.receiverId),
-    index(table.lastMessageAt),
+    index("chat_sender_id_idx").on(table.senderId),
+    index("chat_receiver_id_idx").on(table.receiverId),
+    index("chat_last_message_at_idx").on(table.lastMessageAt),
     unique("unique_chat_thread").on(table.senderId, table.receiverId),
   ],
 );

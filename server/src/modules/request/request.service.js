@@ -67,7 +67,13 @@ const rejectRequest = async (payload) => {
 const cancelRequest = async (payload) => {
   const [request] = await db
     .delete(Request)
-    .where(eq(Request.id, payload.requestId))
+    .where(
+      and(
+        eq(Request.status, REQUEST_STATUS.PENDING),
+        eq(Request.senderId, payload.senderId),
+        eq(Request.receiverId, payload.receiverId),
+      ),
+    )
     .returning();
 
   return request;

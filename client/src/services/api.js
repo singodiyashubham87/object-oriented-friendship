@@ -29,8 +29,7 @@ export const requestAPI = {
     axiosInstance.put(`/request/accept/${requestId}`),
   rejectRequest: (requestId) =>
     axiosInstance.put(`/request/reject/${requestId}`),
-  cancelRequest: (requestId) =>
-    axiosInstance.delete(`/request/cancel/${requestId}`),
+  cancelRequest: (userId) => axiosInstance.delete(`/request/${userId}`),
   getPendingRequests: () => axiosInstance.get("/request/pending"),
   getSentRequests: () => axiosInstance.get("/request/sent"),
 };

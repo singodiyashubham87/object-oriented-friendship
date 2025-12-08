@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import db from "../../db/index.js";
-import { Bookmark, User } from "../../db/schema/index.js";
+import { Bookmark, Request, User } from "../../db/schema/index.js";
+import { REQUEST_STATUS } from "../../enums/requestStatus.js";
 import * as userService from "../user/user.service.js";
 
 const createBookmark = async (payload) => {
@@ -63,6 +64,17 @@ const getBookmarkedUsers = async (userId) => {
     .select({
       ...User,
       isFriend: isFriendSql,
+      hasPendingRequest: sql`CASE WHEN ${db
+        .select({ id: Request.id })
+        .from(Request)
+        .where(
+          and(
+            eq(Request.senderId, userId),
+            eq(Request.receiverId, User.id),
+            eq(Request.status, REQUEST_STATUS.PENDING),
+          ),
+        )
+        .limit(1)} IS NOT NULL THEN true ELSE false END`,
     })
     .from(Bookmark)
     .leftJoin(User, eq(User.id, Bookmark.bookmarkedId))

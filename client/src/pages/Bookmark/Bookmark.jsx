@@ -15,6 +15,8 @@ const Bookmark = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [bookmarkedFriends, setBookmarkedFriends] = useState([]);
+  const [sendingRequest, setSendingRequest] = useState({});
+  const [requestSent, setRequestSent] = useState({});
 
   useEffect(() => {
     fetchBookmarkedFriends();
@@ -26,6 +28,14 @@ const Bookmark = () => {
       const res = await bookmarkAPI.getBookmarks();
       const bookmarks = get(res, "data.data.bookmarkedUsers", []);
       setBookmarkedFriends(bookmarks);
+
+      const initialRequestSentState = {};
+      for (const user of bookmarks) {
+        if (user.hasPendingRequest) {
+          initialRequestSentState[user.id] = true;
+        }
+      }
+      setRequestSent(initialRequestSentState);
     } catch (error) {
       toast.error(
         `Failed to fetch bookmarked friends: ${getErrorMessage(error)}`,
@@ -36,11 +46,28 @@ const Bookmark = () => {
   };
 
   const handleSendRequest = async (userId, userName) => {
+    setSendingRequest((prev) => ({ ...prev, [userId]: true }));
     try {
       await requestAPI.sendRequest(userId);
       toast.success(`Connection request sent to ${userName}!`);
+      setRequestSent((prev) => ({ ...prev, [userId]: true }));
     } catch (error) {
       toast.error(`Failed to send request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
+  const handleWithdrawRequest = async (userId, userName) => {
+    setSendingRequest((prev) => ({ ...prev, [userId]: true }));
+    try {
+      await requestAPI.cancelRequest(userId);
+      toast.success(`Connection request to ${userName} withdrawn!`);
+      setRequestSent((prev) => ({ ...prev, [userId]: false }));
+    } catch (error) {
+      toast.error(`Failed to withdraw request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest((prev) => ({ ...prev, [userId]: false }));
     }
   };
 
@@ -98,7 +125,6 @@ const Bookmark = () => {
                     className="flex items-center gap-1 bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      // TODO: Implement message functionality
                       toast.info("Message feature coming soon!");
                     }}
                     onKeyDown={(e) => {
@@ -118,25 +144,68 @@ const Bookmark = () => {
                   </div>
                 ) : (
                   <div
-                    className="flex items-center gap-1 bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer"
+                    className={`flex items-center gap-1 px-4 py-1 rounded-custom-xs transition-all ${
+                      requestSent[friend.id]
+                        ? "bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                        : "bg-primary-silver-50 text-primary-dark hover:bg-secondary-silver cursor-pointer"
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSendRequest(friend.id, fullName);
+                      if (
+                        !sendingRequest[friend.id] &&
+                        !requestSent[friend.id]
+                      ) {
+                        handleSendRequest(friend.id, fullName);
+                      }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.stopPropagation();
-                        handleSendRequest(friend.id, fullName);
+                        if (
+                          !sendingRequest[friend.id] &&
+                          !requestSent[friend.id]
+                        ) {
+                          handleSendRequest(friend.id, fullName);
+                        }
                       }
                     }}
                   >
-                    <ConnectionRequestIcon size={18} />
-                    <button
-                      type="button"
-                      className="uppercase text-base font-primary font-semibold"
-                    >
-                      Connect
-                    </button>
+                    {sendingRequest[friend.id] ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-primary-dark border-t-transparent rounded-full animate-spin" />
+                        <button
+                          type="button"
+                          className="uppercase text-base font-primary font-semibold"
+                          disabled
+                        >
+                          Sending...
+                        </button>
+                      </>
+                    ) : requestSent[friend.id] ? (
+                      <>
+                        <ConnectionRequestIcon size={18} />
+                        <button
+                          type="button"
+                          className="uppercase text-base font-primary font-semibold"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWithdrawRequest(friend.id, fullName);
+                          }}
+                        >
+                          Withdraw
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <ConnectionRequestIcon size={18} />
+                        <button
+                          type="button"
+                          className="uppercase text-base font-primary font-semibold"
+                        >
+                          Connect
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>

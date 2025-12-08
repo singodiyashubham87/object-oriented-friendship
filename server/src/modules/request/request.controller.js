@@ -74,16 +74,18 @@ const rejectConnectionRequest = async (req, res) => {
 
 const cancelConnectionRequest = async (req, res) => {
   try {
-    const requestId = req.params.requestId;
+    const receiverId = req.params.userId;
+    const senderId = req.user.id;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      requestId,
+      senderId,
+      receiverId,
     });
 
     const request = await requestService.cancelRequest(validatedData);
 
     if (!request) {
-      throw new Error("Failed to cancel request");
+      throw new Error("Request not found!");
     }
 
     return Response.created(res, "Request canceled successfully");

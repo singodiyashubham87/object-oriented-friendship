@@ -22,7 +22,7 @@ router.put(
 );
 
 router.delete(
-  "/cancel/:requestId",
+  "/:userId",
   [isValidUser],
   requestController.cancelConnectionRequest,
 );

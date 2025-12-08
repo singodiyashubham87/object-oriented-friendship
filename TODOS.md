@@ -1,6 +1,6 @@
 Todos:
 
-1. Gender trim in feed card,
+1. Gender trim in feed card :done:
 2. Search feature in feed
 3. On sending request from bookmark, a. add loader b. on request sent change the CTA message
 4. Action pending bindu on all the icons

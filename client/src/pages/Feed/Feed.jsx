@@ -24,6 +24,31 @@ const Feed = () => {
   const [nextArrowColor, setNextArrowColor] = useState("#C7C2C2");
   const transitionStyle = "ease-in-out transition-transform duration-300";
 
+  const formatGender = (gender) => {
+    if (!gender) return "";
+    const lowerGender = gender.toLowerCase();
+    if (lowerGender === "male" || lowerGender === "m") return "M";
+    if (lowerGender === "female" || lowerGender === "f") return "F";
+    return "";
+  };
+
+  const renderAgeGender = (user) => {
+    const age = user?.age;
+    const gender = formatGender(user?.gender);
+
+    if (!age && !gender) return null;
+
+    return (
+      <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
+        <p className="text-primary-dark">
+          {age && age}
+          {age && gender && ", "}
+          {gender && gender}
+        </p>
+      </div>
+    );
+  };
+
   const handleNext = () => {
     if (currentIndex < feedUsers.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -209,12 +234,7 @@ const Feed = () => {
                   </p>
                 </div>
               </div>
-              <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
-                <p className="text-primary-dark">{`${
-                  prevUser?.age || 21
-                }, `}</p>
-                <p className="text-primary-dark">{`${prevUser?.gender}`}</p>
-              </div>
+              {renderAgeGender(prevUser)}
               <FeedCardActions isBookmarked={prevUser?.isBookmarked} />
             </div>
           )}
@@ -247,12 +267,7 @@ const Feed = () => {
                 </p>
               </div>
             </div>
-            <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
-              <p className="text-primary-dark">{`${
-                currentUser?.age || 21
-              }, `}</p>
-              <p className="text-primary-dark">{`${currentUser?.gender}`}</p>
-            </div>
+            {renderAgeGender(currentUser)}
             <FeedCardActions
               onReject={handleRejectClick}
               onBookmark={handleBookmarkClick}
@@ -290,12 +305,7 @@ const Feed = () => {
                   </p>
                 </div>
               </div>
-              <div className="w-1/4 flex bg-primary-gray rounded-custom-xxs text-primary-dark border border-primary-dark font-semibold justify-center items-center gap-2">
-                <p className="text-primary-dark">{`${
-                  nextUser?.age || 21
-                }, `}</p>
-                <p className="text-primary-dark">{`${nextUser?.gender}`}</p>
-              </div>
+              {renderAgeGender(nextUser)}
               <FeedCardActions isBookmarked={nextUser?.isBookmarked} />
             </div>
           )}

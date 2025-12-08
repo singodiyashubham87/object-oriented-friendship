@@ -140,8 +140,9 @@ const searchUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
+    const currentUserId = req.user?.id;
 
-    const user = await userService.getUserById(userId);
+    const user = await userService.getUserById(userId, currentUserId);
 
     if (!user) {
       return Response.notFound(res, API_RESPONSE.USER_NOT_FOUND);

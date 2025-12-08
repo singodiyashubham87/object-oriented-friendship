@@ -1,6 +1,15 @@
-import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { and, eq, ilike, inArray, ne, notInArray, or, sql } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  ne,
+  notInArray,
+  or,
+  sql,
+} from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
 import { Bookmark, Request, User } from "../../db/schema/index.js";
@@ -36,12 +45,64 @@ const deleteUser = async (userId) => {
   return deletedUser;
 };
 
-const getUserById = async (userId) => {
+const getUserById = async (userId, currentUserId = null) => {
   const [user] = await db.select().from(User).where(eq(User.id, userId));
+
+  if (!user) {
+    return null;
+  }
 
   const { password, ...safeUser } = user;
 
-  return safeUser;
+  if (!currentUserId) {
+    return safeUser;
+  }
+
+  const [relationship] = await db
+    .select()
+    .from(Request)
+    .where(
+      and(
+        or(
+          and(
+            eq(Request.senderId, currentUserId),
+            eq(Request.receiverId, userId),
+          ),
+          and(
+            eq(Request.senderId, userId),
+            eq(Request.receiverId, currentUserId),
+          ),
+        ),
+      ),
+    )
+    .orderBy(
+      sql`CASE WHEN ${Request.status} = 'pending' THEN 0 WHEN ${Request.status} = 'accepted' THEN 1 ELSE 2 END`,
+      desc(Request.createdAt),
+    )
+    .limit(1);
+
+  let relationshipStatus = "none";
+  let requestId = null;
+
+  if (relationship) {
+    if (relationship.status === REQUEST_STATUS.ACCEPTED) {
+      relationshipStatus = "friends";
+    } else if (relationship.status === REQUEST_STATUS.PENDING) {
+      if (relationship.senderId === currentUserId) {
+        relationshipStatus = "sent";
+        requestId = relationship.id;
+      } else {
+        relationshipStatus = "received";
+        requestId = relationship.id;
+      }
+    }
+  }
+
+  return {
+    ...safeUser,
+    relationshipStatus,
+    requestId,
+  };
 };
 
 const getFriends = async (userId) => {

@@ -17,6 +17,8 @@ const UserProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null);
+  const [sendingRequest, setSendingRequest] = useState(false);
+  const [requestId, setRequestId] = useState(null);
 
   const skillBadgeStyle =
     "leading-5 bg-primary-dark px-2 py-1 rounded-custom-xxs text-primary-silver";
@@ -32,9 +34,9 @@ const UserProfile = () => {
       const user = get(res, "data.data.user", null);
       setUserData(user);
 
-      // TODO: Fetch request status between current user and this user
-      // For now, we'll assume 'none' - this would need backend support
-      setRequestStatus(REQUEST_STATUS.NONE);
+      const relationshipStatus = user?.relationshipStatus || "none";
+      setRequestStatus(relationshipStatus);
+      setRequestId(user?.requestId || null);
     } catch (error) {
       toast.error(`Failed to load user profile: ${getErrorMessage(error)}`);
     } finally {
@@ -43,12 +45,31 @@ const UserProfile = () => {
   };
 
   const handleSendRequest = async () => {
+    setSendingRequest(true);
     try {
-      await requestAPI.sendRequest(userId);
+      const res = await requestAPI.sendRequest(userId);
+      const newRequestId = get(res, "data.data.request.id");
       toast.success(`Connection request sent to ${userData.firstName}!`);
-      setRequestStatus(REQUEST_STATUS.PENDING);
+      setRequestStatus("sent");
+      setRequestId(newRequestId);
     } catch (error) {
       toast.error(`Failed to send request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest(false);
+    }
+  };
+
+  const handleWithdrawRequest = async () => {
+    setSendingRequest(true);
+    try {
+      await requestAPI.cancelRequest(userId);
+      toast.success(`Connection request to ${userData.firstName} withdrawn!`);
+      setRequestStatus("none");
+      setRequestId(null);
+    } catch (error) {
+      toast.error(`Failed to withdraw request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest(false);
     }
   };
 
@@ -158,21 +179,46 @@ const UserProfile = () => {
         </div>
 
         <div className="first flex justify-evenly items-center gap-4 ">
-          {requestStatus === REQUEST_STATUS.NONE && (
+          {requestStatus === "none" && (
             <button
               type="button"
-              className="connectButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-custom-s"
+              className="connectButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSendRequest}
+              disabled={sendingRequest}
             >
-              <span className="text-xl uppercase">Send Request</span>
+              {sendingRequest ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xl uppercase">Sending...</span>
+                </>
+              ) : (
+                <span className="text-xl uppercase">Send Request</span>
+              )}
             </button>
           )}
-          {requestStatus === REQUEST_STATUS.PENDING && (
+          {requestStatus === "sent" && (
+            <button
+              type="button"
+              className="withdrawButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleWithdrawRequest}
+              disabled={sendingRequest}
+            >
+              {sendingRequest ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xl uppercase">Withdrawing...</span>
+                </>
+              ) : (
+                <span className="text-xl uppercase">Withdraw Request</span>
+              )}
+            </button>
+          )}
+          {requestStatus === "received" && (
             <div className="flex gap-4">
               <button
                 type="button"
                 className="rejectButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
-                onClick={() => handleRejectRequest(userData.requestId)}
+                onClick={() => handleRejectRequest(requestId)}
               >
                 <span className="text-xl uppercase">Reject</span>
                 <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
@@ -182,7 +228,7 @@ const UserProfile = () => {
               <button
                 type="button"
                 className="acceptButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
-                onClick={() => handleAcceptRequest(userData.requestId)}
+                onClick={() => handleAcceptRequest(requestId)}
               >
                 <span className="text-xl uppercase">Accept</span>
                 <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
@@ -191,7 +237,7 @@ const UserProfile = () => {
               </button>
             </div>
           )}
-          {requestStatus === REQUEST_STATUS.ACCEPTED && (
+          {requestStatus === "friends" && (
             <div className="text-primary-silver text-xl">
               ✓ Already connected
             </div>

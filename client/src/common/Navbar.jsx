@@ -1,5 +1,4 @@
 import logo from "@/assets/images/oof-logo.png";
-import profileImage from "@/assets/images/profile.png";
 import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
 import RequestButtons from "@/components/RequestButtons";
@@ -8,9 +7,10 @@ import FriendsIcon from "@/components/icons/FriendsIcon";
 import InboxIcon from "@/components/icons/InboxIcon";
 import LogoutIcon from "@/components/icons/LogoutIcon";
 import RequestsIcon from "@/components/icons/RequestsIcon";
-import axiosInstance from "@/config/axios";
+import { authAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
-import { useState } from "react";
+import { get } from "lodash-es";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -22,11 +22,26 @@ const Navbar = () => {
   const isSentRoute = requestRouteName === "sent";
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await userAPI.getCurrentUser();
+        const user = get(res, "data.data.user", null);
+        setUserData(user);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     try {
       setIsLoading(true);
-      await axiosInstance.post("/user/logout");
+      await authAPI.logout();
       localStorage.removeItem("user");
       navigate("/login");
     } catch (error) {
@@ -51,6 +66,10 @@ const Navbar = () => {
   const rightNavIcons = [
     { href: "/bookmark", Icon: BookmarkIcon, name: "bookmark" },
   ];
+
+  const fallbackAvatarUrl = `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+    `${userData?.firstName || ""} ${userData?.lastName || "User"}`,
+  )}`;
 
   if (isLoading) return <Loader />;
 
@@ -123,9 +142,9 @@ const Navbar = () => {
           </li>
           <li>
             <a href="/profile">
-              <div className="w-11 h-11 flex items-center justify-center rounded-custom-xs">
+              <div className="w-11 h-11 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
                 <img
-                  src={profileImage}
+                  src={userData?.avatar || fallbackAvatarUrl}
                   alt="Profile"
                   className="w-full h-full object-cover rounded-custom-xs"
                 />

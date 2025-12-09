@@ -134,12 +134,14 @@ const UserProfile = () => {
               <h3 className="text-2xl leading-5 text-primary-silver font-bold">
                 {fullName}
               </h3>
-              <div className="location flex gap-2 items-center">
-                <LocationIcon width="16" height="17" />
-                <p className="text-[18px] text-primary-silver opacity-70 leading-5">
-                  {userData.location || "N/A"}
-                </p>
-              </div>
+              {userData.location && (
+                <div className="location flex gap-2 items-center">
+                  <LocationIcon width="16" height="17" />
+                  <p className="text-[18px] text-primary-silver opacity-70 leading-5">
+                    {userData.location}
+                  </p>
+                </div>
+              )}
               {userData.age && userData.gender && (
                 <p className="text-primary-silver">
                   {userData.age} years, {userData.gender}

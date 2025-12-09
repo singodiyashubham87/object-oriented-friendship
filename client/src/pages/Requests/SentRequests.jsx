@@ -75,12 +75,14 @@ const SentRequests = () => {
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   <NameWithTooltip name={fullName} index={index} />
-                  <div className="flex items-center gap-1">
-                    <LocationIcon />
-                    <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
-                      {user.location}
-                    </p>
-                  </div>
+                  {user.location && (
+                    <div className="flex items-center gap-1">
+                      <LocationIcon />
+                      <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
+                        {user.location}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div
                   className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer"

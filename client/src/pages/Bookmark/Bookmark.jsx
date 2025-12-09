@@ -113,12 +113,14 @@ const Bookmark = () => {
               <div className="flex flex-col items-center gap-1">
                 <div className="relative group text-center">
                   <NameWithTooltip name={fullName} index={index} />
-                  <div className="flex items-center gap-1">
-                    <LocationIcon />
-                    <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
-                      {friend.location}
-                    </p>
-                  </div>
+                  {friend.location && (
+                    <div className="flex items-center gap-1">
+                      <LocationIcon />
+                      <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
+                        {friend.location}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {friend.isFriend ? (
                   <div

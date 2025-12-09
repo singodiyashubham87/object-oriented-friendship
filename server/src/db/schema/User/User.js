@@ -1,6 +1,7 @@
 import {
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -23,6 +24,7 @@ export const User = pgTable(
     phone: text("phone"),
     bio: text("bio"),
     skills: text("skills").array().notNull().default([]),
+    socialLinks: jsonb("social_links").default({}).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

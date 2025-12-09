@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/utils/common";
 import { REQUEST_STATUS } from "@/utils/constants";
 import { get } from "lodash-es";
 import React, { useEffect, useState } from "react";
-import { FaGithubSquare, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -154,26 +154,50 @@ const UserProfile = () => {
                 <MdEmail size={20} />
                 <span>Email</span>
               </a>
-              {/* GitHub and LinkedIn links would come from user data if available */}
-              <a
-                href="https://www.github.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
-              >
-                <FaGithubSquare size={20} />
-                <span>Github</span>
-              </a>
-
-              <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
-              >
-                <FaLinkedin size={20} />
-                Linkedin
-              </a>
+              {userData.socialLinks?.github && (
+                <a
+                  href={userData.socialLinks.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                >
+                  <FaGithub size={20} />
+                  <span>Github</span>
+                </a>
+              )}
+              {userData.socialLinks?.linkedin && (
+                <a
+                  href={userData.socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                >
+                  <FaLinkedin size={20} />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+              {userData.socialLinks?.twitter && (
+                <a
+                  href={userData.socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                >
+                  <FaTwitter size={20} />
+                  <span>Twitter</span>
+                </a>
+              )}
+              {userData.socialLinks?.website && (
+                <a
+                  href={userData.socialLinks.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                >
+                  <FaGlobe size={20} />
+                  <span>Website</span>
+                </a>
+              )}
             </div>
           </div>
         </div>

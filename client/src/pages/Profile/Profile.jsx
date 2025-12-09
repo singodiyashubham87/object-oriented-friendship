@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
+import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const imageSrc =
   "https://imgs.search.brave.com/KrIBfwcMYTw5y8uMbjRLirmXFrIp_8-pxvdzPQ6-VX4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vcGljanVt/Ym8uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy9nb3JnZW91cy1z/dW5zZXQtb3Zlci10/aGUtc2VhLWZyZWUt/aW1hZ2UuanBlZz9o/PTgwMCZxdWFsaXR5/PTgw";
@@ -72,6 +73,12 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
+  const [socialLinks, setSocialLinks] = useState({
+    github: "",
+    linkedin: "",
+    twitter: "",
+    website: "",
+  });
 
   const initialFormValues = {
     firstName: userData?.firstName || "",
@@ -88,6 +95,8 @@ const Profile = () => {
     { label: " Female", value: "Female" },
   ];
 
+  const hasNoSocialLinks = Object.values(socialLinks).every((link) => !link);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -96,6 +105,14 @@ const Profile = () => {
         const user = get(res, "data.data.user", null);
         setUserData(user);
         setSkills(user?.skills || []);
+        setSocialLinks(
+          user?.socialLinks || {
+            github: "",
+            linkedin: "",
+            twitter: "",
+            website: "",
+          },
+        );
       } catch (error) {
         toast.error(`Failed to load profile: ${getErrorMessage(error)}`);
       } finally {
@@ -112,7 +129,7 @@ const Profile = () => {
 
       const hasValues = Object.values(values).some((value) => value !== "");
       if ((hasValues || skills.length > 0) && userData?.id) {
-        await updateUserData(values, skills);
+        await updateUserData(values, skills, socialLinks);
         setIsEditable(false);
       }
     } catch (validationErrors) {
@@ -123,7 +140,7 @@ const Profile = () => {
     }
   };
 
-  const updateUserData = async (values, updatedSkills) => {
+  const updateUserData = async (values, updatedSkills, updatedSocialLinks) => {
     try {
       const updatePayload = {};
 
@@ -155,6 +172,14 @@ const Profile = () => {
         updatePayload.skills = updatedSkills;
       }
 
+      // Check if social links have changed
+      const socialLinksChanged =
+        JSON.stringify(updatedSocialLinks) !==
+        JSON.stringify(userData.socialLinks || {});
+      if (socialLinksChanged) {
+        updatePayload.social_links = updatedSocialLinks;
+      }
+
       if (Object.keys(updatePayload).length === 0) {
         toast.info("No changes to update");
         return;
@@ -166,6 +191,7 @@ const Profile = () => {
       if (updatedUser) {
         setUserData(updatedUser);
         setSkills(updatedUser.skills || []);
+        setSocialLinks(updatedUser.socialLinks || {});
         toast.success("Profile updated successfully!");
       }
     } catch (error) {
@@ -202,6 +228,13 @@ const Profile = () => {
     } else {
       setSkillInput(value);
     }
+  };
+
+  const handleSocialLinkChange = (platform, value) => {
+    setSocialLinks((prev) => ({
+      ...prev,
+      [platform]: value,
+    }));
   };
 
   if (isLoading) {
@@ -244,7 +277,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="p-4 rounded-custom-s bg-dark-glassmorphism-50 flex-1 w-full h-full flex flex-grow flex-col gap-4 ">
+            <div className="p-4 rounded-custom-s bg-dark-glassmorphism-50 flex-1 w-full max-h-[500px] overflow-y-auto flex flex-col gap-4">
               <Field
                 type="text"
                 name="firstName"
@@ -338,6 +371,154 @@ const Profile = () => {
                     placeholder="Add skills (press Enter or comma)"
                     className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                   />
+                )}
+              </div>
+
+              {/* Social Links Section */}
+              <div className="flex flex-col gap-2 mt-2">
+                <h3 className="text-primary-silver font-semibold text-sm uppercase tracking-wide">
+                  Social Links
+                </h3>
+                {!isEditable ? (
+                  /* Display mode - show clickable links */
+                  <div className="flex flex-wrap gap-3">
+                    {socialLinks.github && (
+                      <a
+                        href={socialLinks.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                      >
+                        <FaGithub size={18} />
+                        <span>GitHub</span>
+                      </a>
+                    )}
+                    {socialLinks.linkedin && (
+                      <a
+                        href={socialLinks.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                      >
+                        <FaLinkedin size={18} />
+                        <span>LinkedIn</span>
+                      </a>
+                    )}
+                    {socialLinks.twitter && (
+                      <a
+                        href={socialLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                      >
+                        <FaTwitter size={18} />
+                        <span>Twitter</span>
+                      </a>
+                    )}
+                    {socialLinks.website && (
+                      <a
+                        href={socialLinks.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                      >
+                        <FaGlobe size={18} />
+                        <span>Website</span>
+                      </a>
+                    )}
+                    {hasNoSocialLinks && (
+                      <span className="text-primary-silver opacity-50 italic text-sm">
+                        No social links added
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  /* Edit mode - show input fields */
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* GitHub */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="github-input"
+                        className="text-secondary-silver text-xs opacity-70"
+                      >
+                        GitHub
+                      </label>
+                      <input
+                        id="github-input"
+                        type="url"
+                        value={socialLinks.github || ""}
+                        onChange={(e) =>
+                          handleSocialLinkChange("github", e.target.value)
+                        }
+                        placeholder="https://github.com/username"
+                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        disabled={!isEditable}
+                      />
+                    </div>
+
+                    {/* LinkedIn */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="linkedin-input"
+                        className="text-secondary-silver text-xs opacity-70"
+                      >
+                        LinkedIn
+                      </label>
+                      <input
+                        id="linkedin-input"
+                        type="url"
+                        value={socialLinks.linkedin || ""}
+                        onChange={(e) =>
+                          handleSocialLinkChange("linkedin", e.target.value)
+                        }
+                        placeholder="https://linkedin.com/in/username"
+                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        disabled={!isEditable}
+                      />
+                    </div>
+
+                    {/* Twitter */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="twitter-input"
+                        className="text-secondary-silver text-xs opacity-70"
+                      >
+                        Twitter
+                      </label>
+                      <input
+                        id="twitter-input"
+                        type="url"
+                        value={socialLinks.twitter || ""}
+                        onChange={(e) =>
+                          handleSocialLinkChange("twitter", e.target.value)
+                        }
+                        placeholder="https://twitter.com/username"
+                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        disabled={!isEditable}
+                      />
+                    </div>
+
+                    {/* Website */}
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="website-input"
+                        className="text-secondary-silver text-xs opacity-70"
+                      >
+                        Website
+                      </label>
+                      <input
+                        id="website-input"
+                        type="url"
+                        value={socialLinks.website || ""}
+                        onChange={(e) =>
+                          handleSocialLinkChange("website", e.target.value)
+                        }
+                        placeholder="https://yourwebsite.com"
+                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        disabled={!isEditable}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

@@ -6,6 +6,9 @@ export const mapUpdateUserDTO = (payload) => ({
   ...(payload.phone && { phone: payload.phone }),
   ...(payload.bio && { bio: payload.bio }),
   ...(payload.skills && { skills: payload.skills }),
+  ...(payload.social_links && {
+    socialLinks: payload.social_links,
+  }),
   ...(payload.location && { location: payload.location }),
   ...(payload.gender && { gender: payload.gender }),
   ...(payload.age && { age: payload.age }),

@@ -7,5 +7,5 @@ Todos:
 5. User detail profile state sync & withdraw button if request sent :done:
 6. Don't show location if not exists :done:
 7. Remove dummy profile :done:
-8. Add profile update feature
-9. Logout page
+8. Add profile update feature :done:
+9. Logout page :done:

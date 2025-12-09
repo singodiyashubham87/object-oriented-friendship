@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { isValidUser } from "../../utils/middleware.js";
+import { upload } from "../../utils/multer.js";
 import * as userController from "./user.controller.js";
 
 const router = Router();
@@ -14,6 +15,12 @@ router.get("/me", [isValidUser], userController.getCurrentUser);
 router.get("/friends", [isValidUser], userController.getFriends);
 router.get("/feed", [isValidUser], userController.getUserFeed);
 router.get("/search", [isValidUser], userController.searchUsers);
+
+router.post(
+  "/upload-avatar",
+  [isValidUser, upload.single("avatar")],
+  userController.uploadAvatar,
+);
 
 // Dynamic route - must be last among GET routes
 router.get("/:id", [isValidUser], userController.getUserById);

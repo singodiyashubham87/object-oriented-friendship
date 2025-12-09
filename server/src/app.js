@@ -1,4 +1,5 @@
 import "dotenv/config";
+import cloudinary from "cloudinary";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -6,6 +7,13 @@ import morgan from "morgan";
 import baseRouter from "./router.js";
 import { errorHandler, notFoundHandler } from "./utils/errorHandler.js";
 import { generalLimiter } from "./utils/rateLimiter.js";
+
+// Configure Cloudinary for profile picture storage
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 

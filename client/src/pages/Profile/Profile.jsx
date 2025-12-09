@@ -4,13 +4,16 @@ import { userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { Field, Form, Formik } from "formik";
 import { get } from "lodash-es";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
 import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 
-const imageSrc =
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_PROFILE_PIC_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+
+const FALLBACK_IMAGE =
   "https://imgs.search.brave.com/KrIBfwcMYTw5y8uMbjRLirmXFrIp_8-pxvdzPQ6-VX4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vcGljanVt/Ym8uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy9nb3JnZW91cy1z/dW5zZXQtb3Zlci10/aGUtc2VhLWZyZWUt/aW1hZ2UuanBlZz9o/PTgwMCZxdWFsaXR5/PTgw";
 
 const profileSchema = Yup.object().shape({
@@ -79,6 +82,9 @@ const Profile = () => {
     twitter: "",
     website: "",
   });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   const initialFormValues = {
     firstName: userData?.firstName || "",
@@ -237,6 +243,61 @@ const Profile = () => {
     }));
   };
 
+  const handleImageSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_PROFILE_PIC_TYPES.includes(file.type)) {
+      toast.error("Please select a valid image file (JPEG, PNG, GIF, or WebP)");
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    handleImageUpload(file);
+  };
+
+  const handleImageUpload = async (file) => {
+    try {
+      setIsUploadingImage(true);
+      const uploadRes = await userAPI.uploadAvatar(file);
+      const imageUrl = get(uploadRes, "data.data.url", null);
+
+      if (!imageUrl) {
+        toast.error("Failed to get image URL from upload response");
+        return;
+      }
+
+      const updateRes = await userAPI.updateUser(userData.id, {
+        avatar: imageUrl,
+      });
+      const updatedUser = get(updateRes, "data.data.user", null);
+
+      if (updatedUser) {
+        setUserData(updatedUser);
+        setPreviewImage(null);
+        toast.success("Profile picture updated successfully!");
+      }
+    } catch (error) {
+      toast.error(`Failed to upload image: ${getErrorMessage(error)}`);
+      setPreviewImage(null);
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -268,13 +329,30 @@ const Profile = () => {
           <div className="flex items-center  p-10 w-full min-h-[16rem] flex-col md:flex-row gap-10">
             <div className="relative w-64 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-dark">
               <img
-                src={userData.avatar || imageSrc}
+                src={previewImage || userData.avatar || FALLBACK_IMAGE}
                 alt="Profile"
                 className="w-full h-full object-contain"
               />
-              <div className="absolute z-100 top-[-5%] right-[-5%] bg-tertiary-silver p-2 border border-primary-dark shadow-md rounded-full cursor-pointer hover:bg-white">
+              {isUploadingImage && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-custom-s">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent" />
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingImage}
+                className="absolute z-100 top-[-5%] right-[-5%] bg-tertiary-silver p-2 border border-primary-dark shadow-md rounded-full cursor-pointer hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <PencilIcon size="20" />
-              </div>
+              </button>
             </div>
 
             <div className="p-4 rounded-custom-s bg-dark-glassmorphism-50 flex-1 w-full max-h-[500px] overflow-y-auto flex flex-col gap-4">

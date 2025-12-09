@@ -9,3 +9,4 @@ Todos:
 7. Remove dummy profile :done:
 8. Add profile update feature :done:
 9. Logout page :done:
+10. Able to update profile picture, use cloudinary :done:

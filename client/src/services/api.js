@@ -21,6 +21,16 @@ export const userAPI = {
   getUserFeed: () => axiosInstance.get("/user/feed"),
   searchUsers: (query) =>
     axiosInstance.get(`/user/search?q=${encodeURIComponent(query)}`),
+
+  uploadAvatar: (file) => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+    return axiosInstance.post("/user/upload-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 };
 
 export const requestAPI = {

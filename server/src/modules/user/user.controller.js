@@ -1,6 +1,8 @@
 import API_RESPONSE from "../../utils/api.js";
 import Response from "../../utils/response.js";
 
+import { Readable } from "node:stream";
+import cloudinary from "cloudinary";
 import * as userService from "./user.service.js";
 import * as userValidator from "./user.validator.js";
 
@@ -154,6 +156,56 @@ const getUserById = async (req, res) => {
   }
 };
 
+const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return Response.badRequest(res, "No file uploaded");
+    }
+
+    const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
+      return Response.badRequest(
+        res,
+        "Invalid file type. Only JPEG, JPG, PNG are allowed",
+      );
+    }
+
+    const imageUrl = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "avatars",
+          public_id: `avatar_${Date.now()}`,
+          resource_type: "image",
+          transformation: [
+            { width: 500, height: 500, crop: "limit" },
+            { quality: "auto" },
+          ],
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result.secure_url);
+          }
+        },
+      );
+
+      // Convert buffer to stream and pipe to Cloudinary
+      const bufferStream = new Readable();
+      bufferStream.push(req.file.buffer);
+      bufferStream.push(null);
+      bufferStream.pipe(uploadStream);
+    });
+
+    return Response.success(res, "Image uploaded successfully", {
+      url: imageUrl,
+    });
+  } catch (error) {
+    return Response.exception(res, "Failed to upload image", error);
+  }
+};
+
 export {
   updateUser,
   deleteUser,
@@ -164,4 +216,5 @@ export {
   unfriend,
   getUserFeed,
   searchUsers,
+  uploadAvatar,
 };

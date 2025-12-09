@@ -70,6 +70,8 @@ const Profile = () => {
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [skillInput, setSkillInput] = useState("");
 
   const initialFormValues = {
     firstName: userData?.firstName || "",
@@ -93,6 +95,7 @@ const Profile = () => {
         const res = await userAPI.getCurrentUser();
         const user = get(res, "data.data.user", null);
         setUserData(user);
+        setSkills(user?.skills || []);
       } catch (error) {
         toast.error(`Failed to load profile: ${getErrorMessage(error)}`);
       } finally {
@@ -108,8 +111,8 @@ const Profile = () => {
       await profileSchema.validate(values, { abortEarly: false });
 
       const hasValues = Object.values(values).some((value) => value !== "");
-      if (hasValues && userData?.id) {
-        await updateUserData(values);
+      if ((hasValues || skills.length > 0) && userData?.id) {
+        await updateUserData(values, skills);
         setIsEditable(false);
       }
     } catch (validationErrors) {
@@ -120,7 +123,7 @@ const Profile = () => {
     }
   };
 
-  const updateUserData = async (values) => {
+  const updateUserData = async (values, updatedSkills) => {
     try {
       const updatePayload = {};
 
@@ -144,6 +147,14 @@ const Profile = () => {
         updatePayload.location = values.location;
       }
 
+      // Check if skills have changed
+      const skillsChanged =
+        JSON.stringify(updatedSkills.sort()) !==
+        JSON.stringify((userData.skills || []).sort());
+      if (skillsChanged) {
+        updatePayload.skills = updatedSkills;
+      }
+
       if (Object.keys(updatePayload).length === 0) {
         toast.info("No changes to update");
         return;
@@ -154,10 +165,42 @@ const Profile = () => {
 
       if (updatedUser) {
         setUserData(updatedUser);
+        setSkills(updatedUser.skills || []);
         toast.success("Profile updated successfully!");
       }
     } catch (error) {
       toast.error(`Failed to update profile: ${getErrorMessage(error)}`);
+    }
+  };
+
+  const handleAddSkill = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const trimmedSkill = skillInput.trim();
+      if (trimmedSkill && !skills.includes(trimmedSkill)) {
+        setSkills([...skills, trimmedSkill]);
+        setSkillInput("");
+      } else if (skills.includes(trimmedSkill)) {
+        toast.warning("Skill already added");
+      }
+    }
+  };
+
+  const handleRemoveSkill = (skillToRemove) => {
+    setSkills(skills.filter((skill) => skill !== skillToRemove));
+  };
+
+  const handleSkillInputChange = (e) => {
+    const value = e.target.value;
+    // Prevent comma from being entered in the input
+    if (value.includes(",")) {
+      const trimmedSkill = value.replace(",", "").trim();
+      if (trimmedSkill && !skills.includes(trimmedSkill)) {
+        setSkills([...skills, trimmedSkill]);
+        setSkillInput("");
+      }
+    } else {
+      setSkillInput(value);
     }
   };
 
@@ -258,6 +301,45 @@ const Profile = () => {
                 className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
+
+              {/* Skills Section */}
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2 min-h-[2.5rem]">
+                  {skills.length === 0 && !isEditable ? (
+                    <span className="text-primary-silver opacity-50 italic">
+                      No skills listed
+                    </span>
+                  ) : (
+                    skills.map((skill) => (
+                      <div
+                        key={skill}
+                        className="flex items-center gap-2 px-3 py-1 bg-primary-silver-20 border border-primary-silver rounded-full text-secondary-silver font-medium"
+                      >
+                        <span>{skill}</span>
+                        {isEditable && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(skill)}
+                            className="text-red-400 hover:text-red-600 font-bold text-lg leading-none"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+                {isEditable && (
+                  <input
+                    type="text"
+                    value={skillInput}
+                    onChange={handleSkillInputChange}
+                    onKeyDown={handleAddSkill}
+                    placeholder="Add skills (press Enter or comma)"
+                    className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                  />
+                )}
+              </div>
             </div>
           </div>
 

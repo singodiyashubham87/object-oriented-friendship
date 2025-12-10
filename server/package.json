@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "node ./src/db/migrate.js",

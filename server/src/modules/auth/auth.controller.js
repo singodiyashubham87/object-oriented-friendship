@@ -35,7 +35,7 @@ const login = async (req, res) => {
       expires: dayjs().add(7, "days").toDate(),
       httpOnly: true,
       secure: isProd,
-      sameSite: "Strict",
+      sameSite: isProd ? "None" : "Lax",
     });
 
     return Response.success(res, API_RESPONSE.LOGIN_SUCCESSFUL, {

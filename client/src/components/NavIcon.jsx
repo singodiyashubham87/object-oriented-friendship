@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "react-router-dom";
 
 const NavIcon = ({
@@ -19,14 +20,10 @@ const NavIcon = ({
       }`}
       onMouseEnter={() => setHoveredIcon(iconName)}
       onMouseLeave={() => setHoveredIcon(null)}
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          onClick(e);
-        }
-      }}
     >
-      <IconComponent
+      <HugeiconsIcon
+        icon={IconComponent}
+        className="w-5 h-5 md:w-7 md:h-7 lg:w-9 lg:h-9"
         color={isActive || hoveredIcon === iconName ? "#373737" : "#92918D"}
       />
     </div>
@@ -35,19 +32,14 @@ const NavIcon = ({
   return (
     <li>
       {isAppRoute ? (
-        <Link to={href}>{iconDiv}</Link>
+        <Link to={href} onClick={onClick}>
+          {iconDiv}
+        </Link>
       ) : (
         <button
           type="button"
-          style={{ background: "none", border: "none", padding: 0, margin: 0 }}
+          className="bg-transparent border-0 p-0 m-0 cursor-pointer"
           onClick={onClick}
-          onMouseEnter={() => setHoveredIcon(iconName)}
-          onMouseLeave={() => setHoveredIcon(null)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              onClick(e);
-            }
-          }}
         >
           {iconDiv}
         </button>

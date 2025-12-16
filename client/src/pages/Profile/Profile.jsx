@@ -1,7 +1,8 @@
 import Loader from "@/components/Loader";
-import PencilIcon from "@/components/icons/PencilIcon";
 import { userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
+import { PencilEdit01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Field, Form, Formik } from "formik";
 import { get } from "lodash-es";
 import { useEffect, useRef, useState } from "react";
@@ -351,7 +352,7 @@ const Profile = () => {
                 disabled={isUploadingImage}
                 className="absolute z-100 top-[-5%] right-[-5%] bg-tertiary-silver p-2 border border-primary-dark shadow-md rounded-full cursor-pointer hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <PencilIcon size="20" />
+                <HugeiconsIcon icon={PencilEdit01Icon} className="w-5 h-5" />
               </button>
             </div>
 

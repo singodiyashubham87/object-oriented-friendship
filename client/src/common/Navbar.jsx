@@ -2,13 +2,16 @@ import logo from "@/assets/images/oof-logo.png";
 import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
 import RequestButtons from "@/components/RequestButtons";
-import BookmarkIcon from "@/components/icons/BookmarkIcon";
-import FriendsIcon from "@/components/icons/FriendsIcon";
-import InboxIcon from "@/components/icons/InboxIcon";
-import LogoutIcon from "@/components/icons/LogoutIcon";
-import RequestsIcon from "@/components/icons/RequestsIcon";
 import { authAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
+import {
+  Bookmark01FreeIcons,
+  Logout01FreeIcons,
+  Mail01Icon,
+  UserAdd01FreeIcons,
+  UserMultiple02FreeIcons,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { get } from "lodash-es";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -54,17 +57,16 @@ const Navbar = () => {
   const leftNavIcons = [
     {
       href: "/login",
-      Icon: LogoutIcon,
+      Icon: Logout01FreeIcons,
       name: "logout",
       onClick: handleLogout,
-      isAppRoute: false,
     },
-    { href: "/friends", Icon: FriendsIcon, name: "friends" },
-    { href: "/messages", Icon: InboxIcon, name: "inbox" },
+    { href: "/friends", Icon: UserMultiple02FreeIcons, name: "friends" },
+    { href: "/messages", Icon: Mail01Icon, name: "inbox" },
   ];
 
   const rightNavIcons = [
-    { href: "/bookmark", Icon: BookmarkIcon, name: "bookmark" },
+    { href: "/bookmark", Icon: Bookmark01FreeIcons, name: "bookmark" },
   ];
 
   const fallbackAvatarUrl = `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
@@ -75,8 +77,8 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s blur-76 backdrop-blur-76">
-      <ul className="flex items-center justify-between py-6 px-8 gap-3 md:gap-6">
-        <div className="leftIcons flex items-center justify-center gap-3 md:gap-6">
+      <ul className="flex items-center justify-between py-2 px-4 md:py-4 md:px-6 lg:py-6 lg:px-8 gap-2 md:gap-4 lg:gap-6">
+        <div className="leftIcons flex items-center justify-center gap-2 md:gap-4 lg:gap-6">
           {leftNavIcons.map((icon) => (
             <NavIcon
               key={icon.name}
@@ -113,7 +115,7 @@ const Navbar = () => {
           <li>
             <Link to="/received-requests">
               <div
-                className={`p-1 rounded-custom-xs ease-in duration-200 relative cursor-pointer ${
+                className={`p-[1px] md:p-[2px] lg:p-1 rounded-custom-xs ease-in duration-200 relative cursor-pointer ${
                   location.pathname === "/sent-requests" ||
                   location.pathname === "/received-requests"
                     ? "bg-secondary-silver"
@@ -122,7 +124,9 @@ const Navbar = () => {
                 onMouseEnter={() => setHoveredIcon("sent-requests")}
                 onMouseLeave={() => setHoveredIcon(null)}
               >
-                <RequestsIcon
+                <HugeiconsIcon
+                  icon={UserAdd01FreeIcons}
+                  className="w-6 h-6 md:w-7 md:h-7 lg:w-9 lg:h-9"
                   color={
                     location.pathname === "/sent-requests" ||
                     location.pathname === "/received-requests" ||
@@ -142,12 +146,14 @@ const Navbar = () => {
           </li>
           <li>
             <a href="/profile">
-              <div className="w-11 h-11 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
-                <img
-                  src={userData?.avatar || fallbackAvatarUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-custom-xs"
-                />
+              <div className="p-1 rounded-custom-xs ease-in duration-200 bg-secondary-dark hover:bg-secondary-silver">
+                <div className="w-6 h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
+                  <img
+                    src={userData?.avatar || fallbackAvatarUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
             </a>
           </li>

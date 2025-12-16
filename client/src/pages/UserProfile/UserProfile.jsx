@@ -1,10 +1,13 @@
 import Loader from "@/components/Loader";
-import AcceptRequestIcon from "@/components/icons/AcceptRequestIcon";
-import LocationIcon from "@/components/icons/LocationIcon";
-import RejectRequestIcon from "@/components/icons/RejectRequestIcon";
 import { requestAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { REQUEST_STATUS } from "@/utils/constants";
+import {
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  Location01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { get } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
@@ -136,7 +139,7 @@ const UserProfile = () => {
               </h3>
               {userData.location && (
                 <div className="location flex gap-2 items-center">
-                  <LocationIcon width="16" height="17" />
+                  <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
                   <p className="text-[18px] text-primary-silver opacity-70 leading-5">
                     {userData.location}
                   </p>
@@ -248,7 +251,7 @@ const UserProfile = () => {
               >
                 <span className="text-xl uppercase">Reject</span>
                 <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
-                  <RejectRequestIcon size="18" />
+                  <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
                 </div>
               </button>
               <button
@@ -258,7 +261,10 @@ const UserProfile = () => {
               >
                 <span className="text-xl uppercase">Accept</span>
                 <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
-                  <AcceptRequestIcon size="18" />
+                  <HugeiconsIcon
+                    icon={CheckmarkCircle02Icon}
+                    className="w-5 h-5"
+                  />
                 </div>
               </button>
             </div>

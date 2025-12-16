@@ -1,4 +1,4 @@
-import MessageIcon from "@/components/icons/MessageIcon";
+import { Message01Icon } from "@hugeicons/core-free-icons";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { chatData, message } from "./data/chatAndMessages";

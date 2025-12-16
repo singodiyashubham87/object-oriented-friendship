@@ -1,9 +1,9 @@
 import Loader from "@/components/Loader";
 import NameWithTooltip from "@/components/NameWithTooltip";
 import UserAvatar from "@/components/UserAvatar";
-import LocationIcon from "@/components/icons/LocationIcon";
-import MessageIcon from "@/components/icons/MessageIcon";
 import axiosInstance from "@/config/axios";
+import { Location01Icon, Message01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -81,7 +81,10 @@ const Friends = () => {
                   <NameWithTooltip name={fullName} index={index} />
                   {friend?.location && (
                     <div className="flex items-center gap-1">
-                      <LocationIcon />
+                      <HugeiconsIcon
+                        icon={Location01Icon}
+                        className="w-4 h-4"
+                      />
                       <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
                         {friend.location}
                       </p>
@@ -95,7 +98,7 @@ const Friends = () => {
                   >
                     Message
                   </button>
-                  <MessageIcon size={16} />
+                  <HugeiconsIcon icon={Message01Icon} className="w-4 h-4" />
                 </div>
               </div>
             </div>

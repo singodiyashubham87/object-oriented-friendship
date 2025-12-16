@@ -1,10 +1,13 @@
 import FeedCardActions from "@/components/FeedCardActions";
 import Loader from "@/components/Loader";
-import FeedNextArrowIcon from "@/components/icons/FeedNextArrowIcon";
-import FeedPrevArrowIcon from "@/components/icons/FeedPrevArrowIcon";
-import LocationIcon from "@/components/icons/LocationIcon";
 import { bookmarkAPI, requestAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Location01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { get, size } from "lodash-es";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -263,7 +266,11 @@ const Feed = () => {
           onMouseEnter={() => setPrevArrowColor("#e7e7e7")}
           onMouseLeave={() => setNextArrowColor("#c7c2c2")}
         >
-          <FeedPrevArrowIcon color={prevArrowColor} />
+          <HugeiconsIcon
+            icon={ArrowLeft01Icon}
+            className="w-8 h-8"
+            color={prevArrowColor}
+          />
         </button>
         <div className="cards w-10/12 flex justify-center items-center relative">
           {/* Left faded card */}
@@ -285,11 +292,7 @@ const Feed = () => {
                   {prevUser?.firstName} {prevUser?.lastName || ""}
                 </p>
                 <div className="flex items-center gap-1">
-                  <LocationIcon
-                    width="18"
-                    height="20"
-                    styles={{ paddingBottom: "0.2rem" }}
-                  />
+                  <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
                   <p className="text-primary-dark">
                     {indianStatesMap[prevUser?.location]}
                   </p>
@@ -318,11 +321,7 @@ const Feed = () => {
                 {currentUser?.firstName} {currentUser?.lastName || ""}
               </p>
               <div className="flex items-center gap-1">
-                <LocationIcon
-                  width="18"
-                  height="20"
-                  styles={{ paddingBottom: "0.2rem" }}
-                />
+                <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
                 <p className="text-primary-dark">
                   {indianStatesMap[currentUser?.location]}
                 </p>
@@ -356,11 +355,7 @@ const Feed = () => {
                   {nextUser?.firstName} {nextUser?.lastName || ""}
                 </p>
                 <div className="flex items-center gap-1">
-                  <LocationIcon
-                    width="18"
-                    height="20"
-                    styles={{ paddingBottom: "0.2rem" }}
-                  />
+                  <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
                   <p className="text-primary-dark">
                     {indianStatesMap[nextUser?.location]}
                   </p>
@@ -384,7 +379,11 @@ const Feed = () => {
           onMouseEnter={() => setNextArrowColor("#e7e7e7")}
           onMouseLeave={() => setNextArrowColor("#c7c2c2")}
         >
-          <FeedNextArrowIcon color={nextArrowColor} />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            className="w-8 h-8"
+            color={nextArrowColor}
+          />
         </button>
       </div>
     </div>

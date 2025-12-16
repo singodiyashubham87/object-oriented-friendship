@@ -1,10 +1,11 @@
 import Loader from "@/components/Loader";
 import NameWithTooltip from "@/components/NameWithTooltip";
 import UserAvatar from "@/components/UserAvatar";
-import LocationIcon from "@/components/icons/LocationIcon";
-import RevertRequestIcon from "@/components/icons/RevertRequestIcon";
 import { requestAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
+import { Location01Icon } from "@hugeicons/core-free-icons";
+import { Undo02Icon } from "@hugeicons/core-free-icons/index";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -77,7 +78,10 @@ const SentRequests = () => {
                   <NameWithTooltip name={fullName} index={index} />
                   {user.location && (
                     <div className="flex items-center gap-1">
-                      <LocationIcon />
+                      <HugeiconsIcon
+                        icon={Location01Icon}
+                        className="w-4 h-4"
+                      />
                       <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
                         {user.location}
                       </p>
@@ -92,7 +96,7 @@ const SentRequests = () => {
                       handleCancelRequest(user.requestId, fullName);
                   }}
                 >
-                  <RevertRequestIcon size={16} />
+                  <HugeiconsIcon icon={Undo02Icon} className="w-4 h-4" />
                   <button
                     type="button"
                     className="uppercase text-base font-primary font-semibold"

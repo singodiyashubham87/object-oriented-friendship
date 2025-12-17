@@ -77,8 +77,8 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s blur-76 backdrop-blur-76">
-      <ul className="flex items-center justify-between py-2 px-4 md:py-4 md:px-6 lg:py-6 lg:px-8 gap-2 md:gap-4 lg:gap-6">
-        <div className="leftIcons flex items-center justify-center gap-2 md:gap-4 lg:gap-6">
+      <ul className="flex items-center justify-between py-2 px-4 md:py-3 md:px-5 lg:py-4 lg:px-6 gap-2 md:gap-3 lg:gap-4">
+        <div className="leftIcons flex items-center justify-center gap-2 md:gap-3 lg:gap-4">
           {leftNavIcons.map((icon) => (
             <NavIcon
               key={icon.name}
@@ -100,7 +100,7 @@ const Navbar = () => {
             <img src={logo} alt="Logo" width={"125px"} title="Feed" />
           </Link>
         </li>
-        <div className="rightIcons flex items-stretch justify-center gap-3 md:gap-6">
+        <div className="rightIcons flex items-stretch justify-center gap-3 md:gap-4 lg:gap-5">
           {rightNavIcons.map((icon) => (
             <NavIcon
               key={icon.name}
@@ -126,7 +126,7 @@ const Navbar = () => {
               >
                 <HugeiconsIcon
                   icon={UserAdd01FreeIcons}
-                  className="w-6 h-6 md:w-7 md:h-7 lg:w-9 lg:h-9"
+                  className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
                   color={
                     location.pathname === "/sent-requests" ||
                     location.pathname === "/received-requests" ||
@@ -147,7 +147,7 @@ const Navbar = () => {
           <li>
             <a href="/profile">
               <div className="p-1 rounded-custom-xs ease-in duration-200 bg-secondary-dark hover:bg-secondary-silver">
-                <div className="w-6 h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
+                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
                   <img
                     src={userData?.avatar || fallbackAvatarUrl}
                     alt="Profile"

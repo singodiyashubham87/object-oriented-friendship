@@ -114,49 +114,54 @@ const UserProfile = () => {
   const fullName = `${userData.firstName} ${userData.lastName || ""}`.trim();
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
-      <div className="flex justify-center h-1/5">
-        <h2 className="text-4xl text-primary-silver font-bold uppercase">
+    <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-4 md:py-6">
+      {/* Responsive heading */}
+      <div className="flex justify-center mb-4 md:mb-6">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl text-primary-silver font-bold uppercase">
           User Profile
         </h2>
       </div>
-      <div className="w-full h-4/5 flex flex-col flex-grow justify-center flex-wrap px-4 my-6 gap-6 overflow-y-auto overflow-x-hidden">
-        <div className="flex justify-evenly gap-4">
-          <div className="relative w-64 h-64 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver">
+      <div className="w-full flex flex-col flex-grow justify-center px-2 sm:px-4 my-4 md:my-6 gap-4 md:gap-6 overflow-y-auto overflow-x-hidden">
+        {/* Profile picture and user info container */}
+        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4 md:gap-6">
+          {/* Responsive profile picture */}
+          <div className="relative w-32 sm:w-40 md:w-48 lg:w-56 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver flex-shrink-0">
             <img
               src={
                 userData.avatar ||
                 `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(fullName)}`
               }
               alt="Profile"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
-          <div className="userInfoAndSocials w-2/3 flex justify-between gap-4 p-8 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s">
-            <div className="userInfo flex flex-col gap-3">
-              <h3 className="text-2xl leading-5 text-primary-silver font-bold">
+          {/* User info and socials - responsive */}
+          <div className="userInfoAndSocials w-full lg:w-2/3 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 p-4 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s mt-1">
+            <div className="userInfo flex flex-col gap-2 sm:gap-3">
+              <h3 className="text-xl sm:text-2xl text-primary-silver font-bold">
                 {fullName}
               </h3>
               {userData.location && (
                 <div className="location flex gap-2 items-center">
                   <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
-                  <p className="text-[18px] text-primary-silver opacity-70 leading-5">
+                  <p className="text-sm sm:text-base md:text-lg text-primary-silver opacity-70">
                     {userData.location}
                   </p>
                 </div>
               )}
               {userData.age && userData.gender && (
-                <p className="text-primary-silver">
+                <p className="text-sm sm:text-base text-primary-silver">
                   {userData.age} years, {userData.gender}
                 </p>
               )}
             </div>
+            {/* Social links - responsive */}
             <div className="socials flex flex-col gap-2 justify-end">
               <a
                 href={`mailto:${userData.email}`}
-                className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
               >
-                <MdEmail size={20} />
+                <MdEmail size={18} className="sm:w-5 sm:h-5" />
                 <span>Email</span>
               </a>
               {userData.socialLinks?.github && (
@@ -164,9 +169,9 @@ const UserProfile = () => {
                   href={userData.socialLinks.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaGithub size={20} />
+                  <FaGithub size={18} className="sm:w-5 sm:h-5" />
                   <span>Github</span>
                 </a>
               )}
@@ -175,9 +180,9 @@ const UserProfile = () => {
                   href={userData.socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaLinkedin size={20} />
+                  <FaLinkedin size={18} className="sm:w-5 sm:h-5" />
                   <span>LinkedIn</span>
                 </a>
               )}
@@ -186,9 +191,9 @@ const UserProfile = () => {
                   href={userData.socialLinks.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaTwitter size={20} />
+                  <FaTwitter size={18} className="sm:w-5 sm:h-5" />
                   <span>Twitter</span>
                 </a>
               )}
@@ -197,9 +202,9 @@ const UserProfile = () => {
                   href={userData.socialLinks.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300"
+                  className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaGlobe size={20} />
+                  <FaGlobe size={18} className="sm:w-5 sm:h-5" />
                   <span>Website</span>
                 </a>
               )}
@@ -207,90 +212,115 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <div className="first flex justify-evenly items-center gap-4 ">
+        {/* Buttons and bio section - responsive */}
+        <div className="first flex flex-col md:flex-row justify-center items-center gap-3 md:gap-4">
           {requestStatus === "none" && (
             <button
               type="button"
-              className="connectButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
+              className="connectButton flex justify-center items-center gap-3 w-full sm:w-64 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSendRequest}
               disabled={sendingRequest}
             >
               {sendingRequest ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xl uppercase">Sending...</span>
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-base sm:text-lg md:text-xl uppercase">
+                    Sending...
+                  </span>
                 </>
               ) : (
-                <span className="text-xl uppercase">Send Request</span>
+                <span className="text-base sm:text-lg md:text-xl uppercase">
+                  Send Request
+                </span>
               )}
             </button>
           )}
           {requestStatus === "sent" && (
             <button
               type="button"
-              className="withdrawButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
+              className="withdrawButton flex justify-center items-center gap-3 w-full sm:w-64 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleWithdrawRequest}
               disabled={sendingRequest}
             >
               {sendingRequest ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xl uppercase">Withdrawing...</span>
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-base sm:text-lg md:text-xl uppercase">
+                    Withdrawing...
+                  </span>
                 </>
               ) : (
-                <span className="text-xl uppercase">Withdraw Request</span>
+                <span className="text-base sm:text-lg md:text-xl uppercase">
+                  Withdraw Request
+                </span>
               )}
             </button>
           )}
           {requestStatus === "received" && (
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
               <button
                 type="button"
-                className="rejectButton flex justify-center items-center gap-4 w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
+                className="rejectButton flex justify-center items-center gap-3 w-full sm:w-48 md:w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
                 onClick={() => handleRejectRequest(requestId)}
               >
-                <span className="text-xl uppercase">Reject</span>
-                <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
-                  <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
+                <span className="text-base sm:text-lg md:text-xl uppercase">
+                  Reject
+                </span>
+                <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    className="w-4 h-4 sm:w-5 sm:h-5"
+                  />
                 </div>
               </button>
               <button
                 type="button"
-                className="acceptButton flex justify-center items-center gap-4 w-64 bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
+                className="acceptButton flex justify-center items-center gap-3 w-full sm:w-48 md:w-64 bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
                 onClick={() => handleAcceptRequest(requestId)}
               >
-                <span className="text-xl uppercase">Accept</span>
-                <div className="p-sm border border-primary-dark bg-primary-silver rounded-full">
+                <span className="text-base sm:text-lg md:text-xl uppercase">
+                  Accept
+                </span>
+                <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">
                   <HugeiconsIcon
                     icon={CheckmarkCircle02Icon}
-                    className="w-5 h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                   />
                 </div>
               </button>
             </div>
           )}
           {requestStatus === "friends" && (
-            <div className="text-primary-silver text-xl">
+            <div className="text-primary-silver text-base sm:text-lg md:text-xl">
               ✓ Already connected
             </div>
           )}
-          <p className="bio px-4 w-2/3 border-2 border-primary-silver text-primary-silver rounded-custom-xs">
+          {/* Bio section - responsive */}
+          <p className="bio px-3 py-2 sm:px-4 w-full md:w-2/3 border-2 border-primary-silver text-primary-silver rounded-custom-xs text-sm sm:text-base">
             BIO: {userData.bio || "No bio available"}
           </p>
         </div>
 
-        <div className="second flex justify-evenly gap-4">
-          <div className="skills w-full flex items-center gap-2 bg-primary-silver px-4 rounded-custom-xs">
-            <p className="text-primary-dark font-bold leading-5">Skills: </p>
-            <ul className="flex gap-2 flex-wrap py-2">
+        {/* Skills section - responsive */}
+        <div className="second flex justify-center">
+          <div className="skills w-full flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-primary-silver px-3 py-2 sm:px-4 rounded-custom-xs">
+            <p className="text-primary-dark font-bold text-sm sm:text-base">
+              Skills:{" "}
+            </p>
+            <ul className="flex gap-2 flex-wrap py-1 sm:py-2">
               {userSkills && userSkills.length > 0 ? (
                 userSkills.slice(0, 10).map((skill) => (
-                  <li className={skillBadgeStyle} key={skill}>
+                  <li
+                    className={`${skillBadgeStyle} text-xs sm:text-sm`}
+                    key={skill}
+                  >
                     {skill}
                   </li>
                 ))
               ) : (
-                <li className="text-primary-dark">No skills listed</li>
+                <li className="text-primary-dark text-xs sm:text-sm">
+                  No skills listed
+                </li>
               )}
             </ul>
           </div>

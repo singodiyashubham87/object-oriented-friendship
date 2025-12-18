@@ -314,9 +314,10 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
-      <div className="flex justify-center h-1/5 ">
-        <h2 className="text-4xl text-primary-silver font-bold uppercase">
+    <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-4 md:py-6">
+      {/* Responsive heading */}
+      <div className="flex justify-center mb-2 md:mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl text-primary-silver font-bold uppercase">
           Profile
         </h2>
       </div>
@@ -326,17 +327,19 @@ const Profile = () => {
         onSubmit={handleSave}
         enableReinitialize
       >
-        <Form className="w-full flex flex-col flex-grow justify-center items-center px-4 py-6 gap-10 overflow-y-auto overflow-x-hidden">
-          <div className="flex items-center  p-10 w-full min-h-[16rem] flex-col md:flex-row gap-10">
-            <div className="relative w-64 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-dark">
+        <Form className="w-full flex flex-col flex-grow items-center px-2 sm:px-4 gap-4 md:gap-5 overflow-y-visible overflow-x-hidden">
+          {/* Responsive container for profile picture and form */}
+          <div className="flex items-center justify-center w-full flex-col lg:flex-row gap-4 md:gap-6 py-2">
+            {/* Responsive profile picture */}
+            <div className="relative w-24 sm:w-32 lg:w-44 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-dark flex-shrink-0">
               <img
                 src={previewImage || userData.avatar || FALLBACK_IMAGE}
                 alt="Profile"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
               {isUploadingImage && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-custom-s">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent" />
+                  <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-4 border-white border-t-transparent" />
                 </div>
               )}
               <input
@@ -350,18 +353,22 @@ const Profile = () => {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage}
-                className="absolute z-100 top-[-5%] right-[-5%] bg-tertiary-silver p-2 border border-primary-dark shadow-md rounded-full cursor-pointer hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute z-100 top-[-5%] right-[-5%] bg-tertiary-silver p-[1px] sm:p-1 md:p-2 border border-primary-dark shadow-md rounded-full cursor-pointer hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <HugeiconsIcon icon={PencilEdit01Icon} className="w-5 h-5" />
+                <HugeiconsIcon
+                  icon={PencilEdit01Icon}
+                  className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                />
               </button>
             </div>
 
-            <div className="p-4 rounded-custom-s bg-dark-glassmorphism-50 flex-1 w-full max-h-[500px] overflow-y-auto flex flex-col gap-4">
+            {/* Responsive form fields container */}
+            <div className="p-3 sm:p-4 md:p-5 rounded-custom-s bg-dark-glassmorphism-50 flex-1 w-full sm:w-4/5 overflow-y-visible flex flex-col gap-3 sm:gap-4">
               <Field
                 type="text"
                 name="firstName"
                 placeholder="First Name"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
 
@@ -369,14 +376,14 @@ const Profile = () => {
                 type="text"
                 name="lastName"
                 placeholder="Last Name"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
 
               <Field
                 as="select"
                 name="gender"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               >
                 {genderOptionsArray.map(({ label, value }) => (
@@ -394,7 +401,7 @@ const Profile = () => {
                 type="number"
                 name="age"
                 placeholder="Age"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
 
@@ -402,7 +409,7 @@ const Profile = () => {
                 type="text"
                 name="phone"
                 placeholder="Phone Number"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
 
@@ -410,7 +417,7 @@ const Profile = () => {
                 type="text"
                 name="location"
                 placeholder="Location"
-                className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                 disabled={!isEditable}
               />
 
@@ -418,21 +425,21 @@ const Profile = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-2 min-h-[2.5rem]">
                   {skills.length === 0 && !isEditable ? (
-                    <span className="text-primary-silver opacity-50 italic">
+                    <span className="text-primary-silver opacity-50 italic text-xs sm:text-sm">
                       No skills listed
                     </span>
                   ) : (
                     skills.map((skill) => (
                       <div
                         key={skill}
-                        className="flex items-center gap-2 px-3 py-1 bg-primary-silver-20 border border-primary-silver rounded-full text-secondary-silver font-medium"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-primary-silver-20 border border-primary-silver rounded-full text-xs sm:text-sm text-secondary-silver font-medium"
                       >
                         <span>{skill}</span>
                         {isEditable && (
                           <button
                             type="button"
                             onClick={() => handleRemoveSkill(skill)}
-                            className="text-red-400 hover:text-red-600 font-bold text-lg leading-none"
+                            className="text-red-400 hover:text-red-600 font-bold text-base sm:text-lg leading-none"
                           >
                             ×
                           </button>
@@ -448,27 +455,30 @@ const Profile = () => {
                     onChange={handleSkillInputChange}
                     onKeyDown={handleAddSkill}
                     placeholder="Add skills (press Enter or comma)"
-                    className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                    className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                   />
                 )}
               </div>
 
               {/* Social Links Section */}
               <div className="flex flex-col gap-2 mt-2">
-                <h3 className="text-primary-silver font-semibold text-sm uppercase tracking-wide">
+                <h3 className="text-primary-silver font-semibold text-xs sm:text-sm uppercase tracking-wide">
                   Social Links
                 </h3>
                 {!isEditable ? (
                   /* Display mode - show clickable links */
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
                     {socialLinks.github && (
                       <a
                         href={socialLinks.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-xs sm:text-sm text-secondary-silver font-medium transition-all hover:scale-105"
                       >
-                        <FaGithub size={18} />
+                        <FaGithub
+                          size={16}
+                          className="sm:w-[18px] sm:h-[18px]"
+                        />
                         <span>GitHub</span>
                       </a>
                     )}
@@ -477,9 +487,12 @@ const Profile = () => {
                         href={socialLinks.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-xs sm:text-sm text-secondary-silver font-medium transition-all hover:scale-105"
                       >
-                        <FaLinkedin size={18} />
+                        <FaLinkedin
+                          size={16}
+                          className="sm:w-[18px] sm:h-[18px]"
+                        />
                         <span>LinkedIn</span>
                       </a>
                     )}
@@ -488,9 +501,12 @@ const Profile = () => {
                         href={socialLinks.twitter}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-xs sm:text-sm text-secondary-silver font-medium transition-all hover:scale-105"
                       >
-                        <FaTwitter size={18} />
+                        <FaTwitter
+                          size={16}
+                          className="sm:w-[18px] sm:h-[18px]"
+                        />
                         <span>Twitter</span>
                       </a>
                     )}
@@ -499,21 +515,24 @@ const Profile = () => {
                         href={socialLinks.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-secondary-silver font-medium transition-all hover:scale-105"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary-silver-20 hover:bg-primary-silver-30 border border-primary-silver rounded-custom-xs text-xs sm:text-sm text-secondary-silver font-medium transition-all hover:scale-105"
                       >
-                        <FaGlobe size={18} />
+                        <FaGlobe
+                          size={16}
+                          className="sm:w-[18px] sm:h-[18px]"
+                        />
                         <span>Website</span>
                       </a>
                     )}
                     {hasNoSocialLinks && (
-                      <span className="text-primary-silver opacity-50 italic text-sm">
+                      <span className="text-primary-silver opacity-50 italic text-xs sm:text-sm">
                         No social links added
                       </span>
                     )}
                   </div>
                 ) : (
                   /* Edit mode - show input fields */
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {/* GitHub */}
                     <div className="flex flex-col gap-1">
                       <label
@@ -530,7 +549,7 @@ const Profile = () => {
                           handleSocialLinkChange("github", e.target.value)
                         }
                         placeholder="https://github.com/username"
-                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                         disabled={!isEditable}
                       />
                     </div>
@@ -551,7 +570,7 @@ const Profile = () => {
                           handleSocialLinkChange("linkedin", e.target.value)
                         }
                         placeholder="https://linkedin.com/in/username"
-                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                         disabled={!isEditable}
                       />
                     </div>
@@ -572,7 +591,7 @@ const Profile = () => {
                           handleSocialLinkChange("twitter", e.target.value)
                         }
                         placeholder="https://twitter.com/username"
-                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                         disabled={!isEditable}
                       />
                     </div>
@@ -593,7 +612,7 @@ const Profile = () => {
                           handleSocialLinkChange("website", e.target.value)
                         }
                         placeholder="https://yourwebsite.com"
-                        className="px-2 py-1 rounded-custom-xs outline-none w-full text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
+                        className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 rounded-custom-xs outline-none w-full text-sm sm:text-base text-secondary-silver font-semibold bg-transparent border-xs border-primary-silver"
                         disabled={!isEditable}
                       />
                     </div>
@@ -603,10 +622,11 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-12 self-end w-full">
+          {/* Responsive buttons - stack on mobile */}
+          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-8 md:gap-12 self-end w-full px-4">
             <button
               type="button"
-              className={`px-6 py-2 font-semibold text-primary-silver bg-primary-silver-20 hover:text-primary-dark hover:bg-primary-silver rounded-lg uppercase ${transitionStyle} transition-colors ${
+              className={`px-4 sm:px-6 py-2 sm:py-2.5 font-semibold text-sm sm:text-base text-primary-silver bg-primary-silver-20 hover:text-primary-dark hover:bg-primary-silver rounded-lg uppercase ${transitionStyle} transition-colors ${
                 isEditable && "opacity-50 cursor-not-allowed"
               }`}
               onClick={() => setIsEditable(true)}
@@ -616,7 +636,7 @@ const Profile = () => {
             </button>
             <button
               type="submit"
-              className={`px-6 py-2 font-semibold text-primary-silver bg-primary-silver-20 hover:text-primary-dark hover:bg-primary-silver rounded-lg uppercase ${transitionStyle} transition-colors ${
+              className={`px-4 sm:px-6 py-2 sm:py-2.5 font-semibold text-sm sm:text-base text-primary-silver bg-primary-silver-20 hover:text-primary-dark hover:bg-primary-silver rounded-lg uppercase ${transitionStyle} transition-colors ${
                 !isEditable ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={!isEditable}

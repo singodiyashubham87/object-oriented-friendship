@@ -94,9 +94,14 @@ const Navbar = () => {
             />
           ))}
         </div>
-        <li className="hidden md:block cursor-pointer">
+        <li className="cursor-pointer">
           <Link to="/feed">
-            <img src={logo} alt="Logo" width={"125px"} title="Feed" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-[60px] sm:w-[80px] md:w-[100px] lg:w-[125px]"
+              title="Feed"
+            />
           </Link>
         </li>
         <div className="rightIcons flex items-stretch justify-center gap-3 md:gap-4 lg:gap-5">
@@ -127,7 +132,7 @@ const Navbar = () => {
             >
               <HugeiconsIcon
                 icon={UserAdd02FreeIcons}
-                className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 "
+                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
                 color={
                   location.pathname === "/sent-requests" ||
                   location.pathname === "/received-requests" ||
@@ -145,7 +150,7 @@ const Navbar = () => {
           <li>
             <a href="/profile">
               <div className="p-1 rounded-custom-xs ease-in duration-200 bg-secondary-dark hover:bg-secondary-silver">
-                <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded-custom-xs overflow-hidden bg-primary-silver">
                   <img
                     src={userData?.avatar || fallbackAvatarUrl}
                     alt="Profile"

@@ -23,7 +23,7 @@ const NavIcon = ({
     >
       <HugeiconsIcon
         icon={IconComponent}
-        className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
+        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
         color={isActive || hoveredIcon === iconName ? "#373737" : "#92918D"}
       />
     </div>

@@ -10,7 +10,7 @@ const UserAvatar = ({ avatarUrl, classNames = "", alt = "User avatar" }) => {
 
   return (
     <div
-      className={`w-24 border-2 border-primary-gray-30 overflow-hidden rounded-full ${classNames}`}
+      className={`w-20 md:w-24 border-2 border-primary-gray-30 overflow-hidden rounded-full ${classNames}`}
     >
       <img
         src={avatarSrc}

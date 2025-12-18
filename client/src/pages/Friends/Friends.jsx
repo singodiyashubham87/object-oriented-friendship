@@ -58,48 +58,65 @@ const Friends = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6">
       <div className="flex justify-center h-1/5">
         <h2 className="text-4xl text-primary-silver font-bold uppercase">
           Friends
         </h2>
       </div>
-      <div className="w-full h-4/5 flex justify-center flex-wrap px-4 my-6 gap-6 overflow-y-auto overflow-x-hidden">
+      <div className="w-full h-4/5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center px-4 py-6 gap-6 overflow-y-auto overflow-x-hidden">
         {friends?.map((friend, index) => {
           const fullName = `${friend.firstName} ${friend.lastName}`;
 
           return (
             <div
               key={friend.id}
-              className="flex flex-col gap-2 items-center justify-stretch bg-dark-glassmorphism-70 rounded-custom-xs p-4 shadow-lg border-2 border-primary-gray-30   hover:cursor-pointer transition-transform ease-in-out duration-300"
+              className="group relative flex flex-col items-center justify-between w-full max-w-44 h-48 bg-gradient-to-b from-dark-glassmorphism-50 to-dark-glassmorphism-70 backdrop-blur-sm rounded-custom-s px-2 py-3 md:px-3 shadow-xl border border-primary-gray-30 hover:border-primary-cyan-70 hover:cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary-cyan/10 overflow-hidden"
               onClick={(e) => handleUserCardClick(e, friend?.id)}
               onKeyDown={(e) => handleUserCardClick(e, friend?.id)}
             >
-              <UserAvatar avatarUrl={friend.avatar} />
-              <div className="flex flex-col items-center gap-1">
-                <div className="relative group text-center">
-                  <NameWithTooltip name={fullName} index={index} />
+              {/* Subtle glow effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+              {/* Avatar with ring effect */}
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-cyan-70 to-dark-cyan-70 rounded-full opacity-0 group-hover:opacity-75 blur transition-opacity duration-300" />
+                <UserAvatar
+                  avatarUrl={friend.avatar}
+                  classNames="relative ring-2 ring-primary-gray-30 group-hover:ring-primary-cyan-70 transition-all duration-300"
+                />
+              </div>
+
+              <div className="flex flex-col items-center gap-0.5 flex-grow justify-center z-10 w-full px-1">
+                <div className="relative group text-center w-full">
+                  <NameWithTooltip
+                    name={fullName}
+                    index={index}
+                    charLimit={18}
+                  />
                   {friend?.location && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 justify-center">
                       <HugeiconsIcon
                         icon={Location01Icon}
-                        className="w-4 h-4"
+                        className="w-3 h-3 shrink-0 text-primary-cyan"
                       />
-                      <p className="text-secondary-silver text-sm uppercase font-primary font-semibold">
+                      <p className="text-secondary-silver text-xs uppercase font-primary font-medium tracking-wide truncate max-w-32">
                         {friend.location}
                       </p>
                     </div>
                   )}
                 </div>
-                <div className="flex gap-2 items-center bg-primary-silver-50 text-primary-dark px-4 py-1 rounded-custom-xs hover:bg-secondary-silver cursor-pointer">
-                  <button
-                    type="button"
-                    className="messageBtn uppercase text-base font-primary font-semibold"
-                  >
-                    Message
-                  </button>
-                  <HugeiconsIcon icon={Message01Icon} className="w-4 h-4" />
-                </div>
+              </div>
+
+              {/* Enhanced Message Button */}
+              <div className="relative z-10 flex gap-1.5 items-center bg-gradient-to-r from-primary-cyan-70 to-dark-cyan-70 text-primary-dark px-3 py-1 rounded-full hover:from-primary-cyan hover:to-dark-cyan cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg">
+                <button
+                  type="button"
+                  className="messageBtn uppercase text-xs font-primary font-bold tracking-wide"
+                >
+                  Message
+                </button>
+                <HugeiconsIcon icon={Message01Icon} className="w-3 h-3" />
               </div>
             </div>
           );

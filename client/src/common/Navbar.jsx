@@ -1,7 +1,7 @@
 import logo from "@/assets/images/oof-logo.png";
 import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
-import RequestButtons from "@/components/RequestButtons";
+import RequestDialog from "@/components/RequestDialog";
 import { authAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import {
@@ -11,6 +11,7 @@ import {
   UserAdd01FreeIcons,
   UserMultiple02FreeIcons,
 } from "@hugeicons/core-free-icons";
+import { UserAdd02FreeIcons } from "@hugeicons/core-free-icons/index";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { get } from "lodash-es";
 import { useEffect, useState } from "react";
@@ -20,12 +21,10 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const requestRouteName = location.pathname.split("-")[0].slice(1); // e.g., "/received-requests" => "received"
-  const isReceivedRoute = requestRouteName === "received";
-  const isSentRoute = requestRouteName === "sent";
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [isRequestDialogOpen, setIsRequestDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -112,37 +111,36 @@ const Navbar = () => {
               isActive={location.pathname === icon.href}
             />
           ))}
-          <li>
-            <Link to="/received-requests">
-              <div
-                className={`p-[1px] md:p-[2px] lg:p-1 rounded-custom-xs ease-in duration-200 relative cursor-pointer ${
+          <li className="relative">
+            <button
+              type="button"
+              className={`p-1 rounded-custom-xs ease-in duration-200 cursor-pointer ${
+                location.pathname === "/sent-requests" ||
+                location.pathname === "/received-requests"
+                  ? "bg-secondary-silver"
+                  : "bg-secondary-dark hover:bg-secondary-silver"
+              }`}
+              onMouseEnter={() => setHoveredIcon("requests")}
+              onMouseLeave={() => setHoveredIcon(null)}
+              onClick={() => setIsRequestDialogOpen(true)}
+              aria-label="Open requests menu"
+            >
+              <HugeiconsIcon
+                icon={UserAdd02FreeIcons}
+                className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 "
+                color={
                   location.pathname === "/sent-requests" ||
-                  location.pathname === "/received-requests"
-                    ? "bg-secondary-silver"
-                    : "bg-secondary-dark hover:bg-secondary-silver"
-                }`}
-                onMouseEnter={() => setHoveredIcon("sent-requests")}
-                onMouseLeave={() => setHoveredIcon(null)}
-              >
-                <HugeiconsIcon
-                  icon={UserAdd01FreeIcons}
-                  className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                  color={
-                    location.pathname === "/sent-requests" ||
-                    location.pathname === "/received-requests" ||
-                    hoveredIcon === "sent-requests"
-                      ? "#373737"
-                      : "#92918D"
-                  }
-                />
-                {(isReceivedRoute || isSentRoute) && (
-                  <RequestButtons
-                    isReceivedRoute={isReceivedRoute}
-                    isSentRoute={isSentRoute}
-                  />
-                )}
-              </div>
-            </Link>
+                  location.pathname === "/received-requests" ||
+                  hoveredIcon === "requests"
+                    ? "#373737"
+                    : "#92918D"
+                }
+              />
+            </button>
+            <RequestDialog
+              isOpen={isRequestDialogOpen}
+              onClose={() => setIsRequestDialogOpen(false)}
+            />
           </li>
           <li>
             <a href="/profile">

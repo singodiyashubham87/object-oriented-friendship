@@ -119,11 +119,11 @@ const UserProfile = () => {
           User Profile
         </h2>
       </div>
-      <div className="w-full flex flex-col flex-grow justify-center px-2 sm:px-4 my-4 md:my-6 gap-4 md:gap-6 overflow-y-auto overflow-x-hidden">
+      <div className="w-full flex flex-col flex-grow justify-center px-2 sm:px-4 gap-4  overflow-y-auto overflow-x-hidden">
         {/* Profile picture and user info container */}
-        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4 md:gap-6">
+        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4">
           {/* Responsive profile picture */}
-          <div className="relative w-32 sm:w-40 md:w-48 lg:w-56 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver flex-shrink-0">
+          <div className="relative w-32 sm:w-40 lg:w-56 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver flex-shrink-0">
             <img
               src={
                 userData.avatar ||
@@ -133,16 +133,15 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          {/* User info and socials - responsive */}
-          <div className="userInfoAndSocials w-full lg:w-2/3 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 p-4 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s mt-1">
-            <div className="userInfo flex flex-col gap-2 sm:gap-3">
-              <h3 className="text-xl sm:text-2xl text-primary-silver font-bold">
+          <div className="userInfoAndSocials w-full lg:w-2/3 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 p-2 sm:p-3 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s mt-1">
+            <div className="userInfo flex flex-col gap-2">
+              <h3 className="text-xl sm:text-xl text-primary-silver font-bold">
                 {fullName}
               </h3>
               {userData.location && (
                 <div className="location flex gap-2 items-center">
                   <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
-                  <p className="text-sm sm:text-base md:text-lg text-primary-silver opacity-70">
+                  <p className="text-sm sm:text-base text-primary-silver opacity-70">
                     {userData.location}
                   </p>
                 </div>
@@ -153,14 +152,13 @@ const UserProfile = () => {
                 </p>
               )}
             </div>
-            {/* Social links - responsive */}
             <div className="socials flex flex-col gap-2 justify-end">
               <a
                 href={`mailto:${userData.email}`}
                 className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
               >
-                <MdEmail size={18} className="sm:w-5 sm:h-5" />
-                <span>Email</span>
+                <MdEmail size={16} className="sm:w-5 sm:h-5" />
+                <span className="text-sm">Email</span>
               </a>
               {userData.socialLinks?.github && (
                 <a
@@ -169,8 +167,8 @@ const UserProfile = () => {
                   rel="noopener noreferrer"
                   className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaGithub size={18} className="sm:w-5 sm:h-5" />
-                  <span>Github</span>
+                  <FaGithub size={16} className="sm:w-5 sm:h-5" />
+                  <span className="text-sm">Github</span>
                 </a>
               )}
               {userData.socialLinks?.linkedin && (
@@ -180,8 +178,8 @@ const UserProfile = () => {
                   rel="noopener noreferrer"
                   className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaLinkedin size={18} className="sm:w-5 sm:h-5" />
-                  <span>LinkedIn</span>
+                  <FaLinkedin size={16} className="sm:w-5 sm:h-5" />
+                  <span className="text-sm">LinkedIn</span>
                 </a>
               )}
               {userData.socialLinks?.twitter && (
@@ -191,8 +189,8 @@ const UserProfile = () => {
                   rel="noopener noreferrer"
                   className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaTwitter size={18} className="sm:w-5 sm:h-5" />
-                  <span>Twitter</span>
+                  <FaTwitter size={16} className="sm:w-5 sm:h-5" />
+                  <span className="text-sm">Twitter</span>
                 </a>
               )}
               {userData.socialLinks?.website && (
@@ -202,8 +200,8 @@ const UserProfile = () => {
                   rel="noopener noreferrer"
                   className="text-primary-dark hover:text-primary-light flex gap-2 items-center justify-stretch px-2 py-1 bg-primary-gray rounded-custom-xs hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
                 >
-                  <FaGlobe size={18} className="sm:w-5 sm:h-5" />
-                  <span>Website</span>
+                  <FaGlobe size={16} className="sm:w-5 sm:h-5" />
+                  <span className="text-sm">Website</span>
                 </a>
               )}
             </div>
@@ -243,46 +241,42 @@ const UserProfile = () => {
               {sendingRequest ? (
                 <>
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span className="text-base sm:text-lg md:text-xl uppercase">
+                  <span className="text-base sm:text-lg uppercase">
                     Withdrawing...
                   </span>
                 </>
               ) : (
-                <span className="text-base sm:text-lg md:text-xl uppercase">
+                <span className="text-base sm:text-lg uppercase">
                   Withdraw Request
                 </span>
               )}
             </button>
           )}
           {requestStatus === "received" && (
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="flex flex-col gap-3 sm:gap-4 w-full sm:w-auto">
               <button
                 type="button"
-                className="rejectButton flex justify-center items-center gap-3 w-full sm:w-48 md:w-64 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-custom-s"
+                className="rejectButton flex justify-center items-center gap-3 w-full sm:w-48  bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-custom-s"
                 onClick={() => handleRejectRequest(requestId)}
               >
-                <span className="text-base sm:text-lg md:text-xl uppercase">
-                  Reject
-                </span>
+                <span className="text-base sm:text-lg uppercase">Reject</span>
                 <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">
                   <HugeiconsIcon
                     icon={Cancel01Icon}
-                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4"
                   />
                 </div>
               </button>
               <button
                 type="button"
-                className="acceptButton flex justify-center items-center gap-3 w-full sm:w-48 md:w-64 bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-2 px-4 rounded-custom-s"
+                className="acceptButton flex justify-center items-center gap-3 w-full sm:w-48  bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-1 px-2 rounded-custom-s"
                 onClick={() => handleAcceptRequest(requestId)}
               >
-                <span className="text-base sm:text-lg md:text-xl uppercase">
-                  Accept
-                </span>
+                <span className="text-base sm:text-lg uppercase">Accept</span>
                 <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">
                   <HugeiconsIcon
                     icon={CheckmarkCircle02Icon}
-                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4"
                   />
                 </div>
               </button>
@@ -301,7 +295,7 @@ const UserProfile = () => {
 
         {/* Skills section - responsive */}
         <div className="second flex justify-center">
-          <div className="skills w-full flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-primary-silver px-3 py-2 sm:px-4 rounded-custom-xs">
+          <div className="skills w-full flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-primary-silver px-2 py-1 sm:px-4 rounded-custom-xs">
             <p className="text-primary-dark font-bold text-sm sm:text-base">
               Skills:{" "}
             </p>

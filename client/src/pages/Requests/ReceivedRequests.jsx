@@ -14,9 +14,11 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const ReceivedRequests = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
   const { searchQuery, setSearchQuery, filteredUsers } =
@@ -45,7 +47,6 @@ const ReceivedRequests = () => {
     try {
       await requestAPI.acceptRequest(id);
       toast.success(`${userName}'s request accepted!`);
-      // Remove from list
       setPendingRequests((prev) => prev.filter((req) => req.id !== id));
     } catch (error) {
       toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
@@ -56,7 +57,6 @@ const ReceivedRequests = () => {
     try {
       await requestAPI.rejectRequest(id);
       toast.success(`${userName}'s request rejected`);
-      // Remove from list
       setPendingRequests((prev) => prev.filter((req) => req.id !== id));
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
@@ -70,6 +70,10 @@ const ReceivedRequests = () => {
     } catch (error) {
       toast.error(`Failed to bookmark: ${getErrorMessage(error)}`);
     }
+  };
+
+  const handleCardClick = (userId) => {
+    navigate(`/profile/${userId}`);
   };
 
   if (!size(pendingRequests)) {
@@ -115,6 +119,8 @@ const ReceivedRequests = () => {
               <div
                 key={user.id}
                 className="group relative flex flex-col items-center justify-between w-full max-w-44 h-48 bg-gradient-to-b from-dark-glassmorphism-50 to-dark-glassmorphism-70 backdrop-blur-sm rounded-custom-s px-2 py-3 md:px-3 shadow-xl border border-primary-gray-30 hover:border-primary-green-70 hover:cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary-green/10 overflow-hidden"
+                onClick={() => handleCardClick(user.id)}
+                onKeyDown={(e) => e.key === "Enter" && handleCardClick(user.id)}
               >
                 {/* Subtle glow effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />

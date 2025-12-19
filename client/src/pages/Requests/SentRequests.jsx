@@ -10,9 +10,11 @@ import { Undo02Icon } from "@hugeicons/core-free-icons/index";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { get, size } from "lodash-es";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const SentRequests = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [requestedUsers, setRequestedUsers] = useState([]);
   const { searchQuery, setSearchQuery, filteredUsers } =
@@ -43,6 +45,10 @@ const SentRequests = () => {
     } catch (error) {
       toast.error(`Failed to cancel request: ${getErrorMessage(error)}`);
     }
+  };
+
+  const handleCardClick = (userId) => {
+    navigate(`/profile/${userId}`);
   };
 
   if (!size(requestedUsers)) {
@@ -88,6 +94,8 @@ const SentRequests = () => {
               <div
                 key={user.id}
                 className="group relative flex flex-col items-center justify-between w-full max-w-44 h-48 bg-gradient-to-b from-dark-glassmorphism-50 to-dark-glassmorphism-70 backdrop-blur-sm rounded-custom-s px-2 py-3 md:px-3 shadow-xl border border-primary-gray-30 hover:border-primary-silver-70 hover:cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary-silver/10 overflow-hidden"
+                onClick={() => handleCardClick(user.id)}
+                onKeyDown={(e) => e.key === "Enter" && handleCardClick(user.id)}
               >
                 {/* Subtle glow effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-silver/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />

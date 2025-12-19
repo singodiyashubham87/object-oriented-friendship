@@ -245,6 +245,11 @@ const Profile = () => {
   };
 
   const handleImageSelect = (event) => {
+    if (isUploadingImage) {
+      toast.info("Upload already in progress...");
+      return;
+    }
+
     const file = event.target.files?.[0];
     if (!file) return;
 

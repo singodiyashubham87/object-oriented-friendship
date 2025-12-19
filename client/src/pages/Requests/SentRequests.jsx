@@ -35,20 +35,16 @@ const SentRequests = () => {
     try {
       await requestAPI.cancelRequest(requestId);
       toast.success(`Request to ${userName} cancelled`);
-      // Remove from list
       setRequestedUsers((prev) => prev.filter((req) => req.id !== requestId));
     } catch (error) {
       toast.error(`Failed to cancel request: ${getErrorMessage(error)}`);
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (!size(requestedUsers)) {
     return (
-      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6 relative">
+        {isLoading && <Loader />}
         <p className="text-primary-silver text-2xl w-1/2 text-center">
           No sent requests found. Start sending connection requests to others!
         </p>
@@ -57,7 +53,8 @@ const SentRequests = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6">
+    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6 relative">
+      {isLoading && <Loader />}
       <div className="flex justify-center h-1/5">
         <h2 className="text-2xl md:text-3xl lg:text-4xl text-primary-silver font-bold uppercase text-center px-2">
           Sent Requests
@@ -105,12 +102,16 @@ const SentRequests = () => {
                 </div>
               </div>
 
-              {/* Revert Button */}
-              <div className="relative z-10 flex gap-1.5 items-center bg-gradient-to-r from-primary-silver-70 to-secondary-silver-70 text-primary-silver px-3 py-1 rounded-full hover:from-primary-silver hover:to-secondary-silver hover:text-primary-dark cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg">
+              <div
+                className="relative z-10 flex gap-1.5 items-center bg-gradient-to-r from-primary-silver-70 to-secondary-silver-70 text-primary-silver px-3 py-1 rounded-full hover:from-primary-silver hover:to-secondary-silver hover:text-primary-dark cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg"
+                onClick={() => handleCancelRequest(user.id, fullName)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleCancelRequest(user.id, fullName)
+                }
+              >
                 <button
                   type="button"
                   className="uppercase text-xs font-primary font-bold tracking-wide"
-                  onClick={() => handleCancelRequest(user.requestId, fullName)}
                 >
                   Revert
                 </button>

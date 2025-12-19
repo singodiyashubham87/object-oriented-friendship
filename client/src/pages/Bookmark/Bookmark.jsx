@@ -78,13 +78,10 @@ const Bookmark = () => {
     navigate(`/profile/${userId}`);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (!size(bookmarkedFriends)) {
     return (
-      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6 relative">
+        {isLoading && <Loader />}
         <p className="text-primary-silver text-2xl w-1/2 text-center">
           No bookmarked friends found. Start bookmarking your favorite profiles!
         </p>
@@ -93,7 +90,8 @@ const Bookmark = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6">
+    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6 relative">
+      {isLoading && <Loader />}
       <div className="flex justify-center h-1/5">
         <h2 className="text-2xl md:text-3xl lg:text-4xl text-primary-silver font-bold uppercase text-center px-2">
           Bookmarks

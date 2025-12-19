@@ -90,10 +90,12 @@ const Feed = () => {
       setIsLoading(true);
 
       const userId = currentUser?.id;
-      const res = await requestAPI.acceptRequest(userId);
+      const res = await requestAPI.sendRequest(userId);
 
       if (res.status === 200 || res.status === 201) {
-        toast.success(`${currentUser?.firstName || "User"} accepted!`);
+        toast.success(
+          `Friend request sent to ${currentUser?.firstName || "User"}!`,
+        );
 
         const updatedUsers = feedUsers.filter((user) => user.id !== userId);
 
@@ -109,28 +111,12 @@ const Feed = () => {
     }
   };
 
-  const handleRejectClick = async () => {
-    try {
-      setIsLoading(true);
+  const handleRejectClick = () => {
+    const userId = currentUser?.id;
+    const updatedUsers = feedUsers.filter((user) => user.id !== userId);
 
-      const userId = currentUser?.id;
-      const res = await requestAPI.rejectRequest(userId);
-
-      if (res.status === 200 || res.status === 201) {
-        toast.success(`${currentUser?.firstName || "User"} rejected.`);
-
-        const updatedUsers = feedUsers.filter((user) => user.id !== userId);
-
-        setFeedUsers(updatedUsers);
-        setCurrentIndex((prev) => Math.min(prev, updatedUsers.length - 1));
-      } else {
-        toast.error("Unexpected response from server.");
-      }
-    } catch (error) {
-      toast.error(`Error: ${getErrorMessage(error)}`);
-    } finally {
-      setIsLoading(false);
-    }
+    setFeedUsers(updatedUsers);
+    setCurrentIndex((prev) => Math.min(prev, updatedUsers.length - 1));
   };
 
   const handleBookmarkClick = async () => {
@@ -214,13 +200,10 @@ const Feed = () => {
     fetchFeedData();
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (!size(feedUsers)) {
+  if (!feedUsers.length) {
     return (
       <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6 gap-8">
+        {isLoading && <Loader />}
         <div className="flex flex-col items-center gap-4 mt-8">
           <h2 className="text-xl md:text-2xl lg:text-3xl text-primary-silver font-bold uppercase">
             feed
@@ -246,6 +229,7 @@ const Feed = () => {
 
   return (
     <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-hidden px-2 py-2 sm:px-3 sm:py-3 md:px-4 md:py-4">
+      {isLoading && <Loader />}
       <div className="flex flex-col items-center gap-1 sm:gap-2 md:gap-3 mb-1 sm:mb-2">
         <h2 className="text-lg sm:text-xl md:text-2xl text-primary-silver font-bold uppercase">
           feed

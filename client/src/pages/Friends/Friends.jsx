@@ -43,13 +43,10 @@ const Friends = () => {
     fetchFriends();
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (!size(friends)) {
     return (
-      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6 relative">
+        {isLoading && <Loader />}
         <p className="text-primary-silver text-2xl text-center w-1/2">
           No friends found. Start connecting with others!
         </p>
@@ -58,7 +55,8 @@ const Friends = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6">
+    <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-4 py-6 md:px-6 relative">
+      {isLoading && <Loader />}
       <div className="flex justify-center h-1/5">
         <h2 className="text-4xl text-primary-silver font-bold uppercase">
           Friends

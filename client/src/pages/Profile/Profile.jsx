@@ -299,13 +299,10 @@ const Profile = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (!userData) {
     return (
-      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6">
+      <div className="flex-grow flex flex-col justify-evenly items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-6 py-6 relative">
+        {isLoading && <Loader />}
         <p className="text-primary-silver text-2xl text-center">
           Failed to load profile data
         </p>
@@ -314,7 +311,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-4 md:py-6">
+    <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-4 md:py-6 relative">
+      {isLoading && <Loader />}
       {/* Responsive heading */}
       <div className="flex justify-center mb-2 md:mb-4">
         <h2 className="text-2xl sm:text-3xl md:text-4xl text-primary-silver font-bold uppercase">

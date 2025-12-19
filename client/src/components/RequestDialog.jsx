@@ -25,7 +25,7 @@ const RequestDialog = ({ isOpen, onClose }) => {
       />
 
       {/* Popover */}
-      <div className="absolute top-full right-0 mt-2 z-100 w-48">
+      <div className="absolute top-full right-0 mt-2 z-[10002] w-48">
         <div className="bg-primary-dark border border-secondary-silver rounded-custom-xs shadow-lg overflow-hidden">
           <button
             type="button"

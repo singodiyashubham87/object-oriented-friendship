@@ -11,3 +11,7 @@ Todos:
 9. Logout page :done:
 10. Able to update profile picture, use cloudinary :done:
 11. Sent request revert flow(withdraw request)
+12. If a person is friend then on detail page unfriend/message options should be there istead of already connected :done:
+13. On clicking star of a bookmarked person in feed page, unbookmark it. :done:
+14. On withdraw request, state is not working (User Detail Page) :done:
+15. Notification & Email job

@@ -1,5 +1,5 @@
 import Loader from "@/components/Loader";
-import { requestAPI, userAPI } from "@/services/api";
+import { chatAPI, requestAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { REQUEST_STATUS } from "@/utils/constants";
 import {
@@ -12,11 +12,12 @@ import { get } from "lodash-es";
 import React, { useEffect, useState } from "react";
 import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null);
@@ -94,6 +95,24 @@ const UserProfile = () => {
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
     }
+  };
+
+  const handleUnfriend = async () => {
+    setSendingRequest(true);
+    try {
+      await userAPI.unfriend(userId);
+      toast.success(`Unfriended ${userData.firstName}`);
+      setRequestStatus("none");
+      setRequestId(null);
+    } catch (error) {
+      toast.error(`Failed to unfriend: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest(false);
+    }
+  };
+
+  const handleMessage = () => {
+    toast.info("Messaging feature coming soon!");
   };
 
   if (!userData) {
@@ -283,12 +302,37 @@ const UserProfile = () => {
             </div>
           )}
           {requestStatus === "friends" && (
-            <div className="text-primary-silver text-base sm:text-lg md:text-xl">
-              ✓ Already connected
+            <div className="flex flex-col gap-2 sm:gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                className="messageButton flex justify-center items-center gap-2 w-full sm:w-48 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-custom-s"
+                onClick={handleMessage}
+              >
+                <span className="text-base sm:text-lg uppercase">Message</span>
+              </button>
+              <button
+                type="button"
+                className="unfriendButton flex justify-center items-center gap-2 w-full sm:w-48 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleUnfriend}
+                disabled={sendingRequest}
+              >
+                {sendingRequest ? (
+                  <>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="text-base sm:text-lg uppercase">
+                      Unfriending...
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-base sm:text-lg uppercase">
+                    Unfriend
+                  </span>
+                )}
+              </button>
             </div>
           )}
           {/* Bio section - responsive */}
-          <p className="bio px-3 py-2 sm:px-4 w-full md:w-2/3 border-2 border-primary-silver text-primary-silver rounded-custom-xs text-sm sm:text-base">
+          <p className="bio px-3 py-2 sm:px-4 w-full md:w-2/3 border-2 border-primary-silver text-primary-silver rounded-custom-xs text-sm sm:text-base truncate">
             BIO: {userData.bio || "No bio available"}
           </p>
         </div>

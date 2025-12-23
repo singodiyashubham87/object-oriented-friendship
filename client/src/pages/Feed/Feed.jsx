@@ -145,6 +145,32 @@ const Feed = () => {
     }
   };
 
+  const handleUnbookmarkClick = async () => {
+    try {
+      setIsLoading(true);
+
+      const userId = currentUser?.id;
+      const firstName = currentUser?.firstName || "User";
+
+      const res = await bookmarkAPI.removeBookmark(userId);
+
+      if (res.status === 200 || res.status === 201) {
+        const updatedUsers = feedUsers.map((user) =>
+          user.id === userId ? { ...user, isBookmarked: false } : user,
+        );
+
+        setFeedUsers(updatedUsers);
+        toast.success(`${firstName} unbookmarked!`);
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch (error) {
+      toast.error(`Error: ${getErrorMessage(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -325,6 +351,7 @@ const Feed = () => {
             <FeedCardActions
               onReject={handleRejectClick}
               onBookmark={handleBookmarkClick}
+              onUnbookmark={handleUnbookmarkClick}
               onAccept={handleAcceptClick}
               isBookmarked={currentUser?.isBookmarked}
             />

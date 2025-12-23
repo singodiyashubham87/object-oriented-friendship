@@ -5,7 +5,13 @@ import {
 } from "@hugeicons/core-free-icons/index";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
+const FeedCardActions = ({
+  onReject,
+  onBookmark,
+  onUnbookmark,
+  onAccept,
+  isBookmarked,
+}) => {
   const renderAction = (icon, colorClass, handler, fill = "", title = "") => {
     const iconClasses = "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6";
     if (!handler) {
@@ -36,9 +42,9 @@ const FeedCardActions = ({ onReject, onBookmark, onAccept, isBookmarked }) => {
       {renderAction(
         StarIcon,
         isBookmarked ? "bg-yellow-400" : "bg-primary-cyan",
-        onBookmark,
+        isBookmarked ? onUnbookmark : onBookmark,
         isBookmarked ? "black" : "",
-        isBookmarked ? "Bookmarked" : "Bookmark",
+        isBookmarked ? "Bookmarked (Click to remove)" : "Bookmark",
       )}
       {renderAction(
         Tick03FreeIcons,

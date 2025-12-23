@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { and, eq, inArray, sql } from "drizzle-orm";
+import { isEmpty } from "lodash-es";
 import db from "../../db/index.js";
 import { Bookmark, Request, User } from "../../db/schema/index.js";
 import { REQUEST_STATUS } from "../../enums/requestStatus.js";
@@ -36,14 +37,23 @@ const createBookmark = async (payload) => {
 const deleteBookmark = async (payload) => {
   const { bookmarkerId, bookmarkedId } = payload;
 
-  const [deletedBookmark] = await db
-    .delete(Bookmark)
+  const [bookmark] = await db
+    .select({ id: Bookmark.id })
+    .from(Bookmark)
     .where(
       and(
-        eq(Bookmark.bookmarkedId, bookmarkedId),
         eq(Bookmark.bookmarkerId, bookmarkerId),
+        eq(Bookmark.bookmarkedId, bookmarkedId),
       ),
-    );
+    )
+    .limit(1);
+
+  if (isEmpty(bookmark)) throw new Error("User not bookmarked!");
+
+  const [deletedBookmark] = await db
+    .delete(Bookmark)
+    .where(eq(Bookmark.id, bookmark.id))
+    .returning();
 
   return deletedBookmark;
 };

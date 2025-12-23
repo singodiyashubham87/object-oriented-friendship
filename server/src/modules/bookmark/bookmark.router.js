@@ -5,11 +5,7 @@ import * as bookmarkController from "./bookmark.controller.js";
 const router = Router();
 
 router.post("/:userId", [isValidUser], bookmarkController.createBookmark);
-router.delete(
-  "/delete/:userId",
-  [isValidUser],
-  bookmarkController.deleteBookmark,
-);
+router.delete("/:userId", [isValidUser], bookmarkController.deleteBookmark);
 router.get("/", [isValidUser], bookmarkController.getBookmarkedUsers);
 
 export default router;

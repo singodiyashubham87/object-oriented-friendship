@@ -2,7 +2,7 @@ import API_RESPONSE from "../../utils/api.js";
 import Response from "../../utils/response.js";
 
 import { Readable } from "node:stream";
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import * as userService from "./user.service.js";
 import * as userValidator from "./user.validator.js";
 

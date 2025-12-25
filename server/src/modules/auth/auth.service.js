@@ -1,12 +1,15 @@
+import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import { eq, or } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
-import { User } from "../../db/schema/index.js";
+import { PasswordReset, User } from "../../db/schema/index.js";
+import { sendPasswordResetEmail } from "../../utils/email.js";
 
 const BASE_PLACEHOLDER_IMG_URL = "https://api.dicebear.com/6.x/initials/svg";
 const SALT_ROUNDS_FOR_HASHING = 10;
+const RESET_TOKEN_EXPIRY_HOURS = 1;
 
 const register = async (payload) => {
   const existingUser = await db
@@ -76,24 +79,87 @@ const login = async (payload) => {
   return safeUser;
 };
 
-const resetPassword = async (payload) => {
-  const [user] = await db
-    .select()
-    .from(User)
-    .where(eq(User.email, payload.email));
+const forgotPassword = async (email) => {
+  const [user] = await db.select().from(User).where(eq(User.email, email));
 
-  if (!user) throw new Error("User not found");
+  if (!user) {
+    return { success: true };
+  }
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  const expiresAt = dayjs().add(RESET_TOKEN_EXPIRY_HOURS, "hour").toDate();
+
+  await db.insert(PasswordReset).values({
+    userId: user.id,
+    tokenHash,
+    expiresAt,
+    createdAt: dayjs().toDate(),
+  });
+
+  const emailResult = await sendPasswordResetEmail(email, resetToken);
+
+  if (!emailResult.success) {
+    throw new Error("Failed to send password reset email");
+  }
+
+  return { success: true };
+};
+
+const verifyResetToken = async (token) => {
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+  const [resetRequest] = await db
+    .select({
+      resetId: PasswordReset.id,
+      userId: PasswordReset.userId,
+      expiresAt: PasswordReset.expiresAt,
+      usedAt: PasswordReset.usedAt,
+    })
+    .from(PasswordReset)
+    .where(eq(PasswordReset.tokenHash, tokenHash));
+
+  if (!resetRequest) {
+    throw new Error("Invalid reset token");
+  }
+
+  if (resetRequest.usedAt) {
+    throw new Error("Reset token has already been used");
+  }
+
+  if (dayjs().isAfter(dayjs(resetRequest.expiresAt))) {
+    throw new Error("Reset token has expired");
+  }
+
+  return resetRequest;
+};
+
+const resetPassword = async (token, newPassword) => {
+  const resetRequest = await verifyResetToken(token);
 
   const hashedPassword = await bcrypt.hash(
-    payload.password,
+    newPassword,
     SALT_ROUNDS_FOR_HASHING,
   );
 
   const [updatedUser] = await db
     .update(User)
-    .set({ password: hashedPassword })
-    .where(eq(User.email, payload.email))
+    .set({
+      password: hashedPassword,
+      updatedAt: dayjs().toDate(),
+    })
+    .where(eq(User.id, resetRequest.userId))
     .returning();
+
+  await db
+    .update(PasswordReset)
+    .set({ usedAt: dayjs().toDate() })
+    .where(eq(PasswordReset.id, resetRequest.resetId));
 
   return updatedUser;
 };
@@ -106,4 +172,11 @@ const getUserById = async (userId) => {
   return safeUser;
 };
 
-export { register, login, resetPassword, getUserById };
+export {
+  register,
+  login,
+  forgotPassword,
+  verifyResetToken,
+  resetPassword,
+  getUserById,
+};

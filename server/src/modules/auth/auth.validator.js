@@ -63,13 +63,26 @@ const validateForLogin = async (payload) => {
   return transformedPayload;
 };
 
-const validateForResetPassword = (payload) => {
+const validateForForgotPassword = async (payload) => {
   const forgotPasswordSchema = Joi.object({
     email: baseAuthSchemaFields.email.required(),
+  });
+
+  return await forgotPasswordSchema.validateAsync(payload);
+};
+
+const validateForResetPassword = async (payload) => {
+  const resetPasswordSchema = Joi.object({
+    token: Joi.string().required().min(1).message("Reset token is required"),
     password: baseAuthSchemaFields.password.required(),
   });
 
-  return forgotPasswordSchema.validateAsync(payload);
+  return await resetPasswordSchema.validateAsync(payload);
 };
 
-export { validateForRegister, validateForLogin, validateForResetPassword };
+export {
+  validateForRegister,
+  validateForLogin,
+  validateForForgotPassword,
+  validateForResetPassword,
+};

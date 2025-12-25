@@ -52,9 +52,37 @@ const logout = async (req, res) => {
   return Response.success(res, API_RESPONSE.LOGOUT_SUCCESSFUL);
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const validatedData = await authValidator.validateForForgotPassword(
+      req.body,
+    );
+
+    await authService.forgotPassword(validatedData.email);
+
+    return Response.success(res, API_RESPONSE.PASSWORD_RESET_EMAIL_SENT, {
+      message:
+        "If an account exists with this email, you will receive a password reset link.",
+    });
+  } catch (error) {
+    return Response.exception(
+      res,
+      API_RESPONSE.FAILED_TO_SEND_RESET_EMAIL,
+      error,
+    );
+  }
+};
+
 const resetPassword = async (req, res) => {
   try {
-    const updatedUser = await authService.resetPassword(req.body);
+    const validatedData = await authValidator.validateForResetPassword(
+      req.body,
+    );
+
+    const updatedUser = await authService.resetPassword(
+      validatedData.token,
+      validatedData.password,
+    );
 
     return Response.success(res, API_RESPONSE.PASSWORD_UPDATED_SUCCESSFULLY, {
       user: {
@@ -63,6 +91,18 @@ const resetPassword = async (req, res) => {
       },
     });
   } catch (error) {
+    // Check if it's a token-related error
+    const errorMsg = error.message;
+    if (
+      ["Invalid", "expired", "used"].some((word) => errorMsg.includes(word))
+    ) {
+      return Response.exception(
+        res,
+        API_RESPONSE.INVALID_OR_EXPIRED_TOKEN,
+        error,
+      );
+    }
+
     return Response.exception(
       res,
       API_RESPONSE.FAILED_TO_UPDATE_PASSWORD,
@@ -87,4 +127,4 @@ const verifyToken = async (req, res) => {
   }
 };
 
-export { register, login, logout, resetPassword, verifyToken };
+export { register, login, logout, forgotPassword, resetPassword, verifyToken };

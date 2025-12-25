@@ -1,6 +1,7 @@
 import { Bookmark } from "./Bookmark/Bookmark.js";
 import { Chat } from "./Chat/Chat.js";
 import { Message, MessageTypeEnums } from "./Message/Message.js";
+import { PasswordReset } from "./PasswordReset/PasswordReset.js";
 import { Request, RequestStatusEnums } from "./Request/Request.js";
 import { User } from "./User/User.js";
 
@@ -8,4 +9,4 @@ import { User } from "./User/User.js";
 export { RequestStatusEnums, MessageTypeEnums };
 
 // Export all the tables to be created in DB after enum creation
-export { User, Request, Bookmark, Chat, Message };
+export { User, Request, Bookmark, Chat, Message, PasswordReset };

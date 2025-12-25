@@ -45,6 +45,9 @@ const ForgotPassword = () => {
           <p className="text-secondary-silver text-sm text-center">
             Enter your email and we'll send you a link to reset your password.
           </p>
+          <p className="text-secondary-silver text-sm text-center">
+            Note: The reset link may go to spam folder.
+          </p>
 
           <Formik
             initialValues={{ email: "" }}

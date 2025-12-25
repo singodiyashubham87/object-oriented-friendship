@@ -98,6 +98,13 @@ const Login = () => {
                 >
                   Register
                 </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-primary-silver text-sm font-semibold hover:underline mt-2"
+                >
+                  Forgot Password?
+                </button>
               </Form>
             )}
           </Formik>

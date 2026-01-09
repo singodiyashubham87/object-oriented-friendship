@@ -142,14 +142,14 @@ const UserProfile = () => {
         {/* Profile picture and user info container */}
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4">
           {/* Responsive profile picture */}
-          <div className="relative w-32 sm:w-40 lg:w-56 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-silver flex-shrink-0">
+          <div className="relative w-32 sm:w-40 lg:w-56 aspect-square bg-white flex items-center justify-center rounded-custom-s border-2 border-primary-dark flex-shrink-0 overflow-hidden">
             <img
               src={
                 userData.avatar ||
                 `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(fullName)}`
               }
               alt="Profile"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-custom-s"
             />
           </div>
           <div className="userInfoAndSocials w-full lg:w-2/3 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 p-2 sm:p-3 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s mt-1">
@@ -159,7 +159,11 @@ const UserProfile = () => {
               </h3>
               {userData.location && (
                 <div className="location flex gap-2 items-center">
-                  <HugeiconsIcon icon={Location01Icon} className="w-4 h-4" />
+                  <HugeiconsIcon
+                    icon={Location01Icon}
+                    className="w-4 h-4"
+                    color="#92918D"
+                  />
                   <p className="text-sm sm:text-base text-primary-silver opacity-70">
                     {userData.location}
                   </p>

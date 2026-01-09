@@ -87,9 +87,12 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-primary-silver w-full text-secondary-dark text-md uppercase font-semibold py-2 rounded-custom-xs border-2 border-primary-dark hover:border-primary-silver hover:text-primary-silver hover:bg-secondary-dark cursor-pointer"
+                  className="bg-primary-silver w-full text-secondary-dark text-md uppercase font-semibold py-2 rounded-custom-xs border-2 border-primary-dark hover:border-primary-silver hover:text-primary-silver hover:bg-secondary-dark cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Login
+                  {isSubmitting && (
+                    <div className="w-5 h-5 border-2 border-secondary-dark border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isSubmitting ? "Logging in..." : "Login"}
                 </button>
                 <button
                   type="button"

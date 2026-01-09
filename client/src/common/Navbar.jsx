@@ -1,18 +1,17 @@
 import logo from "@/assets/images/oof-logo.png";
 import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
-import RequestDialog from "@/components/RequestDialog";
 import { authAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import {
   Bookmark01FreeIcons,
+  Home01Icon,
   Logout01FreeIcons,
   Mail01Icon,
   UserAdd01FreeIcons,
+  UserCheck01Icon,
   UserMultiple02FreeIcons,
 } from "@hugeicons/core-free-icons";
-import { UserAdd02FreeIcons } from "@hugeicons/core-free-icons/index";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { get } from "lodash-es";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +23,6 @@ const Navbar = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [isRequestDialogOpen, setIsRequestDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,6 +52,7 @@ const Navbar = () => {
   };
 
   const leftNavIcons = [
+    { href: "/feed", Icon: Home01Icon, name: "home" },
     {
       href: "/login",
       Icon: Logout01FreeIcons,
@@ -66,6 +65,12 @@ const Navbar = () => {
 
   const rightNavIcons = [
     { href: "/bookmark", Icon: Bookmark01FreeIcons, name: "bookmark" },
+    { href: "/sent-requests", Icon: UserAdd01FreeIcons, name: "sent requests" },
+    {
+      href: "/received-requests",
+      Icon: UserCheck01Icon,
+      name: "received requests",
+    },
   ];
 
   const fallbackAvatarUrl = `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
@@ -116,37 +121,7 @@ const Navbar = () => {
               isActive={location.pathname === icon.href}
             />
           ))}
-          <li className="relative">
-            <button
-              type="button"
-              className={`p-1 rounded-custom-xs ease-in duration-200 cursor-pointer ${
-                location.pathname === "/sent-requests" ||
-                location.pathname === "/received-requests"
-                  ? "bg-secondary-silver"
-                  : "bg-secondary-dark hover:bg-secondary-silver"
-              }`}
-              onMouseEnter={() => setHoveredIcon("requests")}
-              onMouseLeave={() => setHoveredIcon(null)}
-              onClick={() => setIsRequestDialogOpen(true)}
-              aria-label="Open requests menu"
-            >
-              <HugeiconsIcon
-                icon={UserAdd02FreeIcons}
-                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                color={
-                  location.pathname === "/sent-requests" ||
-                  location.pathname === "/received-requests" ||
-                  hoveredIcon === "requests"
-                    ? "#373737"
-                    : "#92918D"
-                }
-              />
-            </button>
-            <RequestDialog
-              isOpen={isRequestDialogOpen}
-              onClose={() => setIsRequestDialogOpen(false)}
-            />
-          </li>
+
           <li>
             <a href="/profile">
               <div className="p-1 rounded-custom-xs ease-in duration-200 bg-secondary-dark hover:bg-secondary-silver">

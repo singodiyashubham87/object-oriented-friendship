@@ -1,17 +1,56 @@
-import { Resend } from "resend";
+import dayjs from "dayjs";
+import { google } from "googleapis";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
+const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
+const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
+const FROM_EMAIL =
+  process.env.GMAIL_FROM_EMAIL || "singodiyashubham87@gmail.com";
+
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI,
+);
+
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const sendPasswordResetEmail = async (email, resetToken) => {
   try {
+    const accessToken = await oAuth2Client.getAccessToken();
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: FROM_EMAIL,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken.token,
+      },
+    });
+
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+    await transporter.sendMail({
+      from: `Object Oriented Friendship <${FROM_EMAIL}>`,
       to: email,
       subject: "Reset Your OOF Password",
-      html: `
-        <!DOCTYPE html>
+      html: getEmailTemplate(resetUrl),
+    });
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+function getEmailTemplate(resetUrl) {
+  return `
+      <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
@@ -66,7 +105,7 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
                     <tr>
                       <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
                         <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                          © ${new Date().getFullYear()} Object-Oriented Friendship. All rights reserved.
+                          © ${dayjs().format("YYYY")} Object-Oriented Friendship. All rights reserved.
                         </p>
                       </td>
                     </tr>
@@ -76,18 +115,5 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
             </table>
           </body>
         </html>
-      `,
-    });
-
-    if (error) {
-      console.error("Resend error:", error);
-      return { success: false, error: error.message };
-    }
-
-    console.log("Password reset email sent successfully:", data);
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to send password reset email:", error);
-    return { success: false, error: error.message };
-  }
-};
+  `;
+}

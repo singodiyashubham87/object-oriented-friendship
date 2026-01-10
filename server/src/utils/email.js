@@ -18,32 +18,8 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const sendPasswordResetEmail = async (email, resetToken) => {
-  const ACCESS_TOKEN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
   try {
-    if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
-      console.error(
-        "Missing Gmail OAuth credentials. Please check GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, and GMAIL_REFRESH_TOKEN.",
-      );
-      throw new Error("Email service not configured properly");
-    }
-
-    // Wrap getAccessToken in a timeout to prevent hanging indefinitely
-    const accessTokenPromise = oAuth2Client.getAccessToken();
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error("Token refresh timed out")),
-        ACCESS_TOKEN_TIMEOUT,
-      ),
-    );
-
-    const accessToken = await Promise.race([
-      accessTokenPromise,
-      timeoutPromise,
-    ]);
-
-    if (!accessToken || !accessToken.token) {
-      throw new Error("Failed to generate access token");
-    }
+    const accessToken = await oAuth2Client.getAccessToken();
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -68,7 +44,6 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Error sending password reset email:", error);
     return { success: false, error: error.message };
   }
 };

@@ -1,24 +1,18 @@
 import dayjs from "dayjs";
-import { google } from "googleapis";
 import nodemailer from "nodemailer";
 
 const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
 const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
-const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
 const FROM_EMAIL =
   process.env.GMAIL_FROM_EMAIL || "singodiyashubham87@gmail.com";
 
-const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI,
-);
-
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
 export const sendPasswordResetEmail = async (email, resetToken) => {
-  const ACCESS_TOKEN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+  console.log("CHECKPOINT 1: Starting sendPasswordResetEmail");
+  console.log(
+    `CHECKPOINT 1.5: Config - ClientID: ${!!CLIENT_ID}, Secret: ${!!CLIENT_SECRET}, RefreshToken: ${!!REFRESH_TOKEN}`,
+  );
+
   try {
     if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
       console.error(
@@ -27,48 +21,46 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       throw new Error("Email service not configured properly");
     }
 
-    // Wrap getAccessToken in a timeout to prevent hanging indefinitely
-    const accessTokenPromise = oAuth2Client.getAccessToken();
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error("Token refresh timed out")),
-        ACCESS_TOKEN_TIMEOUT,
-      ),
+    console.log(
+      "CHECKPOINT 2: Creating Nodemailer transporter with explicit settings (Port 587)",
     );
 
-    const accessToken = await Promise.race([
-      accessTokenPromise,
-      timeoutPromise,
-    ]);
-
-    if (!accessToken || !accessToken.token) {
-      throw new Error("Failed to generate access token");
-    }
-
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         type: "OAuth2",
         user: FROM_EMAIL,
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token,
       },
     });
 
+    console.log("CHECKPOINT 3: Transporter created. Preparing email options.");
+
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
-    await transporter.sendMail({
+    const mailOptions = {
       from: `Object Oriented Friendship <${FROM_EMAIL}>`,
       to: email,
       subject: "Reset Your OOF Password",
       html: getEmailTemplate(resetUrl),
-    });
+    };
+
+    console.log("CHECKPOINT 4: Sending email...");
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("CHECKPOINT 5: Email sent successfully.", info.messageId);
 
     return { success: true };
   } catch (error) {
-    console.error("Error sending password reset email:", error);
+    console.error(
+      "CHECKPOINT ERROR: Failed to send password reset email:",
+      error,
+    );
     return { success: false, error: error.message };
   }
 };

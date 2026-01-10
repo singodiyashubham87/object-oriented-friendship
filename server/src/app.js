@@ -17,6 +17,10 @@ cloudinary.config({
 
 const app = express();
 
+// Trust proxy - required when running behind reverse proxies like Render
+// This allows express-rate-limit to correctly identify client IPs
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",

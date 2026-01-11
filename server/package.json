@@ -32,8 +32,6 @@
     "lodash-es": "^4.17.21",
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.12",
-    "resend": "^6.6.0",
     "validator": "^13.12.0"
   },
   "devDependencies": {

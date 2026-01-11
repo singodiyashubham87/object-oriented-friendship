@@ -17,8 +17,6 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const sendPasswordResetEmail = async (email, resetToken) => {
-  console.log("CHECKPOINT 1: Starting sendPasswordResetEmail (Gmail API)");
-
   try {
     if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
       console.error(
@@ -27,12 +25,9 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       throw new Error("Email service not configured properly");
     }
 
-    console.log("CHECKPOINT 2: Preparing email content");
-
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
     const htmlContent = getEmailTemplate(resetUrl);
 
-    // Construct the raw email message in standard RFC 2822 format
     const subject = "Reset Your OOF Password";
     const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString("base64")}?=`;
 
@@ -55,25 +50,18 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       .replace(/\//g, "_")
       .replace(/=+$/, "");
 
-    console.log("CHECKPOINT 3: Sending email via Gmail API (HTTP)...");
-
     const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
-    const res = await gmail.users.messages.send({
+    await gmail.users.messages.send({
       userId: "me",
       requestBody: {
         raw: encodedMessage,
       },
     });
 
-    console.log("CHECKPOINT 4: Email sent successfully.", res.data);
-
     return { success: true };
   } catch (error) {
-    console.error(
-      "CHECKPOINT ERROR: Failed to send password reset email via Gmail API:",
-      error,
-    );
+    console.error("Failed to send password reset email:", error);
     return { success: false, error: error.message };
   }
 };

@@ -29,7 +29,12 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       host: "smtp.gmail.com",
       port: 587,
       secure: false, // true for 465, false for other ports
-      family: 4, // Force IPv4 to avoid IPv6 connection hangs
+      family: 4, // Force IPv4
+      logger: true, // Log to console
+      debug: true, // Include debug info
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 5000, // 5 seconds
+      socketTimeout: 10000, // 10 seconds
       auth: {
         type: "OAuth2",
         user: FROM_EMAIL,
@@ -39,7 +44,20 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       },
     });
 
-    console.log("CHECKPOINT 3: Transporter created. Preparing email options.");
+    console.log("CHECKPOINT 3: Transporter created. Verifying connection...");
+
+    try {
+      await transporter.verify();
+      console.log("CHECKPOINT 3.5: Connection verified successfully.");
+    } catch (verifyError) {
+      console.error(
+        "CHECKPOINT ERROR: Connection verification failed:",
+        verifyError,
+      );
+      throw verifyError;
+    }
+
+    console.log("CHECKPOINT 4: Preparing and sending email...");
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
@@ -49,8 +67,6 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       subject: "Reset Your OOF Password",
       html: getEmailTemplate(resetUrl),
     };
-
-    console.log("CHECKPOINT 4: Sending email...");
 
     const info = await transporter.sendMail(mailOptions);
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API_REQUEST_TIMEOUT_MS = 10000; // 10 seconds
+const API_REQUEST_TIMEOUT_MS = 20000; // 20 seconds
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:3000/api",

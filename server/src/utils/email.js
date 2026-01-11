@@ -1,17 +1,23 @@
 import dayjs from "dayjs";
-import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
 const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
 const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
 const FROM_EMAIL =
   process.env.GMAIL_FROM_EMAIL || "singodiyashubham87@gmail.com";
+const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI,
+);
+
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const sendPasswordResetEmail = async (email, resetToken) => {
-  console.log("CHECKPOINT 1: Starting sendPasswordResetEmail");
-  console.log(
-    `CHECKPOINT 1.5: Config - ClientID: ${!!CLIENT_ID}, Secret: ${!!CLIENT_SECRET}, RefreshToken: ${!!REFRESH_TOKEN}`,
-  );
+  console.log("CHECKPOINT 1: Starting sendPasswordResetEmail (Gmail API)");
 
   try {
     if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
@@ -21,61 +27,51 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
       throw new Error("Email service not configured properly");
     }
 
-    console.log(
-      "CHECKPOINT 2: Creating Nodemailer transporter with explicit settings (Port 587, IPv4)",
-    );
+    console.log("CHECKPOINT 2: Preparing email content");
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      family: 4, // Force IPv4
-      logger: true, // Log to console
-      debug: true, // Include debug info
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 5000, // 5 seconds
-      socketTimeout: 10000, // 10 seconds
-      auth: {
-        type: "OAuth2",
-        user: FROM_EMAIL,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+    const htmlContent = getEmailTemplate(resetUrl);
+
+    // Construct the raw email message in standard RFC 2822 format
+    const subject = "Reset Your OOF Password";
+    const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString("base64")}?=`;
+
+    const messageParts = [
+      `From: Object Oriented Friendship <${FROM_EMAIL}>`,
+      `To: ${email}`,
+      `Subject: ${utf8Subject}`,
+      "Content-Type: text/html; charset=utf-8",
+      "MIME-Version: 1.0",
+      "",
+      htmlContent,
+    ];
+
+    const message = messageParts.join("\n");
+
+    // The message needs to be base64url encoded
+    const encodedMessage = Buffer.from(message)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    console.log("CHECKPOINT 3: Sending email via Gmail API (HTTP)...");
+
+    const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
+    const res = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: encodedMessage,
       },
     });
 
-    console.log("CHECKPOINT 3: Transporter created. Verifying connection...");
-
-    try {
-      await transporter.verify();
-      console.log("CHECKPOINT 3.5: Connection verified successfully.");
-    } catch (verifyError) {
-      console.error(
-        "CHECKPOINT ERROR: Connection verification failed:",
-        verifyError,
-      );
-      throw verifyError;
-    }
-
-    console.log("CHECKPOINT 4: Preparing and sending email...");
-
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
-
-    const mailOptions = {
-      from: `Object Oriented Friendship <${FROM_EMAIL}>`,
-      to: email,
-      subject: "Reset Your OOF Password",
-      html: getEmailTemplate(resetUrl),
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("CHECKPOINT 5: Email sent successfully.", info.messageId);
+    console.log("CHECKPOINT 4: Email sent successfully.", res.data);
 
     return { success: true };
   } catch (error) {
     console.error(
-      "CHECKPOINT ERROR: Failed to send password reset email:",
+      "CHECKPOINT ERROR: Failed to send password reset email via Gmail API:",
       error,
     );
     return { success: false, error: error.message };

@@ -22,13 +22,14 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
     }
 
     console.log(
-      "CHECKPOINT 2: Creating Nodemailer transporter with explicit settings (Port 587)",
+      "CHECKPOINT 2: Creating Nodemailer transporter with explicit settings (Port 587, IPv4)",
     );
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
       secure: false, // true for 465, false for other ports
+      family: 4, // Force IPv4 to avoid IPv6 connection hangs
       auth: {
         type: "OAuth2",
         user: FROM_EMAIL,

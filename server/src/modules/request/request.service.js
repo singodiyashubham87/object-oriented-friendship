@@ -21,6 +21,13 @@ const createRequest = async (payload) => {
       createdAt: dayjs().toDate(),
       updatedAt: dayjs().toDate(),
     })
+    .onConflictDoUpdate({
+      target: [Request.senderId, Request.receiverId],
+      set: {
+        status: REQUEST_STATUS.PENDING,
+        updatedAt: dayjs().toDate(),
+      },
+    })
     .returning();
 
   return request;

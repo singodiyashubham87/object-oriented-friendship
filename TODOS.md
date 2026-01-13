@@ -15,5 +15,5 @@ Todos:
 13. On clicking star of a bookmarked person in feed page, unbookmark it. :done:
 14. On withdraw request, state is not working (User Detail Page) :done:
 15. Notification & Email job
-16. Password validation should not be there while logging in
+16. Password validation should not be there while logging in :done:
 17. 

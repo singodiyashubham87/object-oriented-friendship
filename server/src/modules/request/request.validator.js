@@ -19,12 +19,7 @@ const validateForCreate = async (payload) => {
 
 const validateForRequestUpdate = async (payload) => {
   const schema = Joi.object({
-    senderId: Joi.string()
-      .guid({
-        version: ["uuidv4"],
-      })
-      .required(),
-    receiverId: Joi.string()
+    requestId: Joi.string()
       .guid({
         version: ["uuidv4"],
       })

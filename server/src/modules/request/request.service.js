@@ -42,8 +42,7 @@ const acceptRequest = async (payload) => {
     })
     .where(
       and(
-        eq(Request.senderId, payload.senderId),
-        eq(Request.receiverId, payload.receiverId),
+        eq(Request.id, payload.requestId),
         eq(Request.status, REQUEST_STATUS.PENDING),
       ),
     )
@@ -61,8 +60,7 @@ const rejectRequest = async (payload) => {
     })
     .where(
       and(
-        eq(Request.senderId, payload.senderId),
-        eq(Request.receiverId, payload.receiverId),
+        eq(Request.id, payload.requestId),
         eq(Request.status, REQUEST_STATUS.PENDING),
       ),
     )

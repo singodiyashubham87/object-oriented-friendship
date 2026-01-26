@@ -26,12 +26,10 @@ const sendConnectionRequest = async (req, res) => {
 
 const acceptConnectionRequest = async (req, res) => {
   try {
-    const senderId = req.params.userId;
-    const receiverId = req.user.id;
+    const requestId = req.params.requestId;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      senderId,
-      receiverId,
+      requestId,
     });
 
     const request = await requestService.acceptRequest(validatedData);
@@ -50,12 +48,10 @@ const acceptConnectionRequest = async (req, res) => {
 
 const rejectConnectionRequest = async (req, res) => {
   try {
-    const senderId = req.params.userId;
-    const receiverId = req.user.id;
+    const requestId = req.params.requestId;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      senderId,
-      receiverId,
+      requestId,
     });
 
     const request = await requestService.rejectRequest(validatedData);

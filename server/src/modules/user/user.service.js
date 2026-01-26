@@ -179,7 +179,15 @@ const getUserFeed = async (userId) => {
       receiverId: Request.receiverId,
     })
     .from(Request)
-    .where(or(eq(Request.senderId, userId), eq(Request.receiverId, userId)));
+    .where(
+      and(
+        or(eq(Request.senderId, userId), eq(Request.receiverId, userId)),
+        or(
+          eq(Request.status, REQUEST_STATUS.PENDING),
+          eq(Request.status, REQUEST_STATUS.ACCEPTED),
+        ),
+      ),
+    );
 
   const connectedUserIds = [
     ...new Set(

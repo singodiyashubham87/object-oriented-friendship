@@ -22,6 +22,7 @@ const Bookmark = () => {
   const [bookmarkedFriends, setBookmarkedFriends] = useState([]);
   const [sendingRequest, setSendingRequest] = useState({});
   const [requestSent, setRequestSent] = useState({});
+  const [requestIds, setRequestIds] = useState({}); // Track requestId for each user
   const { searchQuery, setSearchQuery, filteredUsers } =
     useUserSearch(bookmarkedFriends);
 
@@ -37,12 +38,15 @@ const Bookmark = () => {
       setBookmarkedFriends(bookmarks);
 
       const initialRequestSentState = {};
+      const initialRequestIds = {};
       for (const user of bookmarks) {
         if (user.hasPendingRequest) {
           initialRequestSentState[user.id] = true;
+          initialRequestIds[user.id] = user.requestId;
         }
       }
       setRequestSent(initialRequestSentState);
+      setRequestIds(initialRequestIds);
     } catch (error) {
       toast.error(
         `Failed to fetch bookmarked friends: ${getErrorMessage(error)}`,
@@ -55,9 +59,11 @@ const Bookmark = () => {
   const handleSendRequest = async (userId, userName) => {
     setSendingRequest((prev) => ({ ...prev, [userId]: true }));
     try {
-      await requestAPI.sendRequest(userId);
+      const res = await requestAPI.sendRequest(userId);
+      const newRequestId = get(res, "data.data.request.id");
       toast.success(`Connection request sent to ${userName}!`);
       setRequestSent((prev) => ({ ...prev, [userId]: true }));
+      setRequestIds((prev) => ({ ...prev, [userId]: newRequestId }));
     } catch (error) {
       toast.error(`Failed to send request: ${getErrorMessage(error)}`);
     } finally {
@@ -68,9 +74,15 @@ const Bookmark = () => {
   const handleWithdrawRequest = async (userId, userName) => {
     setSendingRequest((prev) => ({ ...prev, [userId]: true }));
     try {
-      await requestAPI.cancelRequest(userId);
+      const requestId = requestIds[userId];
+      await requestAPI.cancelRequest(requestId);
       toast.success(`Connection request to ${userName} withdrawn!`);
       setRequestSent((prev) => ({ ...prev, [userId]: false }));
+      setRequestIds((prev) => {
+        const newIds = { ...prev };
+        delete newIds[userId];
+        return newIds;
+      });
     } catch (error) {
       toast.error(`Failed to withdraw request: ${getErrorMessage(error)}`);
     } finally {

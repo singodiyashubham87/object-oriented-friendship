@@ -85,6 +85,16 @@ const getBookmarkedUsers = async (userId) => {
           ),
         )
         .limit(1)} IS NOT NULL THEN true ELSE false END`,
+      requestId: sql`(
+        SELECT ${Request.id}
+        FROM ${Request}
+        WHERE ${and(
+          eq(Request.senderId, userId),
+          eq(Request.receiverId, User.id),
+          eq(Request.status, REQUEST_STATUS.PENDING),
+        )}
+        LIMIT 1
+      )`,
     })
     .from(Bookmark)
     .leftJoin(User, eq(User.id, Bookmark.bookmarkedId))

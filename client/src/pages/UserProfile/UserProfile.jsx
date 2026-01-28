@@ -66,7 +66,7 @@ const UserProfile = () => {
   const handleWithdrawRequest = async () => {
     setSendingRequest(true);
     try {
-      await requestAPI.cancelRequest(userId);
+      await requestAPI.cancelRequest(requestId);
       toast.success(`Connection request to ${userData.firstName} withdrawn!`);
       setRequestStatus("none");
       setRequestId(null);

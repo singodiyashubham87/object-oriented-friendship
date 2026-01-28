@@ -41,7 +41,9 @@ const SentRequests = () => {
     try {
       await requestAPI.cancelRequest(requestId);
       toast.success(`Request to ${userName} cancelled`);
-      setRequestedUsers((prev) => prev.filter((req) => req.id !== requestId));
+      setRequestedUsers((prev) =>
+        prev.filter((req) => req.requestId !== requestId),
+      );
     } catch (error) {
       toast.error(`Failed to cancel request: ${getErrorMessage(error)}`);
     }
@@ -132,9 +134,10 @@ const SentRequests = () => {
 
                 <div
                   className="relative z-10 flex gap-1.5 items-center bg-gradient-to-r from-primary-silver-70 to-secondary-silver-70 text-primary-silver px-3 py-1 rounded-full hover:from-primary-silver hover:to-secondary-silver hover:text-primary-dark cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg"
-                  onClick={() => handleCancelRequest(user.id, fullName)}
+                  onClick={() => handleCancelRequest(user.requestId, fullName)}
                   onKeyDown={(e) =>
-                    e.key === "Enter" && handleCancelRequest(user.id, fullName)
+                    e.key === "Enter" &&
+                    handleCancelRequest(user.requestId, fullName)
                   }
                 >
                   <button

@@ -74,9 +74,9 @@ const cancelRequest = async (payload) => {
     .delete(Request)
     .where(
       and(
+        eq(Request.id, payload.requestId),
         eq(Request.status, REQUEST_STATUS.PENDING),
-        eq(Request.senderId, payload.senderId),
-        eq(Request.receiverId, payload.receiverId),
+        eq(Request.senderId, payload.userId), // Verify user is the sender
       ),
     )
     .returning();
@@ -107,9 +107,17 @@ const getAllPendingRequest = async (payload) => {
 const getAllSentRequest = async (payload) => {
   const allSentRequests = await db
     .select({
+      requestId: Request.id,
       receiverId: Request.receiverId,
+      firstName: User.firstName,
+      lastName: User.lastName,
+      email: User.email,
+      avatar: User.avatar,
+      location: User.location,
+      id: User.id,
     })
     .from(Request)
+    .innerJoin(User, eq(Request.receiverId, User.id))
     .where(
       and(
         eq(Request.senderId, payload.userId),
@@ -117,14 +125,7 @@ const getAllSentRequest = async (payload) => {
       ),
     );
 
-  const receiverIds = allSentRequests.map((request) => request.receiverId);
-
-  const users = await db
-    .select()
-    .from(User)
-    .where(inArray(User.id, receiverIds));
-
-  return users;
+  return allSentRequests;
 };
 
 export {

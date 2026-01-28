@@ -70,15 +70,17 @@ const rejectConnectionRequest = async (req, res) => {
 
 const cancelConnectionRequest = async (req, res) => {
   try {
-    const receiverId = req.params.userId;
-    const senderId = req.user.id;
+    const requestId = req.params.requestId;
+    const userId = req.user.id;
 
     const validatedData = await requestValidator.validateForRequestUpdate({
-      senderId,
-      receiverId,
+      requestId,
     });
 
-    const request = await requestService.cancelRequest(validatedData);
+    const request = await requestService.cancelRequest({
+      ...validatedData,
+      userId,
+    });
 
     if (!request) {
       throw new Error("Request not found!");

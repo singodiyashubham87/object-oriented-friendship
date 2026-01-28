@@ -39,8 +39,9 @@ const UserProfile = () => {
       setUserData(user);
 
       const relationshipStatus = user?.relationshipStatus || "none";
+      const extractedRequestId = user?.requestId || null;
       setRequestStatus(relationshipStatus);
-      setRequestId(user?.requestId || null);
+      setRequestId(extractedRequestId);
     } catch (error) {
       toast.error(`Failed to load user profile: ${getErrorMessage(error)}`);
     } finally {
@@ -66,6 +67,11 @@ const UserProfile = () => {
   const handleWithdrawRequest = async () => {
     setSendingRequest(true);
     try {
+      if (!requestId) {
+        throw new Error(
+          "Request ID not found. Please refresh the page and try again.",
+        );
+      }
       await requestAPI.cancelRequest(requestId);
       toast.success(`Connection request to ${userData.firstName} withdrawn!`);
       setRequestStatus("none");

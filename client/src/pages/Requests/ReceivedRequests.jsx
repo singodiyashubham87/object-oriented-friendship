@@ -43,21 +43,25 @@ const ReceivedRequests = () => {
     }
   };
 
-  const handleAcceptRequest = async (id, userName) => {
+  const handleAcceptRequest = async (requestId, userName) => {
     try {
-      await requestAPI.acceptRequest(id);
+      await requestAPI.acceptRequest(requestId);
       toast.success(`${userName}'s request accepted!`);
-      setPendingRequests((prev) => prev.filter((req) => req.id !== id));
+      setPendingRequests((prev) =>
+        prev.filter((req) => req.requestId !== requestId),
+      );
     } catch (error) {
       toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
     }
   };
 
-  const handleRejectRequest = async (id, userName) => {
+  const handleRejectRequest = async (requestId, userName) => {
     try {
-      await requestAPI.rejectRequest(id);
+      await requestAPI.rejectRequest(requestId);
       toast.success(`${userName}'s request rejected`);
-      setPendingRequests((prev) => prev.filter((req) => req.id !== id));
+      setPendingRequests((prev) =>
+        prev.filter((req) => req.requestId !== requestId),
+      );
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
     }
@@ -160,7 +164,9 @@ const ReceivedRequests = () => {
                   <button
                     type="button"
                     className="p-1.5 bg-primary-pink hover:bg-primary-pink-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200"
-                    onClick={() => handleRejectRequest(user.id, fullName)}
+                    onClick={() =>
+                      handleRejectRequest(user.requestId, fullName)
+                    }
                     aria-label="Reject request"
                   >
                     <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
@@ -179,7 +185,9 @@ const ReceivedRequests = () => {
                   <button
                     type="button"
                     className="p-1.5 bg-primary-green hover:bg-primary-green-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200"
-                    onClick={() => handleAcceptRequest(user.id, fullName)}
+                    onClick={() =>
+                      handleAcceptRequest(user.requestId, fullName)
+                    }
                     aria-label="Accept request"
                   >
                     <HugeiconsIcon

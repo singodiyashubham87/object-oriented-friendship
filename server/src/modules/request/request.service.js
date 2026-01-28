@@ -87,9 +87,17 @@ const cancelRequest = async (payload) => {
 const getAllPendingRequest = async (payload) => {
   const allPendingRequests = await db
     .select({
+      requestId: Request.id,
       senderId: Request.senderId,
+      firstName: User.firstName,
+      lastName: User.lastName,
+      email: User.email,
+      avatar: User.avatar,
+      location: User.location,
+      id: User.id,
     })
     .from(Request)
+    .innerJoin(User, eq(Request.senderId, User.id))
     .where(
       and(
         eq(Request.receiverId, payload.userId),
@@ -97,11 +105,7 @@ const getAllPendingRequest = async (payload) => {
       ),
     );
 
-  const senderIds = allPendingRequests.map((request) => request.senderId);
-
-  const users = await db.select().from(User).where(inArray(User.id, senderIds));
-
-  return users;
+  return allPendingRequests;
 };
 
 const getAllSentRequest = async (payload) => {

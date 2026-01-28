@@ -197,13 +197,15 @@ const getUserFeed = async (userId) => {
     ),
   ];
 
-  let condition = ne(User.id, userId);
-
-  if (connectedUserIds.length > 0) {
-    condition = and(notInArray(User.id, connectedUserIds), ne(User.id, userId));
-  }
-
-  const feed = await db.select().from(User).where(condition);
+  const feed = await db
+    .select()
+    .from(User)
+    .where(
+      notInArray(
+        User.id,
+        connectedUserIds.length > 0 ? [...connectedUserIds, userId] : [userId],
+      ),
+    );
 
   const bookmarks = await db
     .select({ bookmarkedId: Bookmark.bookmarkedId })

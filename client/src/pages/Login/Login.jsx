@@ -31,6 +31,7 @@ const Login = () => {
     const loginData = {
       username_or_email: values.usernameOrEmail,
       password: values.password,
+      remember_me: values.rememberMe,
     };
 
     try {
@@ -52,6 +53,7 @@ const Login = () => {
             initialValues={{
               usernameOrEmail: "",
               password: "",
+              rememberMe: false,
             }}
             validationSchema={loginValidationSchema}
             onSubmit={handleSubmit}
@@ -83,6 +85,20 @@ const Login = () => {
                     component="div"
                     className="text-red-500 text-sm mt-1 font-semibold"
                   />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Field
+                    type="checkbox"
+                    name="rememberMe"
+                    id="rememberMe"
+                    className="w-4 h-4 cursor-pointer accent-primary-silver"
+                  />
+                  <label
+                    htmlFor="rememberMe"
+                    className="text-secondary-silver font-semibold text-sm cursor-pointer"
+                  >
+                    Remember me
+                  </label>
                 </div>
                 <button
                   type="submit"

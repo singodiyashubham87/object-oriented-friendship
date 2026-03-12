@@ -7,6 +7,11 @@ export const authAPI = {
   verifyToken: () => axiosInstance.get("/auth/verify"),
   forgotPassword: (data) => axiosInstance.post("/auth/forgot-password", data),
   resetPassword: (data) => axiosInstance.post("/auth/reset-password", data),
+  getSessions: () => axiosInstance.get("/auth/sessions"),
+  revokeSession: (sessionId) =>
+    axiosInstance.delete(`/auth/sessions/${sessionId}`),
+  revokeAllOtherSessions: () =>
+    axiosInstance.delete("/auth/sessions/all-others"),
 };
 
 export const userAPI = {

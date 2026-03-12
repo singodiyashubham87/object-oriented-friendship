@@ -12,6 +12,7 @@ import Register from "@/pages/Register/Register";
 import ReceivedRequests from "@/pages/Requests/ReceivedRequests";
 import SentRequests from "@/pages/Requests/SentRequests";
 import ResetPassword from "@/pages/ResetPassword/ResetPassword";
+import Sessions from "@/pages/Sessions/Sessions";
 import UserProfile from "@/pages/UserProfile/UserProfile";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="received-requests" element={<ReceivedRequests />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:userId" element={<UserProfile />} />
+          <Route path="sessions" element={<Sessions />} />
         </Route>
       </Routes>
     </BrowserRouter>

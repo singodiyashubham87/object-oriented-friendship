@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Field, Form, Formik } from "formik";
 import { get } from "lodash-es";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
@@ -71,6 +72,7 @@ const profileSchema = Yup.object().shape({
 });
 
 const Profile = () => {
+  const navigate = useNavigate();
   const transitionStyle = "ease-in-out transition-transform duration-1000";
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -319,10 +321,20 @@ const Profile = () => {
     <div className="flex-grow flex flex-col items-center w-full h-11/12 bg-dark-glassmorphism-30 border-xs border-secondary-silver rounded-custom-s overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-4 md:py-6 relative">
       {isLoading && <Loader />}
       {/* Responsive heading */}
-      <div className="flex justify-center mb-2 md:mb-4">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl text-primary-silver font-bold uppercase">
+      <div className="flex justify-between items-center mb-2 md:mb-4 w-full">
+        <div className="flex-1 hidden md:block" />
+        <h2 className="text-2xl sm:text-3xl md:text-4xl text-primary-silver font-bold uppercase text-left md:text-center flex-1">
           Profile
         </h2>
+        <div className="flex-1 flex justify-end">
+          <button
+            type="button"
+            onClick={() => navigate("/sessions")}
+            className="text-primary-silver font-semibold hover:text-white transition-colors text-xs sm:text-sm md:text-base border-2 border-primary-silver px-3 py-1.5 rounded-custom-xs hover:bg-primary-silver/20"
+          >
+            Active Sessions
+          </button>
+        </div>
       </div>
 
       <Formik

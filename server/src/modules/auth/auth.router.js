@@ -13,4 +13,13 @@ router.post("/forgot-password", authLimiter, authController.forgotPassword);
 router.post("/reset-password", authLimiter, authController.resetPassword);
 router.get("/verify", [isValidUser], authController.verifyToken);
 
+router.get("/sessions", [isValidUser], authController.getSessions);
+router.delete(
+  "/sessions/all-others",
+  [isValidUser],
+  authController.revokeAllOtherSessions,
+);
+router.delete("/sessions/:id", [isValidUser], authController.revokeSession);
+router.post("/refresh", authController.refreshAccessToken);
+
 export default router;

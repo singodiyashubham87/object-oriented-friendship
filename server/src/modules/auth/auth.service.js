@@ -1,10 +1,10 @@
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { eq, or } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 import { size } from "lodash-es";
 import db from "../../db/index.js";
-import { PasswordReset, User } from "../../db/schema/index.js";
+import { PasswordReset, Session, User } from "../../db/schema/index.js";
 import { sendPasswordResetEmail } from "../../utils/email.js";
 
 const BASE_PLACEHOLDER_IMG_URL = "https://api.dicebear.com/6.x/initials/svg";
@@ -172,6 +172,95 @@ const getUserById = async (userId) => {
   return safeUser;
 };
 
+const createSession = async (
+  userId,
+  refreshTokenHash,
+  deviceInfo,
+  ipAddress,
+  expiresAt,
+) => {
+  await db.insert(Session).values({
+    userId,
+    refreshTokenHash,
+    deviceInfo,
+    ipAddress,
+    expiresAt,
+    createdAt: dayjs().toDate(),
+  });
+};
+
+const getSessionsForUser = async (userId, currentTokenHash) => {
+  const sessions = await db
+    .select({
+      id: Session.id,
+      deviceInfo: Session.deviceInfo,
+      ipAddress: Session.ipAddress,
+      createdAt: Session.createdAt,
+      refreshTokenHash: Session.refreshTokenHash,
+    })
+    .from(Session)
+    .where(eq(Session.userId, userId));
+
+  return sessions.map((session) => {
+    const { refreshTokenHash, ...safeSession } = session;
+    return {
+      ...safeSession,
+      isCurrentDevice:
+        currentTokenHash && currentTokenHash === refreshTokenHash,
+    };
+  });
+};
+
+const revokeSession = async (sessionId, userId) => {
+  await db
+    .delete(Session)
+    .where(and(eq(Session.id, sessionId), eq(Session.userId, userId)));
+};
+
+const revokeAllOtherSessions = async (userId, rawRefreshToken) => {
+  if (rawRefreshToken) {
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(rawRefreshToken)
+      .digest("hex");
+
+    await db
+      .delete(Session)
+      .where(
+        and(
+          eq(Session.userId, userId),
+          ne(Session.refreshTokenHash, tokenHash),
+        ),
+      );
+  } else {
+    await db.delete(Session).where(eq(Session.userId, userId));
+  }
+};
+
+const refreshAccessToken = async (rawRefreshToken) => {
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(rawRefreshToken)
+    .digest("hex");
+
+  const [session] = await db
+    .select()
+    .from(Session)
+    .where(eq(Session.refreshTokenHash, tokenHash));
+
+  if (!session) {
+    throw new Error("Invalid or expired refresh token");
+  }
+
+  if (dayjs().isAfter(dayjs(session.expiresAt))) {
+    await db.delete(Session).where(eq(Session.id, session.id));
+    throw new Error("Refresh token expired");
+  }
+
+  const user = await getUserById(session.userId);
+  return { user, sessionId: session.id };
+};
+
 export {
   register,
   login,
@@ -179,4 +268,9 @@ export {
   verifyResetToken,
   resetPassword,
   getUserById,
+  createSession,
+  getSessionsForUser,
+  revokeSession,
+  revokeAllOtherSessions,
+  refreshAccessToken,
 };

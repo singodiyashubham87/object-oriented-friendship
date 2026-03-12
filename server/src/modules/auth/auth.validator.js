@@ -38,12 +38,14 @@ const validateForLogin = async (payload) => {
   const inputSchema = Joi.object({
     username_or_email: Joi.string().required(),
     password: baseAuthSchemaFields.password.required(),
+    remember_me: Joi.boolean().optional().default(false),
   });
 
   const validatedInput = await inputSchema.validateAsync(payload);
 
   const transformedPayload = {
     password: validatedInput.password,
+    remember_me: validatedInput.remember_me,
   };
 
   const isEmail = validatedInput.username_or_email.includes("@");

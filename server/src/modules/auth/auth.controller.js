@@ -2,10 +2,14 @@ import API_RESPONSE from "../../utils/api.js";
 import { generateToken } from "../../utils/jwt.js";
 import Response from "../../utils/response.js";
 
+import crypto from "node:crypto";
 import dayjs from "dayjs";
 import { isProd } from "../../utils/common.js";
 import * as authService from "./auth.service.js";
 import * as authValidator from "./auth.validator.js";
+
+const ACCESS_TOKEN_EXPIRY_HOURS = 1;
+const REFRESH_TOKEN_EXPIRY_DAYS = 30;
 
 const register = async (req, res) => {
   try {
@@ -29,19 +33,44 @@ const login = async (req, res) => {
 
     const user = await authService.login(validatedCredentials);
 
-    const jwtToken = generateToken(user);
+    const jwtToken = generateToken(user, `${ACCESS_TOKEN_EXPIRY_HOURS}h`);
 
     res.cookie("token", jwtToken, {
-      expires: dayjs().add(7, "days").toDate(),
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "None" : "Lax",
+      expires: dayjs().add(ACCESS_TOKEN_EXPIRY_HOURS, "hours").toDate(),
+      httpOnly: true, // prevent client-side javascript from accessing the cookie
+      secure: isProd, // only send cookie over HTTPS in production
+      sameSite: isProd ? "None" : "Lax", // allow cross-site cookies in production to bypassing render proxy layer
     });
 
-    return Response.success(res, API_RESPONSE.LOGIN_SUCCESSFUL, {
-      user,
-      token: jwtToken,
-    });
+    if (validatedCredentials.remember_me) {
+      const rawRefreshToken = crypto.randomBytes(32).toString("hex");
+      const tokenHash = crypto
+        .createHash("sha256")
+        .update(rawRefreshToken)
+        .digest("hex");
+      const deviceInfo = req.headers["user-agent"] || "Unknown Device";
+      const ipAddress = req.ip || req.connection?.remoteAddress || "Unknown IP";
+      const expiresAt = dayjs().add(REFRESH_TOKEN_EXPIRY_DAYS, "days").toDate();
+
+      await authService.createSession(
+        user.id,
+        tokenHash,
+        deviceInfo,
+        ipAddress,
+        expiresAt,
+      );
+
+      res.cookie("refreshToken", rawRefreshToken, {
+        expires: expiresAt,
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "None" : "Lax",
+      });
+    } else {
+      res.cookie("refreshToken", null, { expires: dayjs().toDate() });
+    }
+
+    return Response.success(res, API_RESPONSE.LOGIN_SUCCESSFUL, { user });
   } catch (error) {
     return Response.exception(res, API_RESPONSE.FAILED_TO_LOGIN_USER, error);
   }
@@ -49,6 +78,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   res.cookie("token", null, { expires: dayjs().toDate() });
+  res.cookie("refreshToken", null, { expires: dayjs().toDate() });
   return Response.success(res, API_RESPONSE.LOGOUT_SUCCESSFUL);
 };
 
@@ -127,4 +157,85 @@ const verifyToken = async (req, res) => {
   }
 };
 
-export { register, login, logout, forgotPassword, resetPassword, verifyToken };
+const getSessions = async (req, res) => {
+  try {
+    let currentTokenHash = null;
+    if (req.cookies.refreshToken) {
+      currentTokenHash = crypto
+        .createHash("sha256")
+        .update(req.cookies.refreshToken)
+        .digest("hex");
+    }
+
+    const sessions = await authService.getSessionsForUser(
+      req.user.id,
+      currentTokenHash,
+    );
+    return Response.success(res, API_RESPONSE.REQUEST_SUCCESSFUL, { sessions });
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.EXCEPTION_OCCURRED, error);
+  }
+};
+
+const revokeSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await authService.revokeSession(id, req.user.id);
+    return Response.success(res, API_RESPONSE.REQUEST_SUCCESSFUL);
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.EXCEPTION_OCCURRED, error);
+  }
+};
+
+const revokeAllOtherSessions = async (req, res) => {
+  try {
+    await authService.revokeAllOtherSessions(
+      req.user.id,
+      req.cookies.refreshToken,
+    );
+    return Response.success(res, API_RESPONSE.REQUEST_SUCCESSFUL);
+  } catch (error) {
+    return Response.exception(res, API_RESPONSE.EXCEPTION_OCCURRED, error);
+  }
+};
+
+const refreshAccessToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      return Response.unauthorized(res, API_RESPONSE.UNAUTHORIZED);
+    }
+
+    const { user } = await authService.refreshAccessToken(refreshToken);
+
+    const jwtToken = generateToken(user, `${ACCESS_TOKEN_EXPIRY_HOURS}h`);
+
+    res.cookie("token", jwtToken, {
+      expires: dayjs().add(ACCESS_TOKEN_EXPIRY_HOURS, "hours").toDate(),
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "None" : "Lax",
+    });
+
+    return Response.success(res, API_RESPONSE.TOKEN_VERIFIED, {
+      token: jwtToken,
+    });
+  } catch (error) {
+    res.cookie("token", null, { expires: dayjs().toDate() });
+    res.cookie("refreshToken", null, { expires: dayjs().toDate() });
+    return Response.unauthorized(res, API_RESPONSE.UNAUTHORIZED, error);
+  }
+};
+
+export {
+  register,
+  login,
+  logout,
+  forgotPassword,
+  resetPassword,
+  verifyToken,
+  getSessions,
+  revokeSession,
+  revokeAllOtherSessions,
+  refreshAccessToken,
+};

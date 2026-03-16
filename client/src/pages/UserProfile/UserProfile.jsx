@@ -84,22 +84,28 @@ const UserProfile = () => {
   };
 
   const handleAcceptRequest = async (requestId) => {
+    setSendingRequest(true);
     try {
       await requestAPI.acceptRequest(requestId);
       toast.success(`${userData.firstName}'s request accepted!`);
       setRequestStatus(REQUEST_STATUS.ACCEPTED);
     } catch (error) {
       toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest(false);
     }
   };
 
   const handleRejectRequest = async (requestId) => {
+    setSendingRequest(true);
     try {
       await requestAPI.rejectRequest(requestId);
       toast.success(`${userData.firstName}'s request rejected`);
       setRequestStatus(REQUEST_STATUS.NONE);
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
+    } finally {
+      setSendingRequest(false);
     }
   };
 
@@ -285,8 +291,9 @@ const UserProfile = () => {
             <div className="flex flex-col gap-3 sm:gap-4 w-full sm:w-auto">
               <button
                 type="button"
-                className="rejectButton flex justify-center items-center gap-3 w-full sm:w-48  bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-custom-s"
+                className="rejectButton flex justify-center items-center gap-3 w-full sm:w-48  bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => handleRejectRequest(requestId)}
+                disabled={sendingRequest}
               >
                 <span className="text-base sm:text-lg uppercase">Reject</span>
                 <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">
@@ -298,8 +305,9 @@ const UserProfile = () => {
               </button>
               <button
                 type="button"
-                className="acceptButton flex justify-center items-center gap-3 w-full sm:w-48  bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-1 px-2 rounded-custom-s"
+                className="acceptButton flex justify-center items-center gap-3 w-full sm:w-48  bg-green-500 hover:bg-green-700 text-primary-dark font-bold py-1 px-2 rounded-custom-s disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => handleAcceptRequest(requestId)}
+                disabled={sendingRequest}
               >
                 <span className="text-base sm:text-lg uppercase">Accept</span>
                 <div className="p-1 border border-primary-dark bg-primary-silver rounded-full">

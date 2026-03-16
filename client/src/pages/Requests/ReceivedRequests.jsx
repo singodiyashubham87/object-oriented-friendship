@@ -21,6 +21,7 @@ const ReceivedRequests = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [processingId, setProcessingId] = useState(null);
   const { searchQuery, setSearchQuery, filteredUsers } =
     useUserSearch(pendingRequests);
 
@@ -44,6 +45,7 @@ const ReceivedRequests = () => {
   };
 
   const handleAcceptRequest = async (requestId, userName) => {
+    setProcessingId(requestId);
     try {
       await requestAPI.acceptRequest(requestId);
       toast.success(`${userName}'s request accepted!`);
@@ -52,10 +54,13 @@ const ReceivedRequests = () => {
       );
     } catch (error) {
       toast.error(`Failed to accept request: ${getErrorMessage(error)}`);
+    } finally {
+      setProcessingId(null);
     }
   };
 
   const handleRejectRequest = async (requestId, userName) => {
+    setProcessingId(requestId);
     try {
       await requestAPI.rejectRequest(requestId);
       toast.success(`${userName}'s request rejected`);
@@ -64,6 +69,8 @@ const ReceivedRequests = () => {
       );
     } catch (error) {
       toast.error(`Failed to reject request: ${getErrorMessage(error)}`);
+    } finally {
+      setProcessingId(null);
     }
   };
 
@@ -163,10 +170,12 @@ const ReceivedRequests = () => {
                 <div className="relative z-10 flex gap-1.5 items-center justify-center w-full">
                   <button
                     type="button"
-                    className="p-1.5 bg-primary-pink hover:bg-primary-pink-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200"
-                    onClick={() =>
-                      handleRejectRequest(user.requestId, fullName)
-                    }
+                    className="p-1.5 bg-primary-pink hover:bg-primary-pink-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRejectRequest(user.requestId, fullName);
+                    }}
+                    disabled={processingId === user.requestId}
                     aria-label="Reject request"
                   >
                     <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
@@ -174,7 +183,10 @@ const ReceivedRequests = () => {
                   <button
                     type="button"
                     className="p-1.5 bg-primary-cyan hover:bg-primary-cyan-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200"
-                    onClick={() => handleBookmarkUser(user.id, fullName)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookmarkUser(user.id, fullName);
+                    }}
                     aria-label="Bookmark user"
                   >
                     <HugeiconsIcon
@@ -184,10 +196,12 @@ const ReceivedRequests = () => {
                   </button>
                   <button
                     type="button"
-                    className="p-1.5 bg-primary-green hover:bg-primary-green-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200"
-                    onClick={() =>
-                      handleAcceptRequest(user.requestId, fullName)
-                    }
+                    className="p-1.5 bg-primary-green hover:bg-primary-green-70 rounded-full border border-primary-dark cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAcceptRequest(user.requestId, fullName);
+                    }}
+                    disabled={processingId === user.requestId}
                     aria-label="Accept request"
                   >
                     <HugeiconsIcon

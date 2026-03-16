@@ -30,21 +30,21 @@ const Friends = () => {
   };
 
   useEffect(() => {
-    const fetchFriends = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axiosInstance.get("/user/friends");
-        const friends = get(res, "data.data.friends", []);
-        setFriends(friends);
-      } catch (error) {
-        toast.error("Failed to fetch friends");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchFriends();
   }, []);
+
+  const fetchFriends = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axiosInstance.get("/user/friends");
+      const friends = get(res, "data.data.friends", []);
+      setFriends(friends);
+    } catch (error) {
+      toast.error("Failed to fetch friends");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!size(friends)) {
     return (

@@ -6,6 +6,7 @@ import { useUserSearch } from "@/hooks/useUserSearch";
 import { bookmarkAPI, requestAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import {
+  Delete02Icon,
   Location01Icon,
   Message01Icon,
   UserAdd01Icon,
@@ -23,6 +24,7 @@ const Bookmark = () => {
   const [sendingRequest, setSendingRequest] = useState({});
   const [requestSent, setRequestSent] = useState({});
   const [requestIds, setRequestIds] = useState({}); // Track requestId for each user
+  const [removingBookmark, setRemovingBookmark] = useState({});
   const { searchQuery, setSearchQuery, filteredUsers } =
     useUserSearch(bookmarkedFriends);
 
@@ -90,6 +92,20 @@ const Bookmark = () => {
     }
   };
 
+  const handleRemoveBookmark = async (e, userId, fullName) => {
+    e.stopPropagation();
+    setRemovingBookmark((prev) => ({ ...prev, [userId]: true }));
+    try {
+      await bookmarkAPI.removeBookmark(userId);
+      toast.success(`${fullName} removed from bookmarks!`);
+      setBookmarkedFriends((prev) => prev.filter((f) => f.id !== userId));
+    } catch (error) {
+      toast.error(`Failed to remove bookmark: ${getErrorMessage(error)}`);
+    } finally {
+      setRemovingBookmark((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
   const handleCardClick = (userId) => {
     navigate(`/profile/${userId}`);
   };
@@ -142,6 +158,21 @@ const Bookmark = () => {
               >
                 {/* Subtle glow effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                {/* Remove bookmark button */}
+                <button
+                  type="button"
+                  title="Remove from bookmarks"
+                  className="absolute top-2 right-2 z-20 flex items-center justify-center w-6 h-6 rounded-full bg-red-500/80 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer shadow-md"
+                  onClick={(e) => handleRemoveBookmark(e, friend.id, fullName)}
+                  disabled={removingBookmark[friend.id]}
+                >
+                  {removingBookmark[friend.id] ? (
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <HugeiconsIcon icon={Delete02Icon} className="w-3 h-3" />
+                  )}
+                </button>
 
                 {/* Avatar with ring effect */}
                 <div className="relative">

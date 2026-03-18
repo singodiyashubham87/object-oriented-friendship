@@ -15,6 +15,7 @@ import ResetPassword from "@/pages/ResetPassword/ResetPassword";
 import Sessions from "@/pages/Sessions/Sessions";
 import UserProfile from "@/pages/UserProfile/UserProfile";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 const RootRoute = () => {
   return <Navigate to="/feed" replace />;
@@ -25,10 +26,38 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected Routes */}
         <Route

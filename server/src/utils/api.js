@@ -31,6 +31,15 @@ const API_RESPONSE = {
   INVALID_CREDENTIALS: "invalid credentials",
   TOKEN_VERIFIED: "token verified",
   FAILED_TO_VERIFY_TOKEN: "failed to verify token",
+  CHATS_FETCHED: "chats fetched successfully",
+  CHAT_CREATED: "chat created successfully",
+  FAILED_TO_FETCH_CHATS: "failed to fetch chats",
+  FAILED_TO_CREATE_CHAT: "failed to create chat",
+  MESSAGES_FETCHED: "messages fetched successfully",
+  MESSAGE_SENT: "message sent successfully",
+  MESSAGE_READ: "message marked as read",
+  FAILED_TO_FETCH_MESSAGES: "failed to fetch messages",
+  FAILED_TO_SEND_MESSAGE: "failed to send message",
 };
 
 export default API_RESPONSE;

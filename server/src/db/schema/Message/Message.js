@@ -29,6 +29,7 @@ export const Message = pgTable(
       .notNull(),
     content: text("content").notNull(),
     contentType: MessageTypeEnums("content_type").default("text").notNull(),
+    readAt: timestamp("read_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

@@ -3,6 +3,7 @@ import NameWithTooltip from "@/components/NameWithTooltip";
 import SearchBar from "@/components/SearchBar";
 import UserAvatar from "@/components/UserAvatar";
 import axiosInstance from "@/config/axios";
+import { useSocket } from "@/context/SocketContext";
 import { useUserSearch } from "@/hooks/useUserSearch";
 import { Location01Icon, Message01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -13,6 +14,7 @@ import { toast } from "react-toastify";
 
 const Friends = () => {
   const navigate = useNavigate();
+  const { onlineUsers } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
   const [friends, setFriends] = useState([]);
   const { searchQuery, setSearchQuery, filteredUsers } = useUserSearch(friends);
@@ -95,12 +97,19 @@ const Friends = () => {
                 {/* Subtle glow effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                {/* Avatar with ring effect */}
+                {/* Avatar with ring effect and online dot */}
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-primary-cyan-70 to-dark-cyan-70 rounded-full opacity-0 group-hover:opacity-75 blur transition-opacity duration-300" />
                   <UserAvatar
                     avatarUrl={friend.avatar}
                     classNames="relative ring-2 ring-primary-gray-30 group-hover:ring-primary-cyan-70 transition-all duration-300"
+                  />
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-dark ${
+                      onlineUsers.includes(friend.id)
+                        ? "bg-green-500"
+                        : "bg-gray-500"
+                    }`}
                   />
                 </div>
 

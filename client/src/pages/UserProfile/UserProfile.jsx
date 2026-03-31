@@ -1,4 +1,5 @@
 import Loader from "@/components/Loader";
+import { useSocket } from "@/context/SocketContext";
 import { chatAPI, requestAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import { REQUEST_STATUS } from "@/utils/constants";
@@ -18,6 +19,7 @@ import { toast } from "react-toastify";
 const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { onlineUsers } = useSocket();
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null);
@@ -124,7 +126,9 @@ const UserProfile = () => {
   };
 
   const handleMessage = () => {
-    toast.info("Messaging feature coming soon!");
+    navigate("/messages", {
+      state: { selectedFriendId: userId },
+    });
   };
 
   if (!userData) {
@@ -166,8 +170,15 @@ const UserProfile = () => {
           </div>
           <div className="userInfoAndSocials w-full lg:w-2/3 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 p-2 sm:p-3 relative bg-dark-glassmorphism-50 border-2 border-primary-silver rounded-custom-s mt-1">
             <div className="userInfo flex flex-col gap-2">
-              <h3 className="text-xl sm:text-xl text-primary-silver font-bold">
+              <h3 className="text-xl sm:text-xl text-primary-silver font-bold flex items-center gap-2">
                 {fullName}
+                <span
+                  className={`w-2.5 h-2.5 rounded-full ${
+                    onlineUsers.includes(userId)
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                />
               </h3>
               {userData.location && (
                 <div className="location flex gap-2 items-center">

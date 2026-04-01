@@ -11,6 +11,16 @@ import React, {
 
 const SocketContext = createContext(null);
 
+const fetchUnread = async (setHasUnread) => {
+  try {
+    const res = await chatAPI.getUnreadCount();
+    const count = get(res, "data.data.unreadCount", 0);
+    if (count > 0) setHasUnread(true);
+  } catch {
+    console.error("Failed to fetch unread count");
+  }
+};
+
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -27,18 +37,7 @@ export const SocketProvider = ({ children }) => {
 
     const currentUser = JSON.parse(storedUser);
 
-    // Fetch unread count from DB on mount
-    const fetchUnread = async () => {
-      try {
-        const res = await chatAPI.getUnreadCount();
-        const count = get(res, "data.data.unreadCount", 0);
-        if (count > 0) setHasUnread(true);
-      } catch {
-        // Silently fail — not critical
-      }
-    };
-
-    fetchUnread();
+    fetchUnread(setHasUnread);
 
     const s = getSocket();
     s.connect();
@@ -52,8 +51,8 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
-    s.on("online-users", (users) => {
-      setOnlineUsers(users);
+    s.on("online-users", (activeUserIds) => {
+      setOnlineUsers(activeUserIds);
     });
 
     s.on("new-message", (message) => {
@@ -70,6 +69,8 @@ export const SocketProvider = ({ children }) => {
       disconnectSocket();
       setSocket(null);
       setIsConnected(false);
+      setOnlineUsers([]);
+      setHasUnread(false);
     };
   }, []);
 

@@ -1,6 +1,7 @@
 import logo from "@/assets/images/oof-logo.png";
 import Loader from "@/components/Loader";
 import NavIcon from "@/components/NavIcon";
+import { useSocket } from "@/context/SocketContext";
 import { authAPI, userAPI } from "@/services/api";
 import { getErrorMessage } from "@/utils/common";
 import {
@@ -20,6 +21,7 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { hasUnread, clearUnread } = useSocket();
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -60,7 +62,13 @@ const Navbar = () => {
       onClick: handleLogout,
     },
     { href: "/friends", Icon: UserMultiple02FreeIcons, name: "friends" },
-    { href: "/messages", Icon: Mail01Icon, name: "inbox" },
+    {
+      href: "/messages",
+      Icon: Mail01Icon,
+      name: "inbox",
+      showBadge: hasUnread && location.pathname !== "/messages",
+      onClick: clearUnread,
+    },
   ];
 
   const rightNavIcons = [
@@ -96,6 +104,7 @@ const Navbar = () => {
               }
               setHoveredIcon={setHoveredIcon}
               isActive={location.pathname === icon.href}
+              showBadge={icon.showBadge}
             />
           ))}
         </div>

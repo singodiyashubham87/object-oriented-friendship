@@ -10,10 +10,11 @@ const NavIcon = ({
   onClick = () => {},
   setHoveredIcon,
   isActive,
+  showBadge = false,
 }) => {
   const iconDiv = (
     <div
-      className={`p-1 rounded-custom-xs ease-in duration-200 ${
+      className={`relative p-1 rounded-custom-xs ease-in duration-200 ${
         isActive
           ? "bg-secondary-silver"
           : "bg-secondary-dark hover:bg-secondary-silver"
@@ -26,6 +27,9 @@ const NavIcon = ({
         className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
         color={isActive || hoveredIcon === iconName ? "#373737" : "#92918D"}
       />
+      {showBadge && (
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border border-dark animate-pulse" />
+      )}
     </div>
   );
 

@@ -1,5 +1,13 @@
 import { disconnectSocket, getSocket } from "@/config/socket";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { chatAPI } from "@/services/api";
+import { get } from "lodash-es";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const SocketContext = createContext(null);
 
@@ -7,11 +15,30 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [hasUnread, setHasUnread] = useState(false);
+
+  const clearUnread = useCallback(() => {
+    setHasUnread(false);
+  }, []);
 
   useEffect(() => {
-    // Get user from localStorage (set by ProtectedRoute after token verify)
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
+
+    const currentUser = JSON.parse(storedUser);
+
+    // Fetch unread count from DB on mount
+    const fetchUnread = async () => {
+      try {
+        const res = await chatAPI.getUnreadCount();
+        const count = get(res, "data.data.unreadCount", 0);
+        if (count > 0) setHasUnread(true);
+      } catch {
+        // Silently fail — not critical
+      }
+    };
+
+    fetchUnread();
 
     const s = getSocket();
     s.connect();
@@ -29,6 +56,12 @@ export const SocketProvider = ({ children }) => {
       setOnlineUsers(users);
     });
 
+    s.on("new-message", (message) => {
+      if (message.senderId !== currentUser.id) {
+        setHasUnread(true);
+      }
+    });
+
     s.on("connect_error", (err) => {
       console.error("[Socket] Connection error:", err.message);
     });
@@ -41,7 +74,9 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, onlineUsers, isConnected }}>
+    <SocketContext.Provider
+      value={{ socket, onlineUsers, isConnected, hasUnread, clearUnread }}
+    >
       {children}
     </SocketContext.Provider>
   );
@@ -50,7 +85,13 @@ export const SocketProvider = ({ children }) => {
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
-    return { socket: null, onlineUsers: [], isConnected: false };
+    return {
+      socket: null,
+      onlineUsers: [],
+      isConnected: false,
+      hasUnread: false,
+      clearUnread: () => {},
+    };
   }
   return context;
 };

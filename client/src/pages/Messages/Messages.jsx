@@ -10,10 +10,39 @@ import { useLocation } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 
+const TickStatus = ({ msg, currentUserId }) => {
+  const isMine = msg.senderId === currentUserId;
+  if (!isMine) return null;
+
+  if (msg.readAt) {
+    return (
+      <span
+        className="inline-flex items-center ml-1 text-[10px] text-[#ffffff99]"
+        title="Seen"
+      >
+        ✓✓
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="inline-flex items-center ml-1 text-[10px] text-[#ffffff99]"
+      title="Delivered"
+    >
+      ✓
+    </span>
+  );
+};
+
 const Messages = () => {
   const location = useLocation();
-  const { socket, onlineUsers } = useSocket();
+  const { socket, onlineUsers, clearUnread } = useSocket();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  useEffect(() => {
+    clearUnread();
+  }, [clearUnread]);
 
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -42,12 +71,12 @@ const Messages = () => {
       const chatList = get(res, "data.data.chats", []);
       setChats(chatList);
 
-      // Auto-select chat if navigated from Friends page
       const selectedFriendId = location.state?.selectedFriendId;
       if (selectedFriendId) {
         const existingChat = chatList.find(
           (c) => c.otherUserId === selectedFriendId,
         );
+
         if (existingChat) {
           setSelectedChat(existingChat);
         } else {
@@ -62,6 +91,8 @@ const Messages = () => {
             // Chat creation might fail if not friends
           }
         }
+      } else if (chatList.length > 0) {
+        setSelectedChat(chatList[0]);
       }
     } catch {
       // Failed to fetch chats
@@ -70,36 +101,60 @@ const Messages = () => {
     }
   };
 
-  // ── Fetch messages for selected chat ──
-  const fetchMessages = useCallback(async (chatId, cursor = null) => {
-    setIsLoadingMessages(true);
-    try {
-      const url = cursor
-        ? `/message/${chatId}?cursor=${cursor}`
-        : `/message/${chatId}`;
-      const res = await chatAPI.getMessages(chatId, cursor);
-      const data = get(res, "data.data", {});
-
-      if (cursor) {
-        // Prepend older messages
-        setMessages((prev) => [...(data.messages || []), ...prev]);
-      } else {
-        setMessages(data.messages || []);
+  const markMessagesAsRead = useCallback(
+    (msgs, chatId) => {
+      if (!socket) return;
+      const unreadFromOther = msgs.filter(
+        (m) => m.senderId !== currentUser.id && !m.readAt,
+      );
+      for (const msg of unreadFromOther) {
+        socket.emit("message-read", { messageId: msg.id, chatId });
       }
-      setNextCursor(data.nextCursor || null);
-      setHasMore(data.hasMore || false);
-    } catch {
-      // Failed to fetch messages
-    } finally {
-      setIsLoadingMessages(false);
-    }
+    },
+    [socket, currentUser.id],
+  );
+
+  const SCROLL_DELAY_MS = 50;
+  const scrollToBottom = useCallback((instant = false) => {
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({
+          behavior: instant ? "instant" : "smooth",
+        });
+      }
+    }, SCROLL_DELAY_MS);
   }, []);
+
+  const fetchMessages = useCallback(
+    async (chatId, cursor = null) => {
+      setIsLoadingMessages(true);
+      try {
+        const res = await chatAPI.getMessages(chatId, cursor);
+        const data = get(res, "data.data", {});
+        const fetched = data.messages || [];
+
+        if (cursor) {
+          setMessages((prev) => [...fetched, ...prev]);
+        } else {
+          setMessages(fetched);
+          scrollToBottom(true);
+        }
+        setNextCursor(data.nextCursor || null);
+        setHasMore(data.hasMore || false);
+        markMessagesAsRead(fetched, chatId);
+      } catch {
+        toast;
+      } finally {
+        setIsLoadingMessages(false);
+      }
+    },
+    [markMessagesAsRead, scrollToBottom],
+  );
 
   // ── When a chat is selected ──
   useEffect(() => {
     if (!selectedChat || !socket) return;
 
-    // Leave previous rooms and join new one
     socket.emit("join-chat", selectedChat.id);
     fetchMessages(selectedChat.id);
 
@@ -109,25 +164,43 @@ const Messages = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat, socket, fetchMessages]);
 
-  // ── Scroll to bottom on new messages ──
-  const scrollToBottom = useCallback(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
-
-  // ── Socket event listeners ──
   useEffect(() => {
     if (!socket) return;
 
     const handleNewMessage = (message) => {
-      // Add to current messages if viewing this chat
       setMessages((prev) => {
-        // Avoid duplicates
+        // If already have this real message, skip
         if (prev.some((m) => m.id === message.id)) return prev;
+
+        // Replace optimistic temp message with server-confirmed one
+        const tempIdx = prev.findIndex(
+          (m) =>
+            typeof m.id === "string" &&
+            m.id.startsWith("temp-") &&
+            m.senderId === message.senderId &&
+            m.content === message.content,
+        );
+        if (tempIdx !== -1) {
+          const updated = [...prev];
+          updated[tempIdx] = message;
+          return updated;
+        }
+
         return [...prev, message];
       });
       scrollToBottom();
+
+      // Auto-read: if viewing this chat and message is from the other user
+      if (
+        selectedChat &&
+        message.chatId === selectedChat.id &&
+        message.senderId !== currentUser.id
+      ) {
+        socket.emit("message-read", {
+          messageId: message.id,
+          chatId: selectedChat.id,
+        });
+      }
 
       // Update chat list sidebar
       setChats((prev) =>
@@ -148,6 +221,15 @@ const Messages = () => {
       );
     };
 
+    // When the other user reads my message, update tick to blue
+    const handleReadAck = ({ messageId }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId ? { ...m, readAt: new Date().toISOString() } : m,
+        ),
+      );
+    };
+
     const handleTyping = ({ userId, chatId }) => {
       if (selectedChat && chatId === selectedChat.id) {
         setTypingUser(userId);
@@ -161,11 +243,13 @@ const Messages = () => {
     };
 
     socket.on("new-message", handleNewMessage);
+    socket.on("message-read-ack", handleReadAck);
     socket.on("user-typing", handleTyping);
     socket.on("user-stop-typing", handleStopTyping);
 
     return () => {
       socket.off("new-message", handleNewMessage);
+      socket.off("message-read-ack", handleReadAck);
       socket.off("user-typing", handleTyping);
       socket.off("user-stop-typing", handleStopTyping);
     };
@@ -176,9 +260,26 @@ const Messages = () => {
   const handleSendMessage = () => {
     if (!messageInput.trim() || !selectedChat || !socket) return;
 
+    const content = messageInput.trim();
+
+    // Optimistic UI — show message instantly
+    const optimisticMsg = {
+      id: `temp-${Date.now()}`,
+      chatId: selectedChat.id,
+      senderId: currentUser.id,
+      content,
+      contentType: "text",
+      readAt: null,
+      createdAt: new Date().toISOString(),
+      senderFirstName: currentUser.firstName,
+      senderAvatar: currentUser.avatar,
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+    scrollToBottom();
+
     socket.emit("send-message", {
       chatId: selectedChat.id,
-      content: messageInput.trim(),
+      content,
       contentType: "text",
     });
 
@@ -237,7 +338,7 @@ const Messages = () => {
       {/* Main content */}
       <div className="w-full flex-1 flex justify-between items-stretch gap-3 md:gap-4 overflow-hidden">
         {/* Chat List Sidebar */}
-        <div className="chatListSidebar w-1/3 flex flex-col gap-2 overflow-y-auto pr-1">
+        <div className="chatListSidebar w-1/3 flex flex-col gap-2 overflow-y-auto pr-1 bg-dark-glassmorphism-40 rounded-custom-s p-2 border border-primary-gray-30">
           {chats.map((chat) => {
             const isSelected = selectedChat?.id === chat.id;
             const isOnline = onlineUsers.includes(chat.otherUserId);
@@ -309,7 +410,7 @@ const Messages = () => {
         </div>
 
         {/* Message Panel */}
-        <div className="messageContent w-2/3 flex flex-col justify-between rounded-custom-s overflow-hidden">
+        <div className="messageContent w-2/3 flex flex-col justify-between rounded-custom-s overflow-hidden bg-dark-glassmorphism-40 border border-primary-gray-30">
           {selectedChat ? (
             <>
               {/* Chat header */}
@@ -337,9 +438,15 @@ const Messages = () => {
                     {selectedChat.otherUserLastName || ""}
                   </h6>
                   <span className="text-xs text-primary-silver opacity-60">
-                    {onlineUsers.includes(selectedChat.otherUserId)
-                      ? "Online"
-                      : "Offline"}
+                    {typingUser ? (
+                      <span className="text-primary-cyan italic">
+                        typing...
+                      </span>
+                    ) : onlineUsers.includes(selectedChat.otherUserId) ? (
+                      "Online"
+                    ) : (
+                      "Offline"
+                    )}
                   </span>
                 </div>
               </div>
@@ -385,27 +492,24 @@ const Messages = () => {
                       <div
                         className={`px-3 py-1.5 rounded-custom-s ${
                           isMine
-                            ? "bg-dark-cyan-70 rounded-br-none"
-                            : "bg-secondary-silver-70 rounded-bl-none"
+                            ? "bg-[#005C4B] rounded-br-none"
+                            : "bg-dark-glassmorphism-60 rounded-bl-none"
                         }`}
                       >
                         <p className="text-sm text-primary-silver break-words">
                           {msg.content}
                         </p>
-                        <span className="text-[10px] text-primary-silver opacity-40 block text-right mt-0.5">
+                        <span className="text-[10px] text-primary-silver opacity-40 flex items-center justify-end gap-0.5 mt-0.5">
                           {dayjs(msg.createdAt).format("h:mm A")}
+                          <TickStatus
+                            msg={msg}
+                            currentUserId={currentUser.id}
+                          />
                         </span>
                       </div>
                     </div>
                   );
                 })}
-
-                {/* Typing indicator */}
-                {typingUser && (
-                  <div className="self-start text-xs text-primary-silver opacity-60 italic px-2 py-1">
-                    {selectedChat.otherUserFirstName || "User"} is typing...
-                  </div>
-                )}
 
                 <div ref={messagesEndRef} />
               </div>

@@ -105,7 +105,7 @@ const Friends = () => {
                     classNames="relative ring-2 ring-primary-gray-30 group-hover:ring-primary-cyan-70 transition-all duration-300"
                   />
                   <span
-                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-dark ${
+                    className={`absolute bottom-[6px] right-[6px] w-3 h-3 rounded-full border-2 border-dark ${
                       onlineUsers.includes(friend.id)
                         ? "bg-green-500"
                         : "bg-gray-500"

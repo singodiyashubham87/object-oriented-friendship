@@ -89,4 +89,22 @@ const createOrGetChat = async (userId, targetUserId) => {
   return newChat;
 };
 
-export { getAllChats, createOrGetChat };
+const getTotalUnreadCount = async (userId) => {
+  const [result] = await db
+    .select({
+      count: sql`COUNT(*)::int`,
+    })
+    .from(Message)
+    .innerJoin(Chat, eq(Message.chatId, Chat.id))
+    .where(
+      and(
+        or(eq(Chat.senderId, userId), eq(Chat.receiverId, userId)),
+        sql`${Message.senderId} != ${userId}`,
+        sql`${Message.readAt} IS NULL`,
+      ),
+    );
+
+  return result?.count || 0;
+};
+
+export { getAllChats, createOrGetChat, getTotalUnreadCount };

@@ -59,6 +59,7 @@ export const bookmarkAPI = {
 export const chatAPI = {
   getAllChats: () => axiosInstance.get("/chat"),
   createChat: (userId) => axiosInstance.post(`/chat/${userId}`),
+  getUnreadCount: () => axiosInstance.get("/chat/unread-count"),
   getMessages: (chatId, cursor) => {
     const params = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
     return axiosInstance.get(`/message/${chatId}${params}`);

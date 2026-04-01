@@ -30,4 +30,17 @@ const createChat = async (req, res) => {
   }
 };
 
-export { getAllChats, createChat };
+const getUnreadCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const count = await chatService.getTotalUnreadCount(userId);
+
+    return Response.success(res, "Unread count fetched", {
+      unreadCount: count,
+    });
+  } catch (error) {
+    return Response.exception(res, "Failed to fetch unread count", error);
+  }
+};
+
+export { getAllChats, createChat, getUnreadCount };

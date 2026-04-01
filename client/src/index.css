@@ -13,24 +13,20 @@
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: linear-gradient(to right, #888686, #5f5f5f);
-  border: 1px solid #aaa;
+  background: #888;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  cursor: pointer;
-  background: #373737;
+  background: #666;
 }
 
 h1::selection,

@@ -77,8 +77,15 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie("token", null, { expires: dayjs().toDate() });
-  res.cookie("refreshToken", null, { expires: dayjs().toDate() });
+  const cookieOptions = {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
+    expires: dayjs().toDate(),
+  };
+
+  res.cookie("token", null, cookieOptions);
+  res.cookie("refreshToken", null, cookieOptions);
   return Response.success(res, API_RESPONSE.LOGOUT_SUCCESSFUL);
 };
 

@@ -44,12 +44,13 @@ const Navbar = () => {
     try {
       setIsLoading(true);
       await authAPI.logout();
-      localStorage.removeItem("user");
-      navigate("/login");
     } catch (error) {
-      toast.error(`Error: ${getErrorMessage(error)}`);
+      console.error("Logout API failed:", error);
+      // We still proceed to clear local state and redirect
     } finally {
+      localStorage.removeItem("user");
       setIsLoading(false);
+      navigate("/login");
     }
   };
 
